@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEGACY — 선수 서사 굿즈 플랫폼</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;500;700&family=Oswald:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --bg: #070A12;
+            --surface: #0D1220;
+            --surface-2: #131A2E;
+            --border: rgba(255,255,255,0.06);
+            --border-hover: rgba(255,255,255,0.16);
+            --text: #EDE8DC;
+            --text-muted: #68738A;
+            --accent: #FF3300;
+            --accent-light: #ff5533;
+            --gold: #C9A23E;
+            --white: #FAFAF8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 300;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 1.8rem 5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.4s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(7, 10, 18, 0.96);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            padding: 1.1rem 5rem;
+        }
+
+        .logo {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 1.7rem;
+            letter-spacing: 0.18em;
+            color: var(--white);
+            text-decoration: none;
+        }
+        .logo em { color: var(--accent); font-style: normal; }
+
+        .nav-links {
+            display: flex;
+            gap: 2.8rem;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--white); }
+        .nav-item-drop { position: relative; }
+        .nav-drop-menu { position: absolute; top: calc(100% + 0.9rem); left: 50%; transform: translateX(-50%); background: rgba(10,14,24,0.99); border: 1px solid var(--border); min-width: 150px; display: none; flex-direction: column; z-index: 200; padding: 0.4rem 0; backdrop-filter: blur(20px); }
+        .nav-item-drop:hover .nav-drop-menu { display: flex; }
+        .nav-drop-menu a { display: block; padding: 0.55rem 1rem; font-family: 'Oswald', sans-serif; font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; text-decoration: none; letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.15s, background 0.15s; }
+        .nav-drop-menu a:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+
+        .nav-cart {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.65rem 1.4rem;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .nav-cart:hover { background: var(--accent-light); transform: translateY(-1px); }
+
+        /* ===== HERO ===== */
+        .hero {
+            height: 100vh;
+            min-height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 70% 60% at 15% 55%, rgba(255,51,0,0.09) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 50% at 85% 20%, rgba(201,162,62,0.07) 0%, transparent 60%),
+                linear-gradient(175deg, #0A0D18 0%, var(--bg) 60%);
+        }
+
+        .hero-grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+            background-size: 64px 64px;
+        }
+
+        /* Decorative large number in hero */
+        .hero-deco-number {
+            position: absolute;
+            right: -2rem;
+            bottom: -5rem;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 40vw;
+            color: rgba(255,51,0,0.025);
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .hero-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            max-width: 860px;
+            padding: 0 2rem;
+        }
+
+        .hero-eyebrow {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.45em;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero-title {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 800;
+            font-size: clamp(2.4rem, 6.5vw, 5.2rem);
+            line-height: 1.22;
+            letter-spacing: -0.03em;
+            color: var(--white);
+            margin-bottom: 1.8rem;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.4s forwards;
+            word-break: keep-all;
+        }
+        .hero-title em {
+            font-style: normal;
+            color: var(--accent);
+        }
+
+        .hero-subtitle {
+            font-size: 1.05rem;
+            font-weight: 300;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.6s forwards;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.8s forwards;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s;
+            display: inline-block;
+        }
+        .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 1rem 2.5rem;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s;
+            display: inline-block;
+        }
+        .btn-ghost:hover { border-color: var(--white); color: var(--white); }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-muted);
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+        }
+        .scroll-bar {
+            width: 1px;
+            height: 48px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+            animation: scrollAnim 1.8s ease-in-out infinite;
+            transform-origin: top;
+        }
+        @keyframes scrollAnim {
+            0%   { opacity: 0; transform: scaleY(0); transform-origin: top; }
+            40%  { opacity: 1; }
+            100% { opacity: 0; transform: scaleY(1); transform-origin: bottom; }
+        }
+
+        /* ===== MARQUEE ===== */
+        .marquee-wrap {
+            overflow: hidden;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            padding: 0.9rem 0;
+        }
+        .marquee-track {
+            display: flex;
+            gap: 0;
+            animation: marqueeScroll 25s linear infinite;
+            white-space: nowrap;
+            width: max-content;
+        }
+        .marquee-track:hover { animation-play-state: paused; }
+        .marquee-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0 2.5rem;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .marquee-dot {
+            width: 4px; height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        @keyframes marqueeScroll {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+
+        /* ===== SECTION BASE ===== */
+        .section {
+            padding: 8rem 5rem;
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 4rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.68rem;
+            letter-spacing: 0.45em;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 0.6rem;
+        }
+
+        .section-title {
+            font-family: 'Black Han Sans', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            color: var(--white);
+            line-height: 1.1;
+        }
+
+        .section-num {
+            font-family: 'Oswald', sans-serif;
+            font-size: 6rem;
+            color: rgba(255,255,255,0.025);
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* ===== PLAYERS GRID ===== */
+        #players { background: var(--bg); }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .player-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .player-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .player-card:hover .card-photo-overlay { opacity: 0.7; }
+
+        .card-photo {
+            width: 100%;
+            aspect-ratio: 3/4;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-photo-inner {
+            width: 100%; height: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            position: relative;
+        }
+
+        .card-photo-inner img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: top;
+            position: absolute; top: 0; left: 0;
+        }
+
+        .card-num-bg {
+            position: absolute;
+            bottom: -16px; right: 4px;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 7rem;
+            opacity: 0.12;
+            line-height: 1;
+            color: white;
+            user-select: none;
+        }
+
+        .card-silhouette {
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 55%; height: 78%;
+        }
+
+        .card-photo-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(7,10,18,0.95) 0%, rgba(7,10,18,0.1) 55%, transparent 100%);
+            transition: opacity 0.3s;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            background: var(--accent);
+            color: white;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            padding: 0.28rem 0.65rem;
+            z-index: 2;
+        }
+
+        .card-body { padding: 1.4rem 1.5rem 1.5rem; }
+
+        .card-pos {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.68rem;
+            letter-spacing: 0.3em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .card-name {
+            font-family: 'Black Han Sans', sans-serif;
+            font-size: 1.55rem;
+            color: var(--white);
+            margin-bottom: 0.8rem;
+        }
+
+        .card-excerpt {
+            font-size: 0.82rem;
+            line-height: 1.75;
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-goods-count {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.72rem;
+            color: var(--gold);
+            letter-spacing: 0.08em;
+        }
+
+        .btn-story {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--text-muted);
+            padding: 0.45rem 1rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-story:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* ===== STATS ===== */
+        .stats-section {
+            padding: 5rem;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+        .stat-item { text-align: center; }
+        .stat-num {
+            font-family: 'Oswald', sans-serif;
+            font-size: 3.8rem;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        .stat-num sup { color: var(--accent); font-size: 2rem; vertical-align: super; }
+        .stat-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        /* ===== GOODS SECTION ===== */
+        #goods { background: var(--bg); }
+
+        .goods-filters {
+            display: flex;
+            gap: 0.65rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.5rem 1.2rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn.active,
+        .filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(255,51,0,0.06);
+        }
+
+        .goods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .goods-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .goods-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 50px rgba(0,0,0,0.5);
+        }
+        .goods-card:hover .goods-img-inner { transform: scale(1.06); }
+
+        .goods-img-wrap {
+            width: 100%;
+            aspect-ratio: 1;
+            overflow: hidden;
+        }
+        .goods-img-inner {
+            width: 100%; height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            transition: transform 0.4s ease;
+        }
+
+        .goods-body { padding: 1.1rem 1.2rem 1.3rem; }
+
+        .goods-player-tag {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.25em;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 0.35rem;
+        }
+
+        .goods-name {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .goods-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .goods-price {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem;
+            color: var(--gold);
+            letter-spacing: 0.02em;
+        }
+
+        .btn-cart {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 0.42rem 0.9rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-cart:hover { background: var(--accent-light); }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(4,6,12,0.92);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal-box {
+            background: var(--surface);
+            width: 100%;
+            max-width: 920px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.2rem; right: 1.2rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            width: 2.4rem; height: 2.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            z-index: 10;
+            transition: all 0.2s;
+        }
+        .modal-close:hover { background: var(--accent); border-color: var(--accent); color: white; }
+
+        .modal-top {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+        }
+
+        .modal-photo {
+            min-height: 460px;
+            position: relative;
+            overflow: hidden;
+        }
+        .modal-photo-inner {
+            width: 100%; height: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            position: relative;
+        }
+        .modal-photo-inner img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: top;
+            position: absolute; top: 0; left: 0;
+        }
+        .modal-num-bg {
+            position: absolute;
+            bottom: -20px; right: 0;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 12rem;
+            opacity: 0.1;
+            line-height: 1;
+            color: white;
+            user-select: none;
+        }
+        .modal-silhouette {
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 68%; height: 85%;
+        }
+
+        .modal-story {
+            padding: 3rem 2.8rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .modal-label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.68rem;
+            letter-spacing: 0.45em;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+
+        .modal-name {
+            font-family: 'Black Han Sans', sans-serif;
+            font-size: 2.6rem;
+            color: var(--white);
+            margin-bottom: 0.25rem;
+            line-height: 1.1;
+        }
+
+        .modal-meta {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.12em;
+            margin-bottom: 2rem;
+        }
+
+        .modal-quote {
+            border-left: 3px solid var(--accent);
+            padding-left: 1.4rem;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            font-style: italic;
+            color: var(--text);
+            line-height: 1.65;
+        }
+
+        .modal-story-text {
+            font-size: 0.87rem;
+            line-height: 1.95;
+            color: var(--text-muted);
+        }
+        .modal-story-text p + p { margin-top: 0.9rem; }
+
+        .modal-goods-section {
+            padding: 2rem 2.8rem 2.5rem;
+            border-top: 1px solid var(--border);
+            background: rgba(0,0,0,0.2);
+        }
+
+        .modal-goods-title {
+            font-family: 'Black Han Sans', sans-serif;
+            font-size: 1.1rem;
+            color: var(--white);
+            margin-bottom: 1.2rem;
+        }
+
+        .modal-goods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.9rem;
+        }
+
+        .mgood {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mgood:hover { border-color: var(--accent); }
+
+        .mgood-img {
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin-bottom: 0.7rem;
+            border-radius: 2px;
+        }
+
+        .mgood-name { font-size: 0.78rem; color: var(--text); margin-bottom: 0.3rem; }
+        .mgood-price { font-family: 'Oswald', sans-serif; font-size: 0.88rem; color: var(--gold); }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem; right: 2rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.85rem 1.6rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.85rem;
+            z-index: 999;
+            animation: fadeUp 0.3s ease;
+            box-shadow: 0 6px 30px rgba(255,51,0,0.35);
+            pointer-events: none;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--surface);
+            padding: 5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 4rem;
+            margin-bottom: 3.5rem;
+            padding-bottom: 3.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .footer-logo {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: 0.18em;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+        .footer-logo em { color: var(--accent); font-style: normal; }
+
+        .footer-desc {
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            line-height: 1.75;
+            max-width: 260px;
+        }
+
+        .footer-links { display: flex; gap: 5rem; }
+
+        .flink-group h4 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.28em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 1.2rem;
+        }
+        .flink-group ul { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+        .flink-group a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.84rem;
+            transition: color 0.2s;
+        }
+        .flink-group a:hover { color: var(--accent); }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-copy { font-size: 0.73rem; color: var(--text-muted); }
+        .footer-copy em { color: var(--accent); font-style: normal; }
+
+        /* ===== FIGURE LIGHTBOX ===== */
+        .figure-box {
+            background: var(--surface);
+            width: 100%;
+            max-width: 740px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+            max-height: 90vh;
+        }
+        .figure-img-wrap {
+            background: var(--surface-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem;
+            min-height: 400px;
+        }
+        .figure-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            max-height: 380px;
+        }
+        .figure-info {
+            padding: 2.8rem 2.2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+        }
+        .figure-desc {
+            font-size: 0.84rem;
+            line-height: 2;
+            color: var(--text-muted);
+            margin-top: 1.2rem;
+        }
+        .figure-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--border);
+        }
+        @media (max-width: 640px) {
+            .figure-box { grid-template-columns: 1fr; }
+            .figure-img-wrap { min-height: 260px; padding: 1.5rem; }
+            .figure-info { padding: 1.8rem 1.5rem; }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            nav, nav.scrolled { padding: 1.2rem 1.8rem; }
+            .nav-links { display: none; }
+            .section { padding: 5rem 1.8rem; }
+            .stats-section { padding: 4rem 1.8rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 2.5rem; }
+            footer { padding: 4rem 1.8rem; }
+            .footer-top { flex-direction: column; }
+            .footer-links { gap: 2.5rem; }
+            .modal-top { grid-template-columns: 1fr; }
+            .modal-photo { min-height: 280px; }
+            .modal-story { padding: 2rem 1.8rem; }
+            .modal-goods-section { padding: 1.5rem 1.8rem; }
+            .modal-goods-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero-deco-number { font-size: 55vw; }
+        }
+
+        @media (max-width: 600px) {
+            .section-num { display: none; }
+            .modal-goods-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* ===== SOCIAL LINKS ===== */
+        .card-social {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.9rem;
+            margin-bottom: -0.1rem;
+        }
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.32rem;
+            padding: 0.3rem 0.75rem;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.66rem;
+            letter-spacing: 0.08em;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .social-link.instagram:hover {
+            border-color: #C13584;
+            color: #C13584;
+            background: rgba(193,53,132,0.06);
+        }
+        .social-link.youtube:hover {
+            border-color: #FF0000;
+            color: #FF0000;
+            background: rgba(255,0,0,0.06);
+        }
+        .modal-social {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .modal-social .social-link {
+            font-size: 0.72rem;
+            padding: 0.4rem 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==============================
+     NAVIGATION
+     ============================== -->
+<nav id="navbar">
+    <a href="#" class="logo">LEGA<em>CY</em></a>
+    <ul class="nav-links">
+        <li><a href="index.html">홈</a></li>
+        <li><a href="#players">선수</a></li>
+        <li><a href="#goods">굿즈</a></li>
+        <li><a href="community.html">커뮤니티</a></li>
+        <li><a href="schedule.html">경기일정</a></li>
+        <li class="nav-item-drop" id="nav-mypage-li" style="display:none">
+            <a href="mypage.html">마이페이지 ▾</a>
+            <div class="nav-drop-menu">
+                <a href="mypage.html">내 정보</a>
+                <a href="mypage.html#orders">주문내역</a>
+                <a href="mypage.html#address">배송지관리</a>
+                <a href="mypage.html#favorites">관심선수</a>
+                <a href="mypage.html#points">포인트</a>
+            </div>
+        </li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:0.8rem;" id="nav-auth-wrap">
+        <a href="login.html" id="nav-auth-link" style="font-family:'Oswald',sans-serif;font-size:0.78rem;letter-spacing:0.1em;color:var(--text-muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--text-muted)'">로그인</a>
+        <a href="cart.html" class="nav-cart">&#128716; 장바구니 <span id="cart-count">(0)</span></a>
+    </div>
+</nav>
+
+<!-- ==============================
+     HERO
+     ============================== -->
+<div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-deco-number" aria-hidden="true">1</div>
+
+    <div class="hero-content">
+        <p class="hero-eyebrow">Korean MMA Fighter Narrative Goods Platform</p>
+        <h1 class="hero-title">
+            파이터의 서사가<br>
+            당신의 <em>일상</em>이 됩니다
+        </h1>
+        <p class="hero-subtitle">
+            옥타곤 위에서 써 내려간 파이터의 이야기,<br>
+            그 감동을 담은 특별한 굿즈 컬렉션입니다.
+        </p>
+        <div class="hero-cta">
+            <a href="#players" class="btn-primary">파이터 서사 보기</a>
+            <a href="#goods" class="btn-ghost">굿즈 컬렉션</a>
+        </div>
+    </div>
+
+    <div class="hero-scroll">
+        <div class="scroll-bar"></div>
+        <span>Scroll</span>
+    </div>
+</div>
+
+<!-- ==============================
+     MARQUEE
+     ============================== -->
+<div class="marquee-wrap">
+    <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<!-- ==============================
+     PLAYERS SECTION
+     ============================== -->
+<section class="section" id="players">
+    <div class="section-head">
+        <div>
+            <p class="section-label">Players</p>
+            <h2 class="section-title">선수 서사</h2>
+        </div>
+        <div class="section-num" aria-hidden="true">01</div>
+    </div>
+    <div class="players-grid" id="playersGrid"></div>
+</section>
+
+<!-- ==============================
+     STATS
+     ============================== -->
+<div class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-num"><span id="s1">0</span><sup>+</sup></div>
+            <div class="stat-label">등록 선수</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num"><span id="s2">0</span><sup>+</sup></div>
+            <div class="stat-label">굿즈 종류</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num"><span id="s3">0</span><sup>+</sup></div>
+            <div class="stat-label">누적 주문</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num"><span id="s4">0</span><sup>%</sup></div>
+            <div class="stat-label">팬 만족도</div>
+        </div>
+    </div>
+</div>
+
+<!-- ==============================
+     GOODS SECTION
+     ============================== -->
+<section class="section" id="goods">
+    <div class="section-head">
+        <div>
+            <p class="section-label">Goods</p>
+            <h2 class="section-title">굿즈 컬렉션</h2>
+        </div>
+        <div class="section-num" aria-hidden="true">02</div>
+    </div>
+    <div class="goods-filters" id="goodsFilters"></div>
+    <div class="goods-grid" id="goodsGrid"></div>
+</section>
+
+<!-- ==============================
+     MODAL
+     ============================== -->
+<div class="modal-overlay" id="modalOverlay" onclick="overlayClose(event)">
+    <div class="modal-box" id="modalBox">
+        <button class="modal-close" onclick="closeModal()">&#10005;</button>
+
+        <div class="modal-top">
+            <div class="modal-photo" id="mPhoto"></div>
+            <div class="modal-story">
+                <p class="modal-label" id="mTeam"></p>
+                <h2 class="modal-name" id="mName"></h2>
+                <p class="modal-meta" id="mMeta"></p>
+                <blockquote class="modal-quote" id="mQuote"></blockquote>
+                <div class="modal-story-text" id="mStory"></div>
+                <div class="modal-social" id="mSocial"></div>
+            </div>
+        </div>
+
+        <div class="modal-goods-section">
+            <p class="modal-goods-title">이 선수의 굿즈</p>
+            <div class="modal-goods-grid" id="mGoods"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==============================
+     FIGURE LIGHTBOX
+     ============================== -->
+<div class="modal-overlay" id="figureOverlay" onclick="overlayCloseFigure(event)">
+    <div class="figure-box">
+        <button class="modal-close" onclick="closeFigure()">&#10005;</button>
+        <div class="figure-img-wrap">
+            <img id="fLightImg" src="" alt="">
+        </div>
+        <div class="figure-info">
+            <p class="modal-label" id="fLightPlayer"></p>
+            <h3 class="modal-name" id="fLightName" style="font-size:1.35rem;line-height:1.3;margin-bottom:0.2rem;"></h3>
+            <p class="modal-meta" id="fLightPrice"></p>
+            <p class="figure-desc" id="fLightDesc"></p>
+            <div class="figure-actions">
+                <button class="btn-primary" id="fLightCartBtn">장바구니 담기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==============================
+     FOOTER
+     ============================== -->
+<footer>
+    <div class="footer-top">
+        <div>
+            <div class="footer-logo">LEGA<em>CY</em></div>
+            <p class="footer-desc">
+                옥타곤 위에서 쓴 파이터의 서사,<br>
+                그 이야기를 담은 한국 MMA 굿즈 플랫폼입니다.
+            </p>
+        </div>
+        <div class="footer-links">
+            <div class="flink-group">
+                <h4>플랫폼</h4>
+                <ul>
+                    <li><a href="#players">선수 소개</a></li>
+                    <li><a href="#goods">굿즈 컬렉션</a></li>
+                    <li><a href="#">신규 입고</a></li>
+                    <li><a href="#">한정판</a></li>
+                </ul>
+            </div>
+            <div class="flink-group">
+                <h4>고객지원</h4>
+                <ul>
+                    <li><a href="#">주문/배송</a></li>
+                    <li><a href="#">교환/환불</a></li>
+                    <li><a href="#">1:1 문의</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="flink-group">
+                <h4>회사</h4>
+                <ul>
+                    <li><a href="#">소개</a></li>
+                    <li><a href="#">파트너십</a></li>
+                    <li><a href="#">개인정보처리방침</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p class="footer-copy">&copy; 2025 <em>LEGACY</em>. All rights reserved.</p>
+        <p class="footer-copy">선수와 팬을 잇는 이야기</p>
+    </div>
+</footer>
+
+
+<script>
+/* ================================================================
+   ✏️  데이터 수정 구역
+   선수명, 사진, 서사, 굿즈 정보를 여기서 수정하세요.
+   ================================================================ */
+
+const PLAYERS = [
+    {
+        id: 1,
+        name: "정찬성",
+        nickname: "Korean Zombie",
+        wins: "17",                   // 장식용 배경 숫자
+        weightClass: "페더급",
+        org: "UFC",
+        record: "17승 7패",
+        photo: "images/jungchansung.webp",
+        color: "#CC1100",
+        badge: "코리안 좀비",
+        quote: "나는 멈추지 않는다. 그게 나의 싸움 방식이다.",
+        excerpt: "군 복무로 2년을 잃었다. 하지만 그는 더 강해진 모습으로 UFC 옥타곤에 돌아왔다. 한국 MMA의 살아있는 전설.",
+        story: `정찬성은 단순한 파이터가 아닙니다. 그는 하나의 정신입니다. "절대 뒤로 물러서지 않는다"는 그의 철학은 UFC 팬들에게 '코리안 좀비'라는 전설적인 닉네임을 안겨주었습니다.\n\n2012년 더스틴 포이리에와의 경기에서 UFC 역사 최초로 '트위스터' 서브미션을 성공시키며 전 세계를 놀라게 했습니다. 이후 병역 의무를 위해 2년간 UFC를 떠나야 했지만, 전역 후 더욱 완성된 파이터로 돌아왔습니다.\n\n브라이언 오르테가와의 챔피언십 5라운드 혈투, 알렉산더 볼카노프스키와의 타이틀전까지—그의 모든 경기는 '혼신을 다한 싸움'이라는 단어로만 설명됩니다. 정찬성은 한국 MMA의 살아있는 전설입니다.`,
+        goods: [
+            { name: "트위스터 서브미션 명장면 피규어", price: "49,000원", emoji: "🗿", image: "images/정찬성 피규어.png", type: "figure", figureDesc: "2010년 5월 29일, WEC 48. 정찬성은 레너드 가르시아를 상대로 UFC·WEC 역사 최초의 트위스터 서브미션을 성공시켰습니다. 척추를 비틀어 기권을 받아내는 이 기술은 난이도가 극히 높아 실전에서는 불가능에 가깝다 여겨졌습니다. 그 불가능을 정찬성이 해냈고, 이 순간은 MMA 역사에 영원히 새겨졌습니다." },
+        ],
+        instagram: "https://www.instagram.com/koreanzombiemma/",
+        youtube: "https://www.youtube.com/@koreanzombie",
+    },
+    {
+        id: 2,
+        name: "최두호",
+        nickname: "Korean Superboy",
+        wins: "16",
+        weightClass: "페더급",
+        org: "UFC",
+        record: "16승 4패",
+        photo: "images/choidooho.webp",
+        color: "#0055BB",
+        badge: "코리안 슈퍼보이",
+        quote: "두려움 없이 싸울 때, 비로소 진짜 파이터가 된다.",
+        excerpt: "22세에 UFC 데뷔. 쿱 스완슨과의 '올해의 경기'로 세계를 홀린 소년. 그의 눈에는 처음부터 두려움이 없었다.",
+        story: `2016년 12월, UFC 206. 최두호 대 쿱 스완슨. 이 경기는 단순한 MMA 경기가 아니었습니다. UFC 역사에 길이 남을 명승부였고, 양측 모두 '올해의 경기' 후보에 올랐습니다.\n\n22세의 나이로 UFC 무대에 선 최두호는 처음부터 달랐습니다. 두려움이라고는 없는 눈빛, 한 방에 상대를 끝낼 수 있는 폭발적인 파워. 선배들조차 "저 친구는 타고났다"고 말했습니다.\n\n부상과 패배가 찾아왔을 때도 그는 흔들리지 않았습니다. "지는 것이 두렵지 않다. 싸우지 않는 것이 두렵다." 그의 말처럼, 그는 언제나 최선을 다해 싸웁니다.`,
+        goods: [
+            { name: "vs 쿱 스완슨 명장면 피규어", price: "49,000원", emoji: "🗿", image: "images/최두호피규어.png", type: "figure", figureDesc: "2016년 12월 10일, UFC 206. 22세 최두호 대 베테랑 쿱 스완슨. 어느 한 쪽도 뒤로 물러서지 않은 이 혈투는 당해 올해의 경기 후보에 올랐습니다. 최두호는 강타를 맞으면서도 쓰러지지 않고 3라운드를 싸워 만장일치 판정승을 거뒀습니다. UFC 역사에 길이 남을 명승부였습니다." },
+        ],
+        instagram: "https://www.instagram.com/koreansuperboy/",
+        youtube: "https://www.youtube.com/watch?v=BRJSALPkWM4",
+    },
+    {
+        id: 3,
+        name: "김동현",
+        nickname: "Stun Gun",
+        wins: "22",
+        weightClass: "웰터급",
+        org: "UFC",
+        record: "22승 7패",
+        photo: "images/kimdongyhyun.webp",
+        color: "#007744",
+        badge: "스턴건",
+        quote: "한국 MMA의 역사를 써내려가는 것, 그것이 나의 사명이다.",
+        excerpt: "한국 MMA 역사의 산증인. UFC에서 10년 넘게 활약하며 한국 선수들의 길을 먼저 걸었던 개척자.",
+        story: `김동현이 없었다면, 오늘날 한국 MMA는 없었습니다. 그는 한국 파이터들이 UFC에서도 싸울 수 있다는 것을 몸으로 증명한 최초의 세대였습니다.\n\n'스턴건'이라는 닉네임처럼, 그의 경기는 상대를 순식간에 마비시키는 강렬한 테이크다운과 그라운드 앤 파운드로 유명합니다. UFC에서만 20경기 이상을 치르며 한국 선수 최다 UFC 경기 기록을 보유했습니다.\n\n30대에도 은퇴 없이 계속 싸우는 그는 후배 선수들에게 이렇게 말합니다. "포기는 너희가 결정하는 것이 아니다. 심판이 경기를 멈출 때까지 싸워라." 그 말은 그의 모든 경기가 증명해왔습니다.`,
+        goods: [
+            { name: "백스핀 엘보우 명장면 피규어", price: "49,000원", emoji: "🗿", image: "images/김동현 피규어.png", type: "figure", figureDesc: "UFC 옥타곤에서 좀처럼 보기 힘든 기술—백스핀 엘보우. 상대의 전진을 유도하고, 몸을 회전시키는 순간 팔꿈치가 예상치 못한 각도에서 날아듭니다. 김동현은 이 고난도 기술을 실전에서 성공시켰습니다. '스턴건'이라는 별명 그대로, 단 한 방으로 상대를 마비시킨 순간을 피규어로 재현했습니다." },
+        ],
+        instagram: "https://www.instagram.com/stungunkim/",
+        youtube: "https://www.youtube.com/@stungunTV",
+    },
+    {
+        id: 4,
+        name: "김상욱",
+        nickname: "DEADPOOL",
+        wins: "12",
+        weightClass: "웰터급",
+        org: "AFC",
+        record: "12승 3패",
+        photo: "images/kimsangwook.webp",
+        color: "#CC6600",
+        badge: "데드풀",
+        quote: "죽어도 다시 살아 돌아온다. 그게 데드풀이고, 그게 나다.",
+        excerpt: "대한민국 해군 특수전전단(UDT) 출신. 어린 시절 학교폭력을 견뎌낸 소년이 특수부대를 거쳐 AFC 챔피언이 됐다.",
+        story: `김상욱을 이해하려면 먼저 그의 두 개의 얼굴을 알아야 합니다. 하나는 대한민국 해군 특수전전단(UDT) 대원—지상 최강의 특수부대원. 다른 하나는 어린 시절 오랜 학교폭력을 견뎌낸 소년입니다.\n\n"나는 원래 싸움과 거리가 먼 사람이었어요." 책을 좋아하고 다양한 것에 관심이 많던 지적인 청년이 MMA를 시작한 건 스스로를 지키기 위해서였습니다. UDT에서 극한의 훈련을 통해 자신의 한계를 넘은 뒤, MMA에 대한 확신이 생겼습니다. '데드풀'이라는 닉네임처럼—죽어도 다시 살아 돌아와 싸우겠다는 각오를 담았습니다.\n\n김동현 코치와 함께 하바스 MMA에서 훈련하며 2022년 AFC 웰터급 챔피언에 올랐고, 2023년 '로드 투 UFC'에서 준결승까지 진출하며 세계 무대에 이름을 알렸습니다. TV 예능 '강철부대'를 통해 대중에게 친숙해졌지만, 그의 진짜 무대는 언제나 옥타곤 위입니다.`,
+        goods: [
+            { name: "AFC 챔피언전 명장면 피규어", price: "49,000원", emoji: "🗿", image: "images/김상욱 피규어.png", type: "figure", figureDesc: "2022년 AFC 19, 김상욱은 안재영을 상대로 AFC 웰터급 챔피언전을 치렀습니다. UDT 출신의 체력과 하바스 MMA에서 다듬은 그라운드 앤 파운드가 합쳐진 경기였습니다. 3라운드가 끝났을 때 심판 전원이 김상욱의 손을 들었고, 챔피언 벨트가 그의 허리에 감겼습니다. 학교폭력을 견뎌낸 소년의 가장 빛나는 순간이었습니다." },
+        ],
+        instagram: "https://www.instagram.com/seal_103/",
+        youtube: "https://www.youtube.com/watch?v=hFIEhqITcQY",
+    },
+    {
+        id: 5,
+        name: "고석현",
+        nickname: "Korean Tyson",
+        wins: "13",
+        weightClass: "웰터급",
+        org: "UFC",
+        record: "13승 2패",
+        photo: "images/goseokyhyun.webp",
+        color: "#770099",
+        badge: "코리안 타이슨",
+        quote: "매일 훈련장에서 죽는다. 그래야 경기장에서 산다.",
+        excerpt: "삼보 세계챔피언 출신의 UFC 강타자. 유도와 삼보를 기반으로 한 폭발적인 파워로 UFC 2연승 중인 웰터급 다크호스.",
+        story: `고석현은 스포츠 엘리트 코스를 밟은 파이터입니다. 어린 시절부터 유도를 시작해 대학에서 유도 특기생으로 입학했고, 그 탄탄한 기반 위에 삼보를 더했습니다. 2017년 러시아 소치에서 열린 세계 컴뱃삼보 선수권대회 82kg급 금메달—그가 단순한 MMA 파이터가 아님을 세상에 알린 순간이었습니다.\n\n국내 무대를 평정하는 건 시간문제였습니다. AFC 웰터급과 미들급 챔피언을 연이어 차지하며 쌓아 올린 경력. 2024년 9월, 드디어 UFC 입성의 관문인 '데이나 화이트 컨텐더 시리즈'에 섰습니다. 브라질의 무패 유망주 이고르 카발칸티를 3라운드 내내 압박하며 만장일치 판정승—데이나 화이트가 직접 극찬하며 계약서에 사인했습니다.\n\nUFC 입성 후 오반 엘리엇, 필 로우를 연파하며 현재 2연승 행진 중. "코리안 타이슨"이라는 별명처럼, 그의 강렬한 타격과 삼보 기반의 그라운드 장악력은 상대를 압도합니다. 한국 웰터급의 새 역사가 지금 이 순간에도 쓰이고 있습니다.`,
+        goods: [
+            { name: "vs 오반 엘리엇 승리 세레모니 피규어", price: "49,000원", emoji: "🗿", image: "images/고석현피규어.png", type: "figure", figureDesc: "2025년 6월 22일, 아제르바이잔. 고석현은 영국의 오반 엘리엇을 상대로 3라운드 내내 삼보 기반의 압박과 강타를 쏟아부어 30-27 만장일치 판정승을 거뒀습니다. UFC 2연승을 확정한 그 순간, 고석현은 옥타곤 위에서 두 주먹을 치켜들었습니다. 삼보 세계챔피언이 UFC 강자로 자리매김한 역사적인 세레모니입니다." },
+        ],
+        instagram: "https://www.instagram.com/ko.seokhyeon/",
+        youtube: "https://www.youtube.com/watch?v=v1IcTjMNhRc",
+    },
+    {
+        id: 6,
+        name: "유주상",
+        nickname: "ZOMBIE JUNIOR",
+        wins: "10",
+        weightClass: "페더급",
+        org: "UFC",
+        record: "10승 1패",
+        photo: "images/yujusang.webp",
+        color: "#003399",
+        badge: "좀비주니어",
+        quote: "나의 싸움은 팬들에게 보내는 편지다.",
+        excerpt: "맥그리거의 체육관 SBG 아일랜드를 직접 찾아간 청년. ZFN에서 UFC로 직행한 최초의 한국인, 28초 KO로 세계에 이름을 새겼다.",
+        story: `유주상의 꿈은 처음부터 선명했습니다. 롤모델은 코너 맥그리거—그래서 실제로 맥그리거의 체육관 SBG 아일랜드로 직접 건너가 훈련했습니다. 흉내 내려는 것이 아니었습니다. 그 정신을 몸에 새기고 싶었습니다.\n\nZFN을 거쳐 쌓은 9전 무패의 기록 위에, 2025년 UFC 316에서 젝카 사라기를 단 28초 만에 KO로 쓰러뜨리며 UFC에 데뷔했습니다. ZFN에서 UFC로 직행한 최초의 한국인. 데뷔 경기를 지켜본 전 UFC 페더급 챔피언 맥스 할로웨이는 "재능 있고 랭커가 될 만한 선수"라며 극찬을 보냈습니다.\n\n빠른 스텝과 복싱 기반의 타격, 예측 불가한 움직임—유주상의 경기는 언제나 관중을 열광시킵니다. 25번째 한국인 UFC 파이터이자, 가장 빠르게 떠오르는 이름. 그의 편지는 아직 진행 중입니다.`,
+        goods: [
+            { name: "UFC 316 28초 KO 명장면 피규어", price: "49,000원", emoji: "🗿", image: "images/유주상 피규어.png", type: "figure", figureDesc: "2025년 6월 7일, UFC 316. 벨이 울린 지 단 28초. 유주상의 왼손 훅이 젝카 사라기의 턱을 정확히 강타했고, 사라기는 그대로 쓰러졌습니다. ZFN에서 UFC로 직행한 최초의 한국인이 세계 무대에 자신의 이름을 새긴 순간입니다. 맥스 할로웨이가 극찬한 그 주먹을, 이 피규어에 담았습니다." },
+        ],
+        instagram: "https://www.instagram.com/myownhero_yoo/",
+        youtube: "https://www.youtube.com/watch?v=lsMO11zdbO0",
+    },
+    {
+        id: 7,
+        name: "이스라엘 아데산야",
+        nickname: "The Last Stylebender",
+        wins: "24",
+        weightClass: "미들급",
+        org: "UFC",
+        record: "24승 3패",
+        photo: "images/아데산야.webp",
+        color: "#FFD700",
+        badge: "라스트 스타일벤더",
+        quote: "나는 나 자신의 예술을 만들어낸다. 싸움은 곧 춤이다.",
+        excerpt: "나이지리아에서 뉴질랜드로 이민 온 소년. 학교 괴롭힘을 피해 시작한 킥복싱이 그를 UFC 미들급 챔피언으로 만들었다.",
+        story: `나이지리아 라고스에서 태어난 이스라엘 아데산야는 열 살에 뉴질랜드로 이민을 갔습니다. 새로운 나라에서 그를 기다리고 있던 것은 무한한 가능성이 아니라, 끝없는 괴롭힘이었습니다. 피부색이 다르다는 이유로, 말투가 다르다는 이유로—학교에서 그는 언제나 혼자였습니다.\n\n18세가 되던 해, 무에타이 영화 '옹박'을 보고 킥복싱 도장 문을 두드렸습니다. 아마추어 킥복싱 32승 1패, 프로 전환 후에도 K-1, Glory 등 세계 최고 무대를 종횡무진하던 그는 마침내 UFC로 향했습니다. 일본 애니메이션 마니아였던 소년이 자신만의 싸움 스타일을 '예술'로 승화시킨 것입니다.\n\n2019년 UFC 243, 로버트 위태커와의 챔피언십 통합전—2라운드 KO승. 나이지리아에서 뉴질랜드로 떠밀려 온 소년이 UFC 미들급 챔피언이 된 순간이었습니다. 그를 괴롭혔던 아이들은 훗날 세 아이의 아빠가 됐고, 아데산야는 세계 챔피언이 됐습니다.`,
+        goods: [
+            { name: "와이드 스탠스 핑거 베킹 피규어", price: "49,000원", emoji: "🗿", image: "images/아데산야 피규어.png", type: "figure", figureDesc: "2019년 10월 5일, UFC 243. 멜버른 9만 관중 앞에서 아데산야는 로버트 위태커를 2라운드 KO로 쓰러뜨리고 UFC 미들급 챔피언에 올랐습니다. 그리고 그는 다리를 넓게 벌리고 손가락을 까딱이며 말했습니다. '다음은 누구냐?' 나이지리아에서 온 소년이 세계의 중심에 선 순간, 그 도발적이고 아름다운 포즈를 그대로 피규어에 담았습니다." },
+        ],
+        instagram: "https://www.instagram.com/stylebender/",
+        youtube: "https://www.youtube.com/c/FreeStylebender",
+    },
+    {
+        id: 8,
+        name: "더스틴 포이리에",
+        nickname: "The Diamond",
+        wins: "29",
+        weightClass: "라이트급",
+        org: "UFC",
+        record: "29승 9패",
+        photo: "images/포이리에.webp",
+        color: "#1B4FA8",
+        badge: "더 다이아몬드",
+        quote: "챔피언 벨트보다 소중한 건 포기하지 않는 태도다.",
+        excerpt: "루이지애나 빈민가 출신, 두 번의 타이틀 실패를 딛고 맥그리거에게 두 번 복수한 다이아몬드. 다이아몬드는 압박 속에서 만들어진다.",
+        story: `더스틴 포이리에는 미국 루이지애나 주 라파예트의 가난한 집안에서 자랐습니다. 고등학교를 중퇴하고 거리를 떠돌던 소년에게 MMA는 탈출구이자 삶의 이유가 됐습니다. 그는 종종 말했습니다. "격투기가 없었다면 나는 지금 감옥에 있었을 것이다."\n\n첫 UFC 타이틀 도전에서 실패했을 때, 많은 이들이 그를 포기했습니다. 하지만 포이리에는 달랐습니다. 패배를 분석하고, 약점을 보완하고, 조용히 더 강해졌습니다. 2019년 인터림 라이트급 챔피언 등극—포기하지 않은 자에게 찾아온 보상이었습니다.\n\n코너 맥그리거와의 첫 경기에서 진 뒤, 그는 7년을 기다렸습니다. 2021년 UFC 257과 264, 두 번의 리매치에서 연속으로 맥그리거를 무너뜨렸습니다. "나는 죽을 때까지 싸울 것이다. 이것이 내 삶이다." 다이아몬드는 오직 압박 속에서만 만들어집니다.`,
+        goods: [
+            { name: "vs 맥그리거 2차전 명장면 피규어", price: "49,000원", emoji: "🗿", image: "images/포이리에 피규어.png", type: "figure", figureDesc: "2021년 1월 23일, UFC 257. 더스틴 포이리에가 2라운드 KO로 코너 맥그리거를 무너뜨렸습니다. 첫 만남에서 패한 지 7년, 포이리에는 그 세월 동안 단 한 순간도 복수를 잊지 않았습니다. 맥그리거가 쓰러지는 순간 포이리에는 무릎을 꿇고 하늘을 바라봤습니다. MMA 역사상 가장 완벽한 복수의 순간입니다." },
+        ],
+        instagram: "https://www.instagram.com/dustinpoirier/",
+        youtube: "https://www.youtube.com/channel/UCJRMs0w779vFt41udYeXs9A",
+    },
+    {
+        id: 9,
+        name: "코너 맥그리거",
+        nickname: "The Notorious",
+        wins: "22",
+        weightClass: "라이트급 · 페더급",
+        org: "UFC",
+        record: "22승 6패",
+        photo: "images/맥그리거.webp",
+        color: "#880000",
+        badge: "더 노토리어스",
+        quote: "나는 아무것도 없는 곳에서 모든 것을 만들었다.",
+        excerpt: "아일랜드의 배관공 보조, 생활보조금으로 살던 청년이 UFC 두 체급 챔피언이 됐다. 스포츠 역사상 가장 극적인 역전 서사.",
+        story: `코너 맥그리거는 아일랜드 더블린의 노동자 계층 집안에서 태어났습니다. UFC 스타가 되기 전 그의 현실은 냉혹했습니다. 배관공 보조로 일하며 생계를 이었고, 훈련 비용을 위해 아일랜드 정부의 생활보조금에 의존했습니다. 그럼에도 그는 말했습니다. "나는 언젠가 챔피언이 될 것이다."\n\n그 말을 믿는 사람은 주변에 없었습니다. 하지만 그는 포기하지 않았습니다. 2013년 UFC 데뷔, 단 4초 KO승으로 세상을 충격에 빠뜨렸습니다. 그리고 2015년, UFC 페더급 챔피언—아일랜드 역사상 최초의 UFC 챔피언이 됐습니다.\n\n2016년에는 사상 최초로 두 체급 챔피언 벨트를 동시에 거머쥐었습니다. 생활보조금을 받던 청년에서 스포츠 역사상 가장 많은 수입을 올린 파이터로—코너 맥그리거의 서사는 단순한 성공 이야기가 아닙니다. 그것은 절대 포기하지 않는 의지에 관한 이야기입니다.`,
+        goods: [
+            { name: "2체급 챔피언 등극 세레모니 피규어", price: "49,000원", emoji: "🗿", image: "images/맥그리거 피구어.png", type: "figure", figureDesc: "2016년 11월 12일, UFC 205. 맥그리거는 에디 알바레즈를 2라운드 TKO로 제압하며 라이트급 챔피언 벨트를 획득했습니다. 페더급 벨트를 어깨에 걸고 라이트급 벨트를 허리에 차고 옥타곤을 활보한 그 모습—UFC 역사상 최초의 두 체급 동시 챔피언 탄생. 생활보조금을 받던 아일랜드 청년이 세계 정상에 선 세레모니입니다." },
+        ],
+        instagram: "https://www.instagram.com/thenotoriousmma/",
+        youtube: "https://www.youtube.com/@ConorMcGregor",
+    },
+    {
+        id: 10,
+        name: "알렉스 페레이라",
+        nickname: "Poatan",
+        wins: "14",
+        weightClass: "라이트헤비급",
+        org: "UFC",
+        record: "14승 3패",
+        photo: "images/페레이라.webp",
+        color: "#B8460B",
+        badge: "포아탄",
+        quote: "나는 KO를 위해 싸우지 않는다. KO는 내가 제대로 싸웠을 때 따라오는 결과다.",
+        excerpt: "킥복싱과 MMA, 두 종목에서 두 체급을 모두 제패한 유일한 파이터. 브라질 빈민가에서 자란 소년이 지구상 가장 위험한 파이터가 됐다.",
+        story: `알렉스 페레이라는 브라질 상파울루의 노동자 계층 집안에서 자랐습니다. 십 대 시절 거리의 싸움꾼이었던 그가 킥복싱 도장 문을 두드린 것은 살아남기 위해서였습니다. 그 선택이 역사를 바꿨습니다.\n\n킥복싱 무대에서 페레이라는 무자비했습니다. GLORY 미들급과 라이트헤비급 챔피언 벨트를 동시에 거머쥔 최초의 파이터—그리고 이스라엘 아데산야를 킥복싱에서 두 번 KO로 쓰러뜨린 유일한 인간. MMA 전향 불과 5경기 만에 UFC 문을 두드렸고, 2022년 UFC 281에서 아데산야와 재대결—5라운드 TKO로 미들급 챔피언 벨트를 빼앗았습니다.\n\n이후 한 체급 위인 라이트헤비급으로 옮겨 또 챔피언이 됐습니다. UFC 역사상 킥복싱과 MMA 양 종목에서 두 체급을 모두 제패한 것은 페레이라가 유일합니다. "포아탄(Poatan)"—포르투갈어로 '돌주먹'. 그 별명이 전부를 설명합니다.`,
+        goods: [
+            { name: "아처 입장 세레모니 피규어", price: "49,000원", emoji: "🗿", image: "images/페레이라 피규어.png", type: "figure", figureDesc: "알렉스 페레이라가 옥타곤으로 걸어 들어올 때, 그는 활을 쏩니다. 허공을 향해 시위를 당기고 화살을 날리는 그 포즈—이것이 페레이라의 시그니처 입장 세레모니입니다. 2022년 UFC 281에서 아데산야를 5라운드 TKO로 꺾기 직전, 그 활은 이미 겨눠져 있었습니다. 포아탄의 활은 언제나 정확히 과녁을 꿰뚫습니다." },
+        ],
+        instagram: "https://www.instagram.com/alexpoatanpereira/",
+        youtube: "https://www.youtube.com/@Poatan.AlexPereira",
+    },
+];
+
+/* ================================================================
+   아래는 수정하지 않아도 되는 로직입니다.
+   ================================================================ */
+
+let cartCount = 0;
+
+const IG_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`;
+const YT_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`;
+
+function ytLabel(url) {
+    return (url.includes('watch?v=') || url.includes('shorts/')) ? '인터뷰·영상' : 'YouTube';
+}
+function buildSocialLinks(p, stopProp = false) {
+    const stop = stopProp ? ' onclick="event.stopPropagation()"' : '';
+    const ig = p.instagram ? `<a href="${p.instagram}" class="social-link instagram" target="_blank" rel="noopener"${stop}>${IG_SVG} Instagram</a>` : '';
+    const yt = p.youtube ? `<a href="${p.youtube}" class="social-link youtube" target="_blank" rel="noopener"${stop}>${YT_SVG} ${ytLabel(p.youtube)}</a>` : '';
+    return ig + yt;
+}
+
+/* ------ 마키 초기화 ------ */
+function initMarquee() {
+    const words = [
+        "코리안 좀비", "옥타곤", "서브미션", "KO 승리",
+        "타이틀샷", "MMA 굿즈", "FIGHT NIGHT", "UFC · ONE · ROAD FC",
+        "시그니처 글러브", "파이터 서사", "KNOCKDOWN", "한국 MMA"
+    ];
+    const doubled = [...words, ...words];
+    document.getElementById('marqueeTrack').innerHTML = doubled.map(w => `
+        <span class="marquee-item">
+            <span class="marquee-dot"></span>${w}
+        </span>
+    `).join('');
+}
+
+/* ------ 선수 카드 렌더링 ------ */
+function buildSilhouetteSVG(color) {
+    return `
+        <svg class="card-silhouette" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="50" cy="20" rx="16" ry="16" fill="${color}55"/>
+            <path d="M22 55 Q32 40 50 40 Q68 40 78 55 L86 96 Q68 102 50 102 Q32 102 14 96 Z" fill="${color}40"/>
+            <rect x="29" y="100" width="15" height="40" rx="4" fill="${color}30"/>
+            <rect x="56" y="100" width="15" height="40" rx="4" fill="${color}30"/>
+        </svg>`;
+}
+
+function renderPlayers() {
+    document.getElementById('playersGrid').innerHTML = PLAYERS.map(p => `
+        <article class="player-card" onclick="location.href='player.html?id=${p.id}'" role="button" aria-label="${p.name} 전용 페이지 보기">
+            <div class="card-photo">
+                <div class="card-photo-inner" style="background:linear-gradient(160deg,${p.color}25 0%,#0a0d18 100%);">
+                    ${p.photo
+                        ? `<img src="${p.photo}" alt="${p.name}">`
+                        : `<div class="card-num-bg">${p.wins}</div>${buildSilhouetteSVG(p.color)}`
+                    }
+                    <div class="card-photo-overlay"></div>
+                </div>
+                <span class="card-badge">${p.badge}</span>
+            </div>
+            <div class="card-body">
+                <p class="card-pos">${p.weightClass} &middot; ${p.org}</p>
+                <h3 class="card-name">${p.name}</h3>
+                <p class="card-excerpt">${p.excerpt}</p>
+                ${(p.instagram || p.youtube) ? `<div class="card-social">${buildSocialLinks(p, true)}</div>` : ''}
+                <div class="card-footer">
+                    <span class="card-goods-count">&#9733; 굿즈 ${p.goods.length}종</span>
+                    <button class="btn-story" tabindex="-1">전용 페이지 &rarr;</button>
+                </div>
+            </div>
+        </article>
+    `).join('');
+}
+
+/* ------ 모달 ------ */
+function openModal(id) {
+    const p = PLAYERS.find(x => x.id === id);
+    if (!p) return;
+
+    document.getElementById('mPhoto').innerHTML = `
+        <div class="modal-photo-inner" style="background:linear-gradient(160deg,${p.color}30 0%,#060810 100%);">
+            ${p.photo
+                ? `<img src="${p.photo}" alt="${p.name}">`
+                : `<div class="modal-num-bg">${p.wins}</div>
+                   <svg class="modal-silhouette" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                     <ellipse cx="50" cy="20" rx="16" ry="16" fill="${p.color}60"/>
+                     <path d="M22 55 Q32 40 50 40 Q68 40 78 55 L86 96 Q68 102 50 102 Q32 102 14 96 Z" fill="${p.color}50"/>
+                     <rect x="29" y="100" width="15" height="40" rx="4" fill="${p.color}40"/>
+                     <rect x="56" y="100" width="15" height="40" rx="4" fill="${p.color}40"/>
+                   </svg>`
+            }
+        </div>`;
+
+    document.getElementById('mTeam').textContent = `${p.org}  ·  ${p.nickname || p.weightClass}`;
+    document.getElementById('mName').textContent = p.name;
+    document.getElementById('mMeta').textContent = `${p.weightClass} · ${p.record}`;
+    document.getElementById('mQuote').textContent = `"${p.quote}"`;
+    document.getElementById('mStory').innerHTML = p.story
+        .split('\n\n')
+        .map(para => `<p>${para}</p>`)
+        .join('');
+
+    document.getElementById('mSocial').innerHTML = buildSocialLinks(p);
+
+    document.getElementById('mGoods').innerHTML = p.goods.map((g, i) => {
+        const click = `goProduct(${p.id},${i})`;
+        return `
+        <div class="mgood" onclick="${click}">
+            <div class="mgood-img" style="background:linear-gradient(135deg,${p.color}18,${p.color}06);overflow:hidden;">${g.image ? `<img src="${g.image}" alt="${g.name}" style="width:100%;height:100%;object-fit:cover;">` : g.emoji}</div>
+            <p class="mgood-name">${g.name}</p>
+            <p class="mgood-price">${g.price}</p>
+        </div>`;
+    }).join('');
+
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function overlayClose(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeFigure(); } });
+
+/* ------ 피규어 라이트박스 ------ */
+function openFigure(pId, gIdx) {
+    const p = PLAYERS.find(x => x.id === pId);
+    const g = p.goods[gIdx];
+    document.getElementById('fLightImg').src = g.image || '';
+    document.getElementById('fLightImg').alt = g.name;
+    document.getElementById('fLightPlayer').textContent = p.name + '  ·  ' + p.nickname;
+    document.getElementById('fLightName').textContent = g.name;
+    document.getElementById('fLightPrice').textContent = g.price;
+    document.getElementById('fLightDesc').textContent = g.figureDesc || '';
+    document.getElementById('fLightCartBtn').onclick = () => { addToCart(p.name + ' - ' + g.name); closeFigure(); };
+    document.getElementById('figureOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeFigure() {
+    document.getElementById('figureOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function overlayCloseFigure(e) {
+    if (e.target === document.getElementById('figureOverlay')) closeFigure();
+}
+
+/* ------ 굿즈 ------ */
+function renderGoodsFilters() {
+    document.getElementById('goodsFilters').innerHTML =
+        `<button class="filter-btn active" onclick="filterGoods('all',this)">전체</button>` +
+        PLAYERS.map(p =>
+            `<button class="filter-btn" onclick="filterGoods(${p.id},this)">${p.name}</button>`
+        ).join('');
+}
+
+function renderGoods(filterId = 'all') {
+    const all = PLAYERS.flatMap(p => p.goods.map((g, i) => ({ ...g, pName: p.name, pColor: p.color, pId: p.id, gIdx: i })));
+    const list = filterId === 'all' ? all : all.filter(g => g.pId == filterId);
+
+    document.getElementById('goodsGrid').innerHTML = list.map(g => {
+        return `
+        <div class="goods-card" onclick="goProduct(${g.pId},${g.gIdx})">
+            <div class="goods-img-wrap">
+                <div class="goods-img-inner" style="background:linear-gradient(135deg,${g.pColor}18,${g.pColor}06);">
+                    ${g.image ? `<img src="${g.image}" alt="${g.name}" style="width:100%;height:100%;object-fit:cover;">` : g.emoji}
+                </div>
+            </div>
+            <div class="goods-body">
+                <p class="goods-player-tag">${g.pName}</p>
+                <p class="goods-name">${g.name}</p>
+                <div class="goods-footer">
+                    <span class="goods-price">${g.price}</span>
+                    <button class="btn-cart" tabindex="-1" onclick="event.stopPropagation();addToCart('${g.pName} - ${g.name}')">담기</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function filterGoods(id, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderGoods(id);
+}
+
+/* ------ 상품 페이지 이동 ------ */
+function goProduct(pId, gIdx) {
+    window.location.href = `product.html?pid=${pId}&gid=${gIdx}`;
+}
+
+/* ------ 장바구니 토스트 ------ */
+function addToCart(name) {
+    cartCount++;
+    document.getElementById('cart-count').textContent = `(${cartCount})`;
+    showToast('장바구니에 담겼습니다 ✓');
+}
+
+function cartToast() { showToast('장바구니 기능은 준비 중입니다.'); }
+
+function showToast(msg) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2200);
+}
+
+/* ------ 스탯 카운터 ------ */
+function animateStats() {
+    const targets = [
+        { id: 's1', val: PLAYERS.length },
+        { id: 's2', val: PLAYERS.reduce((a, p) => a + p.goods.length, 0) },
+        { id: 's3', val: 1247 },
+        { id: 's4', val: 98 },
+    ];
+    targets.forEach(({ id, val }) => {
+        let cur = 0;
+        const step = val / 55;
+        const el = document.getElementById(id);
+        const t = setInterval(() => {
+            cur = Math.min(cur + step, val);
+            el.textContent = Math.floor(cur);
+            if (cur >= val) clearInterval(t);
+        }, 18);
+    });
+}
+
+new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+        animateStats();
+        entries[0].target._ob && entries[0].target._ob.disconnect();
+    }
+}, { threshold: 0.5 }).observe(document.querySelector('.stats-section'));
+
+/* ------ 내비게이션 스크롤 ------ */
+window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+/* ------ 네비 auth ------ */
+(function() {
+    const user = JSON.parse(localStorage.getItem('legacy_user') || 'null');
+    if (user) {
+        document.getElementById('nav-mypage-li').style.display = 'block';
+        const wrap = document.getElementById('nav-auth-wrap');
+        wrap.innerHTML = `
+            <a href="#" onclick="doLogout()" style="font-family:'Oswald',sans-serif;font-size:0.78rem;letter-spacing:0.1em;color:var(--text-muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--text-muted)'">로그아웃</a>
+            <a href="cart.html" class="nav-cart">&#128716; 장바구니 <span id="cart-count">(0)</span></a>`;
+    }
+})();
+function doLogout() { localStorage.removeItem('legacy_loggedIn'); location.reload(); }
+
+/* ------ 초기화 ------ */
+document.addEventListener('DOMContentLoaded', () => {
+    initMarquee();
+    renderPlayers();
+    renderGoodsFilters();
+    renderGoods();
+});
+</script>
+</body>
+</html>

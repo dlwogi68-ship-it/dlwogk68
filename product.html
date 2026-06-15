@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상품 상세 — LEGACY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;500;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070A12;--surface:#0D1220;--surface-2:#131A2E;--border:rgba(255,255,255,0.07);--text:#EDE8DC;--text-muted:#68738A;--accent:#FF3300;--gold:#C9A23E;--white:#FAFAF8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-weight:300;min-height:100vh;}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 5rem;display:flex;justify-content:space-between;align-items:center;background:rgba(7,10,18,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Oswald',sans-serif;font-weight:700;font-size:1.6rem;letter-spacing:0.18em;color:var(--white);text-decoration:none;}
+.logo em{color:var(--accent);font-style:normal;}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{color:var(--text-muted);text-decoration:none;font-family:'Oswald',sans-serif;font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover{color:var(--white);}
+.nav-right{display:flex;align-items:center;gap:1.2rem;}
+.nav-right a{font-family:'Oswald',sans-serif;font-size:0.78rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s;}
+.nav-right a:hover{color:var(--white);}
+.nav-cart-btn{background:var(--accent)!important;color:white!important;padding:0.45rem 1rem;}
+
+.breadcrumb{padding:5.5rem 5rem 0;max-width:1300px;margin:0 auto;}
+.bc-inner{display:flex;gap:0.5rem;align-items:center;font-size:0.73rem;color:var(--text-muted);font-family:'Oswald',sans-serif;letter-spacing:0.05em;}
+.bc-inner a{color:var(--text-muted);text-decoration:none;transition:color 0.2s;}
+.bc-inner a:hover{color:var(--white);}
+.bc-sep{opacity:0.35;}
+
+.product-wrap{max-width:1300px;margin:0 auto;padding:2rem 5rem 5rem;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+
+.product-img-section{position:sticky;top:5.5rem;}
+.main-img-box{background:var(--surface);border:1px solid var(--border);aspect-ratio:1;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:0.7rem;cursor:zoom-in;}
+.main-img-box img{width:100%;height:100%;object-fit:contain;padding:2.5rem;transition:transform 0.4s ease;}
+.main-img-box:hover img{transform:scale(1.07);}
+.main-img-box .emoji-big{font-size:8rem;}
+.thumbs-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;}
+.thumb{background:var(--surface);border:1px solid var(--border);aspect-ratio:1;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color 0.2s;font-size:1.6rem;}
+.thumb.active,.thumb:hover{border-color:var(--accent);}
+.thumb img{width:100%;height:100%;object-fit:contain;padding:0.4rem;}
+
+.product-player-tag{font-family:'Oswald',sans-serif;font-size:0.68rem;letter-spacing:0.32em;color:var(--accent);text-transform:uppercase;display:block;margin-bottom:0.5rem;}
+.product-name{font-family:'Black Han Sans',sans-serif;font-size:1.65rem;color:var(--white);line-height:1.3;margin-bottom:1rem;}
+.rating-row{display:flex;align-items:center;gap:0.8rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.stars-display{color:var(--gold);font-size:0.95rem;letter-spacing:0.04em;}
+.rating-num{font-family:'Oswald',sans-serif;font-weight:600;color:var(--gold);}
+.rev-link{font-size:0.76rem;color:var(--text-muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.rev-link:hover{color:var(--white);}
+
+.price-row{margin-bottom:1.8rem;}
+.price-label{font-size:0.7rem;color:var(--text-muted);margin-bottom:0.15rem;}
+.price-val{font-family:'Oswald',sans-serif;font-size:2.5rem;font-weight:700;color:var(--gold);}
+
+.badge-strip{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.8rem;}
+.badge-chip{background:var(--surface);border:1px solid var(--border);padding:0.4rem 0.8rem;font-size:0.7rem;color:var(--text-muted);display:flex;align-items:center;gap:0.35rem;}
+.badge-chip em{color:var(--accent);font-style:normal;}
+
+.qty-row{display:flex;align-items:center;gap:1.2rem;margin-bottom:1.5rem;}
+.qty-label{font-size:0.78rem;color:var(--text-muted);}
+.qty-ctrl{display:flex;align-items:center;border:1px solid var(--border);}
+.qty-btn{background:var(--surface);border:none;color:var(--text);width:2.2rem;height:2.2rem;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+.qty-btn:hover{background:var(--surface-2);}
+.qty-num{width:3rem;height:2.2rem;background:var(--surface-2);border:none;border-left:1px solid var(--border);border-right:1px solid var(--border);color:var(--white);text-align:center;font-family:'Oswald',sans-serif;font-size:0.95rem;}
+
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:2rem;}
+.btn-cart-full{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:1rem;font-family:'Oswald',sans-serif;font-size:0.88rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:0.4rem;}
+.btn-cart-full:hover{background:rgba(255,51,0,0.1);}
+.btn-buy-now{background:var(--accent);border:none;color:white;padding:1rem;font-family:'Oswald',sans-serif;font-size:0.88rem;letter-spacing:0.1em;cursor:pointer;transition:background 0.2s;}
+.btn-buy-now:hover{background:#ff5533;}
+
+.story-box{background:var(--surface);border-left:3px solid var(--accent);border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:1.2rem 1.3rem;}
+.story-box-label{font-family:'Oswald',sans-serif;font-size:0.6rem;letter-spacing:0.3em;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;}
+.story-box-text{font-size:0.81rem;line-height:1.9;color:var(--text-muted);}
+
+.tabs-wrap{max-width:1300px;margin:0 auto;padding:0 5rem;}
+.tab-bar{display:flex;border-bottom:1px solid var(--border);}
+.tab-btn{padding:1rem 2rem;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Noto Sans KR',sans-serif;font-size:0.88rem;cursor:pointer;transition:all 0.2s;margin-bottom:-1px;}
+.tab-btn:hover{color:var(--white);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
+
+.tab-section{max-width:1300px;margin:0 auto;padding:3rem 5rem 6rem;}
+
+/* 상품 상세 탭 */
+.detail-img-full{width:100%;max-width:760px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;min-height:360px;overflow:hidden;margin-bottom:2rem;}
+.detail-img-full img{width:100%;object-fit:contain;max-height:520px;padding:3rem;}
+.detail-img-full .emoji-detail{font-size:9rem;}
+.detail-desc{max-width:760px;font-size:0.87rem;line-height:2.1;color:var(--text-muted);margin-bottom:2.5rem;}
+.detail-table{width:100%;max-width:760px;border-collapse:collapse;}
+.detail-table tr{border-bottom:1px solid var(--border);}
+.detail-table td{padding:0.85rem 1rem;font-size:0.82rem;}
+.detail-table td:first-child{color:var(--text-muted);width:130px;}
+.detail-table td:last-child{color:var(--text);}
+
+/* 리뷰 탭 */
+.review-summary{display:grid;grid-template-columns:160px 1fr;gap:3rem;align-items:center;background:var(--surface);border:1px solid var(--border);padding:2rem;margin-bottom:2rem;}
+.big-rating{text-align:center;}
+.big-rating-num{font-family:'Oswald',sans-serif;font-size:4.5rem;font-weight:700;color:var(--gold);line-height:1;}
+.big-rating-stars{font-size:1.2rem;color:var(--gold);margin-top:0.25rem;}
+.big-rating-count{font-size:0.7rem;color:var(--text-muted);margin-top:0.3rem;}
+.bar-rows{display:flex;flex-direction:column;gap:0.55rem;flex:1;}
+.bar-row{display:grid;grid-template-columns:44px 1fr 36px;gap:0.8rem;align-items:center;}
+.bar-label{font-size:0.72rem;color:var(--text-muted);font-family:'Oswald',sans-serif;}
+.bar-track{height:5px;background:var(--surface-2);overflow:hidden;}
+.bar-fill{height:100%;background:var(--gold);transition:width 0.7s ease;}
+.bar-count{font-size:0.68rem;color:var(--text-muted);text-align:right;}
+
+.write-review-box{background:var(--surface);border:1px solid var(--border);padding:1.5rem;margin-bottom:1.8rem;}
+.wr-title{font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.28em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.9rem;}
+.star-picker{display:flex;gap:0.25rem;margin-bottom:0.8rem;cursor:pointer;}
+.star-picker span{font-size:1.5rem;color:var(--surface-2);transition:color 0.15s;user-select:none;}
+.star-picker span.lit{color:var(--gold);}
+.wr-textarea{width:100%;padding:0.8rem 1rem;background:var(--surface-2);border:1px solid var(--border);color:var(--white);font-family:'Noto Sans KR',sans-serif;font-size:0.84rem;resize:vertical;min-height:90px;outline:none;transition:border-color 0.2s;line-height:1.7;}
+.wr-textarea:focus{border-color:var(--accent);}
+.wr-textarea::placeholder{color:var(--text-muted);}
+.wr-footer{display:flex;justify-content:space-between;align-items:center;margin-top:0.7rem;gap:1rem;}
+.wr-nick{flex:1;max-width:200px;padding:0.6rem 0.8rem;background:var(--surface-2);border:1px solid var(--border);color:var(--white);font-family:'Noto Sans KR',sans-serif;font-size:0.82rem;outline:none;transition:border-color 0.2s;}
+.wr-nick:focus{border-color:var(--accent);}
+.wr-nick::placeholder{color:var(--text-muted);}
+.wr-submit{background:var(--accent);border:none;color:white;padding:0.6rem 1.4rem;font-family:'Oswald',sans-serif;font-size:0.78rem;letter-spacing:0.1em;cursor:pointer;transition:background 0.2s;}
+.wr-submit:hover{background:#ff5533;}
+
+.review-list{display:flex;flex-direction:column;gap:1rem;}
+.review-item{background:var(--surface);border:1px solid var(--border);padding:1.4rem;}
+.rv-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6rem;}
+.rv-author{font-weight:500;font-size:0.85rem;color:var(--white);}
+.rv-date{font-size:0.7rem;color:var(--text-muted);}
+.rv-stars{color:var(--gold);font-size:0.82rem;margin-bottom:0.55rem;}
+.rv-body{font-size:0.83rem;line-height:1.85;color:var(--text-muted);}
+.rv-footer{display:flex;align-items:center;gap:0.6rem;margin-top:0.9rem;}
+.rv-like-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:0.22rem 0.65rem;cursor:pointer;font-size:0.68rem;transition:all 0.2s;font-family:'Noto Sans KR',sans-serif;}
+.rv-like-btn:hover{border-color:var(--accent);color:var(--accent);}
+.rv-likes{font-size:0.7rem;color:var(--text-muted);}
+.no-reviews{text-align:center;padding:3rem;color:var(--text-muted);font-size:0.85rem;}
+
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:white;padding:0.8rem 1.4rem;font-size:0.82rem;z-index:999;box-shadow:0 6px 24px rgba(255,51,0,0.35);pointer-events:none;animation:fadeUp 0.3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:1024px){
+  nav{padding:1rem 1.5rem;}
+  .nav-links{display:none;}
+  .breadcrumb{padding:5rem 1.5rem 0;}
+  .product-wrap{padding:1.5rem 1.5rem 3rem;grid-template-columns:1fr;gap:2rem;}
+  .product-img-section{position:static;}
+  .tabs-wrap,.tab-section{padding-left:1.5rem;padding-right:1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">LEGA<em>CY</em></a>
+  <ul class="nav-links">
+    <li><a href="index.html">홈</a></li>
+    <li><a href="index.html#players">선수</a></li>
+    <li><a href="index.html#goods">굿즈</a></li>
+    <li><a href="community.html">커뮤니티</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="login.html">로그인</a>
+    <a href="cart.html" class="nav-cart-btn">🛒 장바구니 <span id="cart-count">(0)</span></a>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <div class="bc-inner">
+    <a href="index.html">홈</a>
+    <span class="bc-sep">/</span>
+    <a href="index.html#goods">굿즈</a>
+    <span class="bc-sep">/</span>
+    <span id="bc-player">—</span>
+    <span class="bc-sep">/</span>
+    <span id="bc-goods">—</span>
+  </div>
+</div>
+
+<div class="product-wrap">
+  <div class="product-img-section">
+    <div class="main-img-box" id="mainImgBox"></div>
+    <div class="thumbs-row" id="thumbsRow"></div>
+  </div>
+  <div>
+    <span class="product-player-tag" id="playerTag"></span>
+    <h1 class="product-name" id="productName"></h1>
+    <div class="rating-row">
+      <div class="stars-display" id="starsDisplay"></div>
+      <div class="rating-num" id="ratingNum"></div>
+      <div class="rev-link" id="revLink" onclick="switchTab('review')"></div>
+    </div>
+    <div class="price-row">
+      <div class="price-label">판매가</div>
+      <div class="price-val" id="priceVal"></div>
+    </div>
+    <div class="badge-strip">
+      <div class="badge-chip"><em>🚚</em> 무료배송</div>
+      <div class="badge-chip"><em>✓</em> 정품 보장</div>
+      <div class="badge-chip"><em>📦</em> 2-3일 내 배송</div>
+      <div class="badge-chip"><em>↩</em> 7일 무료 반품</div>
+    </div>
+    <div class="qty-row">
+      <span class="qty-label">수량</span>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <input class="qty-num" id="qtyNum" value="1" readonly>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+    <div class="action-row">
+      <button class="btn-cart-full" onclick="addToCartAct()">🛒 장바구니 담기</button>
+      <button class="btn-buy-now" onclick="buyNow()">바로 구매</button>
+    </div>
+    <div class="story-box" id="storyBox"></div>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('detail')" id="tab-detail-btn">상품 상세</button>
+    <button class="tab-btn" onclick="switchTab('review')" id="tab-review-btn">리뷰 <span id="reviewCountBadge">(0)</span></button>
+  </div>
+</div>
+
+<div class="tab-section">
+  <div id="panel-detail">
+    <div class="detail-img-full" id="detailImgFull"></div>
+    <p class="detail-desc" id="detailDesc"></p>
+    <table class="detail-table" id="detailTable"></table>
+  </div>
+  <div id="panel-review" style="display:none;">
+    <div class="review-summary" id="reviewSummary"></div>
+    <div class="write-review-box">
+      <p class="wr-title">리뷰 작성</p>
+      <div class="star-picker" id="starPicker">
+        <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+      </div>
+      <textarea class="wr-textarea" id="rvText" placeholder="상품을 구매하신 후 솔직한 후기를 남겨주세요."></textarea>
+      <div class="wr-footer">
+        <input class="wr-nick" id="rvNick" placeholder="닉네임">
+        <button class="wr-submit" onclick="submitReview()">리뷰 등록</button>
+      </div>
+    </div>
+    <div class="review-list" id="reviewList"></div>
+  </div>
+</div>
+
+<script>
+const PLAYERS = [
+  {id:1,name:"정찬성",nickname:"Korean Zombie",wins:"17",weightClass:"페더급",org:"UFC",record:"17승 7패",photo:"images/jungchansung.webp",color:"#CC1100",badge:"코리안 좀비",quote:"나는 멈추지 않는다. 그게 나의 싸움 방식이다.",excerpt:"군 복무로 2년을 잃었다. 하지만 그는 더 강해진 모습으로 UFC 옥타곤에 돌아왔다. 한국 MMA의 살아있는 전설.",story:`정찬성은 단순한 파이터가 아닙니다. 그는 하나의 정신입니다.`,
+   goods:[
+    {name:"사인포토카드 (6종)",price:"18,000원",emoji:"🃏"},
+    {name:"트위스터 서브미션 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/정찬성 피규어.png",type:"figure",figureDesc:"2010년 5월 29일, WEC 48. 정찬성은 레너드 가르시아를 상대로 UFC·WEC 역사 최초의 트위스터 서브미션을 성공시켰습니다. 척추를 비틀어 기권을 받아내는 이 기술은 난이도가 극히 높아 실전에서는 불가능에 가깝다 여겨졌습니다. 그 불가능을 정찬성이 해냈고, 이 순간은 MMA 역사에 영원히 새겨졌습니다."}
+  ]},
+  {id:2,name:"최두호",nickname:"Korean Superboy",wins:"16",weightClass:"페더급",org:"UFC",record:"16승 4패",photo:"images/choidooho.webp",color:"#0055BB",badge:"코리안 슈퍼보이",quote:"두려움 없이 싸울 때, 비로소 진짜 파이터가 된다.",excerpt:"22세에 UFC 데뷔. 쿱 스완슨과의 '올해의 경기'로 세계를 홀린 소년. 그의 눈에는 처음부터 두려움이 없었다.",story:`2016년 12월, UFC 206. 최두호 대 쿱 스완슨. UFC 역사에 길이 남을 명승부였습니다.`,
+   goods:[
+    {name:"사인포토카드 (6종)",price:"18,000원",emoji:"🃏"},
+    {name:"vs 쿱 스완슨 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/최두호피규어.png",type:"figure",figureDesc:"2016년 12월 10일, UFC 206. 22세 최두호 대 베테랑 쿱 스완슨. 어느 한 쪽도 뒤로 물러서지 않은 이 혈투는 당해 올해의 경기 후보에 올랐습니다. 최두호는 강타를 맞으면서도 쓰러지지 않고 3라운드를 싸워 만장일치 판정승을 거뒀습니다."}
+  ]},
+  {id:3,name:"김동현",nickname:"Stun Gun",wins:"22",weightClass:"웰터급",org:"UFC",record:"22승 7패",photo:"images/kimdongyhyun.webp",color:"#007744",badge:"스턴건",quote:"한국 MMA의 역사를 써내려가는 것, 그것이 나의 사명이다.",excerpt:"한국 MMA 역사의 산증인. UFC에서 10년 넘게 활약하며 한국 선수들의 길을 먼저 걸었던 개척자.",story:`김동현이 없었다면, 오늘날 한국 MMA는 없었습니다.`,
+   goods:[
+    {name:"사인포토카드 (6종)",price:"18,000원",emoji:"🃏"},
+    {name:"백스핀 엘보우 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/김동현 피규어.png",type:"figure",figureDesc:"UFC 옥타곤에서 좀처럼 보기 힘든 기술—백스핀 엘보우. 상대의 전진을 유도하고, 몸을 회전시키는 순간 팔꿈치가 예상치 못한 각도에서 날아듭니다. 김동현은 이 고난도 기술을 실전에서 성공시켰습니다."}
+  ]},
+  {id:4,name:"김상욱",nickname:"DEADPOOL",wins:"12",weightClass:"웰터급",org:"AFC",record:"12승 3패",photo:"images/kimsangwook.webp",color:"#CC6600",badge:"데드풀",quote:"죽어도 다시 살아 돌아온다. 그게 데드풀이고, 그게 나다.",excerpt:"대한민국 해군 특수전전단(UDT) 출신. 어린 시절 학교폭력을 견뎌낸 소년이 특수부대를 거쳐 AFC 챔피언이 됐다.",story:`김상욱을 이해하려면 먼저 그의 두 개의 얼굴을 알아야 합니다.`,
+   goods:[
+    {name:"사인포토카드 (6종)",price:"18,000원",emoji:"🃏"},
+    {name:"AFC 챔피언전 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/김상욱 피규어.png",type:"figure",figureDesc:"2022년 AFC 19, 김상욱은 안재영을 상대로 AFC 웰터급 챔피언전을 치렀습니다. UDT 출신의 체력과 하바스 MMA에서 다듬은 그라운드 앤 파운드가 합쳐진 경기였습니다."}
+  ]},
+  {id:5,name:"고석현",nickname:"Korean Tyson",wins:"13",weightClass:"웰터급",org:"UFC",record:"13승 2패",photo:"images/goseokyhyun.webp",color:"#770099",badge:"코리안 타이슨",quote:"매일 훈련장에서 죽는다. 그래야 경기장에서 산다.",excerpt:"삼보 세계챔피언 출신의 UFC 강타자. 유도와 삼보를 기반으로 한 폭발적인 파워로 UFC 2연승 중인 웰터급 다크호스.",story:`고석현은 스포츠 엘리트 코스를 밟은 파이터입니다.`,
+   goods:[
+    {name:"사인포토카드 (6종)",price:"18,000원",emoji:"🃏"},
+    {name:"vs 오반 엘리엇 승리 세레모니 피규어",price:"49,000원",emoji:"🗿",image:"images/고석현피규어.png",type:"figure",figureDesc:"2025년 6월 22일, 아제르바이잔. 고석현은 영국의 오반 엘리엇을 상대로 3라운드 내내 삼보 기반의 압박과 강타를 쏟아부어 30-27 만장일치 판정승을 거뒀습니다."}
+  ]},
+  {id:6,name:"유주상",nickname:"ZOMBIE JUNIOR",wins:"10",weightClass:"페더급",org:"UFC",record:"10승 1패",photo:"images/yujusang.webp",color:"#003399",badge:"좀비주니어",quote:"나의 싸움은 팬들에게 보내는 편지다.",excerpt:"맥그리거의 체육관 SBG 아일랜드를 직접 찾아간 청년. ZFN에서 UFC로 직행한 최초의 한국인, 28초 KO로 세계에 이름을 새겼다.",story:`유주상의 꿈은 처음부터 선명했습니다.`,
+   goods:[
+    {name:"사인포토카드 (6종)",price:"18,000원",emoji:"🃏"},
+    {name:"UFC 316 28초 KO 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/유주상 피규어.png",type:"figure",figureDesc:"2025년 6월 7일, UFC 316. 벨이 울린 지 단 28초. 유주상의 왼손 훅이 젝카 사라기의 턱을 정확히 강타했고, 사라기는 그대로 쓰러졌습니다."}
+  ]},
+  {id:7,name:"이스라엘 아데산야",nickname:"The Last Stylebender",wins:"24",weightClass:"미들급",org:"UFC",record:"24승 3패",photo:"images/아데산야.webp",color:"#FFD700",badge:"라스트 스타일벤더",quote:"나는 나 자신의 예술을 만들어낸다. 싸움은 곧 춤이다.",excerpt:"나이지리아에서 뉴질랜드로 이민 온 소년. 학교 괴롭힘을 피해 시작한 킥복싱이 그를 UFC 미들급 챔피언으로 만들었다.",story:`나이지리아 라고스에서 태어난 이스라엘 아데산야는 열 살에 뉴질랜드로 이민을 갔습니다.`,
+   goods:[
+    {name:"사인포토카드 (6종)",price:"18,000원",emoji:"🃏"},
+    {name:"와이드 스탠스 핑거 베킹 피규어",price:"49,000원",emoji:"🗿",image:"images/아데산야 피규어.png",type:"figure",figureDesc:"2019년 10월 5일, UFC 243. 멜버른 9만 관중 앞에서 아데산야는 로버트 위태커를 2라운드 KO로 쓰러뜨리고 UFC 미들급 챔피언에 올랐습니다."}
+  ]},
+  {id:8,name:"더스틴 포이리에",nickname:"The Diamond",wins:"29",weightClass:"라이트급",org:"UFC",record:"29승 9패",photo:"images/포이리에.webp",color:"#1B4FA8",badge:"더 다이아몬드",quote:"챔피언 벨트보다 소중한 건 포기하지 않는 태도다.",excerpt:"루이지애나 빈민가 출신, 두 번의 타이틀 실패를 딛고 맥그리거에게 두 번 복수한 다이아몬드.",story:`더스틴 포이리에는 미국 루이지애나 주 라파예트의 가난한 집안에서 자랐습니다.`,
+   goods:[
+    {name:"사인포토카드 (6종)",price:"18,000원",emoji:"🃏"},
+    {name:"vs 맥그리거 2차전 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/포이리에 피규어.png",type:"figure",figureDesc:"2021년 1월 23일, UFC 257. 더스틴 포이리에가 2라운드 KO로 코너 맥그리거를 무너뜨렸습니다. 첫 만남에서 패한 지 7년, 포이리에는 그 세월 동안 단 한 순간도 복수를 잊지 않았습니다."}
+  ]},
+  {id:9,name:"코너 맥그리거",nickname:"The Notorious",wins:"22",weightClass:"라이트급 · 페더급",org:"UFC",record:"22승 6패",photo:"images/맥그리거.webp",color:"#880000",badge:"더 노토리어스",quote:"나는 아무것도 없는 곳에서 모든 것을 만들었다.",excerpt:"아일랜드의 배관공 보조, 생활보조금으로 살던 청년이 UFC 두 체급 챔피언이 됐다.",story:`코너 맥그리거는 아일랜드 더블린의 노동자 계층 집안에서 태어났습니다.`,
+   goods:[
+    {name:"사인포토카드 (6종)",price:"18,000원",emoji:"🃏"},
+    {name:"2체급 챔피언 등극 세레모니 피규어",price:"49,000원",emoji:"🗿",image:"images/맥그리거 피구어.png",type:"figure",figureDesc:"2016년 11월 12일, UFC 205. 맥그리거는 에디 알바레즈를 2라운드 TKO로 제압하며 라이트급 챔피언 벨트를 획득했습니다. UFC 역사상 최초의 두 체급 동시 챔피언 탄생."}
+  ]},
+  {id:10,name:"알렉스 페레이라",nickname:"Poatan",wins:"14",weightClass:"라이트헤비급",org:"UFC",record:"14승 3패",photo:"images/페레이라.webp",color:"#B8460B",badge:"포아탄",quote:"나는 KO를 위해 싸우지 않는다. KO는 내가 제대로 싸웠을 때 따라오는 결과다.",excerpt:"킥복싱과 MMA, 두 종목에서 두 체급을 모두 제패한 유일한 파이터.",story:`알렉스 페레이라는 브라질 상파울루의 노동자 계층 집안에서 자랐습니다.`,
+   goods:[
+    {name:"사인포토카드 (6종)",price:"18,000원",emoji:"🃏"},
+    {name:"아처 입장 세레모니 피규어",price:"49,000원",emoji:"🗿",image:"images/페레이라 피규어.png",type:"figure",figureDesc:"알렉스 페레이라가 옥타곤으로 걸어 들어올 때, 그는 활을 쏩니다. 허공을 향해 시위를 당기고 화살을 날리는 그 포즈—이것이 페레이라의 시그니처 입장 세레모니입니다."}
+  ]},
+];
+
+/* ---- 시드 리뷰 ---- */
+const SEED_REVIEWS = {
+  '1_0':[
+    {id:'s1_0_1',author:'zombie_forever',rating:5,date:'2026.05.28',content:'6종 다 모았어요!! 인쇄 퀄리티가 진짜 최상급이에요. 사진이 선명하고 코팅도 고급스러워서 슬리브에 넣어두고 책상에 전시하고 있습니다. 정찬성 팬이라면 무조건 추천!',likes:41},
+    {id:'s1_0_2',author:'UFC사랑해',rating:5,date:'2026.05.30',content:'배송도 빠르고 포장도 꼼꼼하게 돼 있었어요. 카드 두께감도 적당하고 색감도 실물이 더 예쁘네요. 친구한테도 선물했는데 엄청 좋아했어요.',likes:27},
+    {id:'s1_0_3',author:'mma_collector',rating:4,date:'2026.06.02',content:'전반적으로 만족스럽습니다. 6종 중에 옥타곤 포즈 카드가 제일 마음에 들어요. 다음엔 다른 선수 포토카드도 모아볼 예정이에요.',likes:18},
+  ],
+  '1_1':[
+    {id:'s1_1_1',author:'MMA피규어덕후',rating:5,date:'2026.06.01',content:'트위스터 피규어 드디어 받았습니다!! 정말 말이 안 나와요. 관절 표현이 너무 자연스럽고 채색 디테일도 살아있어서 실제 경기 장면이 그대로 옮겨진 것 같아요. 역대급 퀄리티.',likes:112},
+    {id:'s1_1_2',author:'코리안좀비팬',rating:5,date:'2026.06.03',content:'박스 패키징부터 내부 완충재까지 너무 꼼꼼하게 포장돼 있었어요. 피규어 크기도 생각보다 커서 책상에 올려두니까 포인트가 확 살아나요. 가격이 아깝지 않은 퀄리티!',likes:88},
+    {id:'s1_1_3',author:'zombie_1977',rating:5,date:'2026.06.05',content:'트위스터 자세 재현이 완벽합니다. 구매 고민하시는 분들 그냥 사세요. 후회 없어요. MMA 팬이라면 하나쯤은 소장해야 할 아이템.',likes:67},
+    {id:'s1_1_4',author:'격투기마니아',rating:4,date:'2026.06.07',content:'퀄리티는 정말 좋은데 배송이 이틀 걸렸어요. 제품 자체는 완벽합니다. 선물용으로도 강력 추천!',likes:34},
+  ],
+  '2_0':[
+    {id:'s2_0_1',author:'superboy팬',rating:5,date:'2026.05.29',content:'슈퍼보이 포토카드 6종 풀셋! 사진 퀄리티가 정말 잡지 수준이에요. 특히 파이팅 포즈 카드가 너무 멋있어요. 소장가치 100%!',likes:56},
+    {id:'s2_0_2',author:'UFC덕후22',rating:5,date:'2026.06.01',content:'카드 재질도 좋고 코팅도 잘 되어 있어요. 색감이 화면보다 실물이 더 생생합니다. 최두호 팬분들께 강력 추천!',likes:38},
+  ],
+  '2_1':[
+    {id:'s2_1_1',author:'두호love',rating:5,date:'2026.06.02',content:'쿱 스완슨전 피규어 받았습니다. 그 경기 보면서 진짜 울었는데 이걸 소장할 수 있다니... 최두호가 강타 맞으면서도 절대 안 쓰러지던 장면이 완벽하게 재현됐어요.',likes:92},
+    {id:'s2_1_2',author:'MMA클래식',rating:5,date:'2026.06.04',content:'UFC 역사상 최고의 경기 중 하나를 피규어로 소장하는 느낌이 정말 특별해요. 디테일 하나하나가 살아있고 채색도 너무 예뻐요.',likes:71},
+    {id:'s2_1_3',author:'파이터서사',rating:4,date:'2026.06.06',content:'피규어 퀄리티 좋습니다. 포장이 정말 꼼꼼해서 배송 중 손상 걱정 없었어요. 전시용으로 딱이에요.',likes:29},
+  ],
+  '3_0':[
+    {id:'s3_0_1',author:'스턴건매니아',rating:5,date:'2026.05.27',content:'김동현 포토카드 받았어요. 한국 MMA 역사를 써온 선수를 이렇게 소장할 수 있어서 감동이에요. 카드 퀄리티도 최상급!',likes:33},
+    {id:'s3_0_2',author:'그라운드팬',rating:5,date:'2026.06.01',content:'6종 다 색감이 다르고 각 포즈가 개성 있어요. 지인 선물로 하나 더 주문했어요.',likes:21},
+  ],
+  '3_1':[
+    {id:'s3_1_1',author:'stungun_fan',rating:5,date:'2026.06.03',content:'백스핀 엘보우 피규어! 그 기술 자체가 워낙 희귀하고 어려운데 피규어로 재현한 것도 완벽해요. 소장가치 엄청납니다.',likes:78},
+    {id:'s3_1_2',author:'MMA역사',rating:5,date:'2026.06.05',content:'한국 MMA 개척자의 가장 인상적인 기술을 피규어로. 이런 아이템이 나와줘서 정말 고마워요. 퀄리티도 훌륭합니다.',likes:54},
+  ],
+  '4_0':[
+    {id:'s4_0_1',author:'데드풀팬',rating:5,date:'2026.05.30',content:'강철부대에서 보고 완전 팬이 됐는데 포토카드 퀄리티도 역시 최고예요. 6종 다 개성 있고 멋있어요!',likes:44},
+  ],
+  '4_1':[
+    {id:'s4_1_1',author:'UDT전사팬',rating:5,date:'2026.06.02',content:'AFC 챔피언전 피규어 정말 감동이에요. 학폭을 이겨내고 UDT를 거쳐 챔피언이 된 스토리를 알고 보니까 더 특별하게 느껴져요.',likes:66},
+    {id:'s4_1_2',author:'격투기사랑',rating:4,date:'2026.06.06',content:'피규어 퀄리티 좋아요. 포즈가 역동적이고 채색도 세밀합니다. 소장가치 충분!',likes:31},
+  ],
+  '5_0':[
+    {id:'s5_0_1',author:'코리안타이슨',rating:5,date:'2026.06.01',content:'고석현 포토카드 6종 완성! 삼보 세계챔피언 출신 UFC 파이터... 이미지 자체가 너무 강렬해요. 카드 퀄리티도 역시 최상급.',likes:37},
+  ],
+  '5_1':[
+    {id:'s5_1_1',author:'삼보팬',rating:5,date:'2026.06.04',content:'vs 오반 엘리엇 피규어! 그 승리 세레모니가 너무 멋있었는데 피규어로 재현이 완벽해요. 두 주먹 들어올리는 포즈가 에너지가 느껴져요.',likes:83},
+    {id:'s5_1_2',author:'UFC웰터팬',rating:5,date:'2026.06.06',content:'한국 웰터급의 미래를 이 피규어가 보여주는 것 같아요. 디테일 퀄리티 최상급. 강력 추천!',likes:58},
+  ],
+  '6_0':[
+    {id:'s6_0_1',author:'좀비주니어팬',rating:5,date:'2026.06.01',content:'유주상 포토카드 받았어요! 28초 KO 뉴스 보고 바로 팬이 됐는데 카드까지 소장하니까 너무 좋아요. 퀄리티 최고!',likes:48},
+    {id:'s6_0_2',author:'신인파이터팬',rating:5,date:'2026.06.03',content:'사진이 너무 잘 나왔어요. 6종 각각 포즈가 다르고 다 멋있어요. 한국 MMA 미래를 응원합니다!',likes:32},
+  ],
+  '6_1':[
+    {id:'s6_1_1',author:'28초KO팬',rating:5,date:'2026.06.05',content:'UFC 316 28초 KO 피규어!! 그 순간을 이렇게 소장할 수 있다니 너무 행복해요. 왼손 훅 자세 재현이 완벽합니다.',likes:97},
+    {id:'s6_1_2',author:'ZFN팬',rating:5,date:'2026.06.07',content:'한국인 최초 ZFN→UFC 직행의 역사적 순간을 피규어로. 퀄리티도 이전 시리즈와 동일하게 최상급이에요!',likes:74},
+    {id:'s6_1_3',author:'맥스할로웨이팬',rating:4,date:'2026.06.08',content:'퀄리티 좋고 포즈도 역동적이에요. 다음 경기도 기대됩니다. 피규어는 완벽!',likes:28},
+  ],
+  '7_1':[
+    {id:'s7_1_1',author:'스타일벤더팬',rating:5,date:'2026.06.03',content:'핑거 베킹 포즈 피규어 받았어요! 아데산야 특유의 도발적이고 예술적인 포즈가 그대로 재현됐어요. 너무 멋있어요.',likes:89},
+    {id:'s7_1_2',author:'애니메이션마니아',rating:5,date:'2026.06.05',content:'UFC 243 챔피언 등극 순간 피규어. 9만 관중 앞에서의 그 장면이 눈앞에 펼쳐지는 것 같아요. 소장가치 최상!',likes:65},
+  ],
+  '8_1':[
+    {id:'s8_1_1',author:'다이아몬드팬',rating:5,date:'2026.06.02',content:'맥그리거 복수 KO 피규어! 7년을 기다린 복수의 순간이 완벽하게 재현됐어요. 무릎 꿇고 하늘 바라보는 포즈가 너무 감동적이에요.',likes:101},
+    {id:'s8_1_2',author:'포이리에응원단',rating:5,date:'2026.06.04',content:'퀄리티 역대급입니다. 포즈의 감정이 느껴질 정도로 디테일이 살아있어요. 루이지애나 소년의 복수를 응원합니다!',likes:76},
+  ],
+  '9_1':[
+    {id:'s9_1_1',author:'노토리어스팬',rating:5,date:'2026.06.01',content:'2체급 챔피언 세레모니 피규어 최고예요. 두 벨트 모두 표현된 디테일이 너무 좋아요. 생활보조금 받던 청년이 챔피언이 된 스토리와 함께 보면 더 감동적이에요.',likes:134},
+    {id:'s9_1_2',author:'MMA황제팬',rating:5,date:'2026.06.03',content:'역사적인 순간을 이렇게 소장할 수 있다니 정말 행복해요. 퀄리티 더 말할 필요 없고 완벽합니다.',likes:98},
+  ],
+  '10_1':[
+    {id:'s10_1_1',author:'포아탄팬',rating:5,date:'2026.06.02',content:'아처 입장 세레모니 피규어! 페레이라 입장할 때마다 소름 돋는데 이걸 피규어로 소장하게 됐어요. 활 쏘는 포즈 재현이 완벽해요.',likes:115},
+    {id:'s10_1_2',author:'킥복싱팬',rating:5,date:'2026.06.04',content:'킥복싱 MMA 두 종목 두 체급 챔피언의 시그니처 세레모니를 피규어로. 이것보다 더 상징적인 아이템이 있을까요? 퀄리티도 최고!',likes:87},
+    {id:'s10_1_3',author:'돌주먹숭배',rating:4,date:'2026.06.06',content:'피규어 자체는 완벽한데 배송 박스가 살짝 찌그러져 있었어요. 내용물은 아무 이상 없었고 퀄리티도 훌륭합니다.',likes:42},
+  ],
+};
+
+/* ---- 상태 ---- */
+let currentPlayer = null;
+let currentGoods = null;
+let currentPid = null;
+let currentGid = null;
+let selectedStar = 0;
+let cartCount = parseInt(localStorage.getItem('legacy_cart_count') || '0');
+
+/* ---- URL 파싱 및 초기화 ---- */
+function init() {
+  const params = new URLSearchParams(location.search);
+  currentPid = parseInt(params.get('pid'));
+  currentGid = parseInt(params.get('gid'));
+  currentPlayer = PLAYERS.find(p => p.id === currentPid);
+  if (!currentPlayer || currentGid === undefined || !currentPlayer.goods[currentGid]) {
+    document.body.innerHTML = '<div style="text-align:center;padding:10rem;color:#68738A;font-family:Oswald,sans-serif;">상품을 찾을 수 없습니다. <a href="index.html" style="color:#FF3300;">홈으로</a></div>';
+    return;
+  }
+  currentGoods = currentPlayer.goods[currentGid];
+  updateCartDisplay();
+  renderProduct();
+  renderReviews();
+}
+
+function updateCartDisplay() {
+  document.getElementById('cart-count').textContent = `(${cartCount})`;
+}
+
+/* ---- 상품 렌더링 ---- */
+function renderProduct() {
+  const p = currentPlayer;
+  const g = currentGoods;
+
+  // 브레드크럼
+  document.title = `${g.name} — LEGACY`;
+  document.getElementById('bc-player').textContent = p.name;
+  document.getElementById('bc-goods').textContent = g.name;
+
+  // 메인 이미지
+  const mainBox = document.getElementById('mainImgBox');
+  if (g.image) {
+    mainBox.innerHTML = `<img src="${g.image}" alt="${g.name}" id="mainImg">`;
+  } else {
+    mainBox.innerHTML = `<div class="emoji-big">${g.emoji}</div>`;
+    mainBox.style.background = `linear-gradient(135deg,${p.color}18,${p.color}06)`;
+  }
+
+  // 썸네일
+  const thumbsRow = document.getElementById('thumbsRow');
+  const thumbs = [];
+  if (g.image) {
+    thumbs.push({type:'img', src:g.image, label:g.name});
+  } else {
+    thumbs.push({type:'emoji', val:g.emoji});
+  }
+  if (p.photo) thumbs.push({type:'img', src:p.photo, label:p.name});
+  thumbs.push({type:'emoji', val:'📦'});
+  thumbs.push({type:'emoji', val:'✨'});
+
+  thumbsRow.innerHTML = thumbs.map((t, i) => {
+    if (t.type === 'img') return `<div class="thumb ${i===0?'active':''}" onclick="selectThumb(this,'${t.src}')"><img src="${t.src}" alt="${t.label||''}"></div>`;
+    return `<div class="thumb ${i===0?'active':''}" onclick="selectThumbEmoji(this,'${t.val}','${p.color}')">${t.val}</div>`;
+  }).join('');
+
+  // 정보
+  document.getElementById('playerTag').textContent = `${p.name}  ·  ${p.nickname}`;
+  document.getElementById('productName').textContent = g.name;
+  document.getElementById('priceVal').textContent = g.price;
+
+  // 평점
+  const reviews = getAllReviews();
+  const avgRating = reviews.length ? (reviews.reduce((a,r)=>a+r.rating,0)/reviews.length) : 4.8;
+  const displayRating = reviews.length ? avgRating.toFixed(1) : '4.8';
+  const fullStars = Math.round(parseFloat(displayRating));
+  document.getElementById('starsDisplay').textContent = '★'.repeat(fullStars) + '☆'.repeat(5-fullStars);
+  document.getElementById('ratingNum').textContent = displayRating;
+  document.getElementById('revLink').textContent = `리뷰 ${reviews.length}개`;
+  document.getElementById('reviewCountBadge').textContent = `(${reviews.length})`;
+
+  // 스토리 박스
+  const storyBox = document.getElementById('storyBox');
+  const desc = g.figureDesc || p.excerpt;
+  storyBox.innerHTML = `<div class="story-box-label">파이터 서사</div><div class="story-box-text">${desc}</div>`;
+
+  // 상세 탭 콘텐츠
+  const detailImgFull = document.getElementById('detailImgFull');
+  if (g.image) {
+    detailImgFull.innerHTML = `<img src="${g.image}" alt="${g.name}">`;
+  } else {
+    detailImgFull.innerHTML = `<div class="emoji-detail">${g.emoji}</div>`;
+    detailImgFull.style.background = `linear-gradient(135deg,${p.color}14,${p.color}04)`;
+  }
+
+  document.getElementById('detailDesc').textContent = g.figureDesc || p.excerpt;
+
+  const isFigure = g.type === 'figure';
+  document.getElementById('detailTable').innerHTML = `
+    <tr><td>선수</td><td>${p.name} (${p.nickname})</td></tr>
+    <tr><td>체급</td><td>${p.weightClass}</td></tr>
+    <tr><td>소속</td><td>${p.org}</td></tr>
+    <tr><td>전적</td><td>${p.record}</td></tr>
+    <tr><td>상품 유형</td><td>${isFigure ? '한정판 피규어 (레진)' : '포토카드 6종 세트'}</td></tr>
+    <tr><td>제조사</td><td>LEGACY 공식 굿즈</td></tr>
+    ${isFigure ? '<tr><td>크기</td><td>높이 약 20cm</td></tr><tr><td>소재</td><td>고급 레진 / 수작업 채색</td></tr>' : '<tr><td>카드 크기</td><td>표준 트레이딩 카드 (88×63mm)</td></tr><tr><td>종류</td><td>6종 (포즈별 상이)</td></tr>'}
+    <tr><td>배송</td><td>무료배송 / 주문 후 2~3일 내 발송</td></tr>
+    <tr><td>교환/환불</td><td>수령 후 7일 이내 (단순변심 포함)</td></tr>
+  `;
+}
+
+function selectThumb(el, src) {
+  document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const mainBox = document.getElementById('mainImgBox');
+  mainBox.innerHTML = `<img src="${src}" alt="" id="mainImg">`;
+  mainBox.style.background = '';
+}
+
+function selectThumbEmoji(el, emoji, color) {
+  document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const mainBox = document.getElementById('mainImgBox');
+  mainBox.innerHTML = `<div class="emoji-big">${emoji}</div>`;
+  mainBox.style.background = emoji === '📦' ? `var(--surface)` : `linear-gradient(135deg,${color}18,${color}06)`;
+}
+
+/* ---- 탭 전환 ---- */
+function switchTab(tab) {
+  document.getElementById('panel-detail').style.display = tab==='detail' ? 'block' : 'none';
+  document.getElementById('panel-review').style.display = tab==='review' ? 'block' : 'none';
+  document.getElementById('tab-detail-btn').classList.toggle('active', tab==='detail');
+  document.getElementById('tab-review-btn').classList.toggle('active', tab==='review');
+  if (tab === 'review') renderReviewSummary();
+}
+
+/* ---- 수량 ---- */
+function changeQty(d) {
+  const el = document.getElementById('qtyNum');
+  const v = Math.max(1, Math.min(99, parseInt(el.value) + d));
+  el.value = v;
+}
+
+/* ---- 장바구니 / 구매 ---- */
+function addToCartAct() {
+  const qty = parseInt(document.getElementById('qtyNum').value);
+  cartCount += qty;
+  localStorage.setItem('legacy_cart_count', cartCount);
+  updateCartDisplay();
+  showToast(`장바구니에 ${qty}개 담겼습니다 ✓`);
+}
+
+function buyNow() {
+  addToCartAct();
+  window.location.href = 'cart.html';
+}
+
+/* ---- 리뷰 ---- */
+function getAllReviews() {
+  const key = `${currentPid}_${currentGid}`;
+  const seeds = SEED_REVIEWS[key] || [];
+  const user = JSON.parse(localStorage.getItem(`legacy_rv_${key}`) || '[]');
+  return [...user, ...seeds];
+}
+
+function renderReviews() {
+  const reviews = getAllReviews();
+  document.getElementById('reviewCountBadge').textContent = `(${reviews.length})`;
+  document.getElementById('revLink').textContent = `리뷰 ${reviews.length}개`;
+  renderReviewSummary();
+  renderReviewList(reviews);
+}
+
+function renderReviewSummary() {
+  const reviews = getAllReviews();
+  if (!reviews.length) {
+    document.getElementById('reviewSummary').innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;padding:0.5rem;">아직 리뷰가 없습니다. 첫 번째 리뷰를 남겨주세요!</div>';
+    return;
+  }
+  const avg = reviews.reduce((a,r)=>a+r.rating,0)/reviews.length;
+  const counts = [0,0,0,0,0];
+  reviews.forEach(r=>counts[r.rating-1]++);
+  const fullStars = Math.round(avg);
+
+  document.getElementById('reviewSummary').innerHTML = `
+    <div class="big-rating">
+      <div class="big-rating-num">${avg.toFixed(1)}</div>
+      <div class="big-rating-stars">${'★'.repeat(fullStars)}${'☆'.repeat(5-fullStars)}</div>
+      <div class="big-rating-count">${reviews.length}개 리뷰</div>
+    </div>
+    <div class="bar-rows">
+      ${[5,4,3,2,1].map(n=>`
+        <div class="bar-row">
+          <span class="bar-label">${n}점</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${reviews.length?counts[n-1]/reviews.length*100:0}%"></div></div>
+          <span class="bar-count">${counts[n-1]}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderReviewList(reviews) {
+  const list = document.getElementById('reviewList');
+  if (!reviews.length) {
+    list.innerHTML = '<div class="no-reviews">아직 등록된 리뷰가 없습니다.<br>첫 번째 리뷰를 남겨주세요!</div>';
+    return;
+  }
+  list.innerHTML = reviews.map(r => `
+    <div class="review-item">
+      <div class="rv-head">
+        <div class="rv-author">${r.author}</div>
+        <div class="rv-date">${r.date}</div>
+      </div>
+      <div class="rv-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+      <div class="rv-body">${r.content}</div>
+      <div class="rv-footer">
+        <button class="rv-like-btn" onclick="likeReview('${r.id}',this)">👍 도움이 됐어요</button>
+        <span class="rv-likes">${r.likes || 0}명에게 도움</span>
+      </div>
+    </div>`).join('');
+}
+
+function likeReview(id, btn) {
+  const liked = JSON.parse(localStorage.getItem('legacy_rv_liked') || '[]');
+  if (liked.includes(id)) { showToast('이미 도움 표시했습니다.'); return; }
+  liked.push(id);
+  localStorage.setItem('legacy_rv_liked', JSON.stringify(liked));
+  const span = btn.nextElementSibling;
+  const cur = parseInt(span.textContent);
+  span.textContent = `${cur+1}명에게 도움`;
+  btn.style.borderColor = 'var(--accent)';
+  btn.style.color = 'var(--accent)';
+  showToast('도움이 됐어요 ✓');
+}
+
+/* ---- 별점 선택 ---- */
+const starPicker = document.getElementById('starPicker');
+starPicker.querySelectorAll('span').forEach(star => {
+  star.addEventListener('mouseenter', () => {
+    const v = parseInt(star.dataset.v);
+    starPicker.querySelectorAll('span').forEach(s => s.classList.toggle('lit', parseInt(s.dataset.v) <= v));
+  });
+  star.addEventListener('click', () => {
+    selectedStar = parseInt(star.dataset.v);
+    starPicker.querySelectorAll('span').forEach(s => s.classList.toggle('lit', parseInt(s.dataset.v) <= selectedStar));
+  });
+});
+starPicker.addEventListener('mouseleave', () => {
+  starPicker.querySelectorAll('span').forEach(s => s.classList.toggle('lit', parseInt(s.dataset.v) <= selectedStar));
+});
+
+/* ---- 리뷰 등록 ---- */
+function submitReview() {
+  if (!selectedStar) { showToast('별점을 선택해주세요.'); return; }
+  const content = document.getElementById('rvText').value.trim();
+  if (!content) { showToast('리뷰 내용을 입력해주세요.'); return; }
+  const nick = document.getElementById('rvNick').value.trim() || '익명';
+  const now = new Date();
+  const date = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+  const key = `${currentPid}_${currentGid}`;
+  const userReviews = JSON.parse(localStorage.getItem(`legacy_rv_${key}`) || '[]');
+  userReviews.unshift({id:`u_${Date.now()}`, author:nick, rating:selectedStar, date, content, likes:0});
+  localStorage.setItem(`legacy_rv_${key}`, JSON.stringify(userReviews));
+  document.getElementById('rvText').value = '';
+  document.getElementById('rvNick').value = '';
+  selectedStar = 0;
+  starPicker.querySelectorAll('span').forEach(s=>s.classList.remove('lit'));
+  showToast('리뷰가 등록됐습니다 ✓');
+  renderReviews();
+  renderReviewSummary();
+}
+
+function showToast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast'; el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2400);
+}
+
+init();
+</script>
+</body>
+</html>

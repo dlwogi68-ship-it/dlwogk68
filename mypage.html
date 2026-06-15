@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 — LEGACY</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;500;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:#070A12; --surface:#0D1220; --surface-2:#131A2E;
+            --border:rgba(255,255,255,0.07); --text:#EDE8DC; --text-muted:#68738A;
+            --accent:#FF3300; --accent-light:#ff5533; --gold:#C9A23E; --white:#FAFAF8;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { background:var(--bg); color:var(--text); font-family:'Noto Sans KR',sans-serif; font-weight:300; min-height:100vh; }
+        ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--accent)}
+
+        /* ===== NAV ===== */
+        nav { position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 5rem;display:flex;justify-content:space-between;align-items:center;background:rgba(7,10,18,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border); }
+        .logo { font-family:'Oswald',sans-serif;font-weight:700;font-size:1.6rem;letter-spacing:0.18em;color:var(--white);text-decoration:none; }
+        .logo em { color:var(--accent);font-style:normal; }
+        .nav-links { display:flex;gap:2.5rem;list-style:none; }
+        .nav-links a { color:var(--text-muted);text-decoration:none;font-family:'Oswald',sans-serif;font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;transition:color 0.2s; }
+        .nav-links a:hover { color:var(--white); }
+        .nav-right { display:flex;align-items:center;gap:1.2rem; }
+        .nav-right a { font-family:'Oswald',sans-serif;font-size:0.78rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s; }
+        .nav-right a:hover { color:var(--white); }
+
+        /* ===== LAYOUT ===== */
+        .mypage-wrap { max-width:1100px; margin:0 auto; padding:7rem 2rem 5rem; display:grid; grid-template-columns:260px 1fr; gap:2rem; align-items:start; }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar { position:sticky; top:7rem; }
+        .user-card { background:var(--surface); border:1px solid var(--border); padding:1.8rem 1.5rem; margin-bottom:1rem; text-align:center; }
+        .user-avatar-wrap { position:relative; display:inline-block; margin-bottom:1rem; }
+        .user-avatar { width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#880000); display:flex; align-items:center; justify-content:center; font-size:2rem; color:white; font-family:'Black Han Sans',sans-serif; overflow:hidden; }
+        .user-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+        .avatar-edit-btn { position:absolute; bottom:0; right:0; width:26px; height:26px; background:var(--accent); border:2px solid var(--bg); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:0.65rem; color:white; }
+        .avatar-input { display:none; }
+        .user-nickname { font-family:'Black Han Sans',sans-serif; font-size:1.1rem; color:var(--white); margin-bottom:0.25rem; }
+        .user-email-disp { font-size:0.78rem; color:var(--text-muted); margin-bottom:0.8rem; }
+        .user-grade { display:inline-block; background:rgba(201,162,62,0.15); border:1px solid rgba(201,162,62,0.3); color:var(--gold); font-family:'Oswald',sans-serif; font-size:0.65rem; letter-spacing:0.15em; padding:0.2rem 0.7rem; }
+
+        .side-nav { background:var(--surface); border:1px solid var(--border); overflow:hidden; }
+        .side-nav-item { display:block; padding:0.9rem 1.4rem; color:var(--text-muted); text-decoration:none; font-size:0.85rem; border-left:3px solid transparent; transition:all 0.2s; cursor:pointer; border-bottom:1px solid var(--border); }
+        .side-nav-item:last-child { border-bottom:none; }
+        .side-nav-item:hover { background:rgba(255,255,255,0.02); color:var(--white); border-left-color:rgba(255,51,0,0.4); }
+        .side-nav-item.active { background:rgba(255,51,0,0.06); color:var(--accent); border-left-color:var(--accent); font-weight:500; }
+        .side-nav-item.danger { color:#FF5555; }
+        .side-nav-item.danger:hover { background:rgba(255,85,85,0.06); border-left-color:#FF5555; }
+
+        /* ===== CONTENT ===== */
+        .content-area { min-width:0; }
+        .tab-panel { display:none; }
+        .tab-panel.active { display:block; animation:fadeUp 0.3s ease; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+        .panel-title { font-family:'Oswald',sans-serif; font-size:1.3rem; color:var(--white); letter-spacing:0.05em; margin-bottom:0.3rem; }
+        .panel-sub { font-size:0.82rem; color:var(--text-muted); margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
+
+        /* ===== FORM COMMON ===== */
+        .form-section { background:var(--surface); border:1px solid var(--border); padding:1.8rem; margin-bottom:1.2rem; }
+        .form-section-title { font-family:'Oswald',sans-serif; font-size:0.75rem; letter-spacing:0.3em; color:var(--text-muted); text-transform:uppercase; margin-bottom:1.2rem; padding-bottom:0.8rem; border-bottom:1px solid var(--border); }
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem 1.2rem; }
+        .form-group { margin-bottom:0; }
+        .form-group.full { grid-column:1/-1; }
+        .form-label { display:block; font-size:0.78rem; color:var(--text-muted); margin-bottom:0.4rem; letter-spacing:0.05em; }
+        .form-input { width:100%; padding:0.82rem 1rem; background:var(--surface-2); border:1px solid var(--border); color:var(--white); font-family:'Noto Sans KR',sans-serif; font-size:0.88rem; outline:none; transition:border-color 0.2s; }
+        .form-input:focus { border-color:var(--accent); }
+        .form-input::placeholder { color:var(--text-muted); }
+        .form-input:read-only { color:var(--text-muted); cursor:not-allowed; }
+        .form-input[type="select"] { appearance:none; }
+        select.form-input { appearance:none; cursor:pointer; }
+        .form-hint { font-size:0.72rem; color:var(--text-muted); margin-top:0.3rem; }
+        .form-hint.ok { color:#44CC88; }
+        .form-hint.err { color:#FF5555; }
+
+        .btn-save { background:var(--accent); color:white; border:none; padding:0.85rem 2rem; font-family:'Oswald',sans-serif; font-size:0.9rem; letter-spacing:0.1em; cursor:pointer; transition:background 0.2s; }
+        .btn-save:hover { background:var(--accent-light); }
+        .btn-outline { background:transparent; color:var(--text-muted); border:1px solid var(--border); padding:0.82rem 1.5rem; font-family:'Oswald',sans-serif; font-size:0.85rem; letter-spacing:0.08em; cursor:pointer; transition:all 0.2s; }
+        .btn-outline:hover { border-color:rgba(255,255,255,0.2); color:var(--white); }
+        .btn-danger { background:transparent; color:#FF5555; border:1px solid rgba(255,85,85,0.3); padding:0.82rem 1.5rem; font-family:'Oswald',sans-serif; font-size:0.85rem; letter-spacing:0.08em; cursor:pointer; transition:all 0.2s; }
+        .btn-danger:hover { background:rgba(255,85,85,0.08); border-color:#FF5555; }
+
+        /* ===== 주문 내역 ===== */
+        .order-card { background:var(--surface); border:1px solid var(--border); padding:1.3rem 1.5rem; margin-bottom:0.8rem; transition:border-color 0.2s; }
+        .order-card:hover { border-color:rgba(255,255,255,0.12); }
+        .order-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.8rem; }
+        .order-num { font-family:'Oswald',sans-serif; font-size:0.75rem; color:var(--text-muted); letter-spacing:0.1em; }
+        .order-date { font-size:0.75rem; color:var(--text-muted); }
+        .order-status { font-family:'Oswald',sans-serif; font-size:0.7rem; letter-spacing:0.1em; padding:0.22rem 0.65rem; }
+        .order-status.paid { background:rgba(68,204,136,0.12); color:#44CC88; border:1px solid rgba(68,204,136,0.2); }
+        .order-status.shipping { background:rgba(201,162,62,0.12); color:var(--gold); border:1px solid rgba(201,162,62,0.2); }
+        .order-status.done { background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--border); }
+        .order-items { font-size:0.84rem; color:var(--text); margin-bottom:0.6rem; line-height:1.6; }
+        .order-bottom { display:flex; justify-content:space-between; align-items:center; }
+        .order-total { font-family:'Oswald',sans-serif; font-size:1rem; color:var(--gold); }
+        .order-actions { display:flex; gap:0.5rem; }
+        .order-btn { font-size:0.72rem; color:var(--text-muted); text-decoration:none; border:1px solid var(--border); padding:0.25rem 0.7rem; cursor:pointer; background:transparent; transition:all 0.2s; font-family:'Noto Sans KR',sans-serif; }
+        .order-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--white); }
+
+        .empty-state { text-align:center; padding:4rem 2rem; color:var(--text-muted); }
+        .empty-state .icon { font-size:3rem; opacity:0.3; margin-bottom:1rem; }
+        .empty-state p { font-size:0.9rem; margin-bottom:1.5rem; }
+
+        /* ===== 배송지 ===== */
+        .addr-card { background:var(--surface); border:1px solid var(--border); padding:1.3rem 1.5rem; margin-bottom:0.8rem; position:relative; }
+        .addr-card.default { border-color:rgba(255,51,0,0.35); }
+        .addr-top { display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem; }
+        .addr-name { font-weight:500; color:var(--white); font-size:0.9rem; }
+        .addr-default-badge { font-family:'Oswald',sans-serif; font-size:0.62rem; letter-spacing:0.1em; color:var(--accent); border:1px solid rgba(255,51,0,0.4); padding:0.12rem 0.5rem; }
+        .addr-info { font-size:0.83rem; color:var(--text-muted); line-height:1.7; }
+        .addr-actions { position:absolute; top:1.2rem; right:1.3rem; display:flex; gap:0.5rem; }
+        .addr-btn { font-size:0.72rem; color:var(--text-muted); cursor:pointer; background:none; border:none; text-decoration:underline; font-family:'Noto Sans KR',sans-serif; transition:color 0.2s; }
+        .addr-btn:hover { color:var(--white); }
+        .addr-btn.del:hover { color:#FF5555; }
+
+        .addr-form { background:var(--surface-2); border:1px solid var(--border); padding:1.5rem; margin-bottom:0.8rem; display:none; }
+        .addr-form.open { display:block; animation:fadeUp 0.3s ease; }
+        .addr-form-title { font-family:'Oswald',sans-serif; font-size:0.8rem; letter-spacing:0.2em; color:var(--text-muted); text-transform:uppercase; margin-bottom:1.2rem; }
+        .addr-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem 1rem; margin-bottom:1rem; }
+        .addr-form-grid .full { grid-column:1/-1; }
+        .addr-form-actions { display:flex; gap:0.6rem; justify-content:flex-end; }
+
+        /* ===== 비밀번호 ===== */
+        .pw-strength { height:4px; background:var(--border); margin-top:0.5rem; border-radius:2px; overflow:hidden; }
+        .pw-strength-bar { height:100%; width:0; transition:width 0.3s, background 0.3s; border-radius:2px; }
+
+        /* ===== 탈퇴 ===== */
+        .danger-box { background:rgba(255,85,85,0.04); border:1px solid rgba(255,85,85,0.2); padding:1.8rem; }
+        .danger-title { font-family:'Oswald',sans-serif; color:#FF5555; letter-spacing:0.05em; margin-bottom:0.6rem; }
+        .danger-desc { font-size:0.84rem; color:var(--text-muted); line-height:1.8; margin-bottom:1.5rem; }
+
+        /* ===== POINTS ===== */
+        .points-hero { background:linear-gradient(135deg,rgba(201,162,62,0.14),rgba(201,162,62,0.04));border:1px solid rgba(201,162,62,0.25);padding:1.8rem;margin-bottom:1.2rem;text-align:center; }
+        .points-hero-val { font-family:'Oswald',sans-serif;font-size:3rem;color:var(--gold);font-weight:700;letter-spacing:0.05em;line-height:1; }
+        .points-hero-label { font-size:0.78rem;color:var(--text-muted);margin-top:0.4rem;margin-bottom:1.2rem; }
+        .points-actions { display:flex;gap:0.8rem;justify-content:center; }
+        .points-action-btn { background:var(--accent);color:white;border:none;padding:0.7rem 1.4rem;font-family:'Oswald',sans-serif;font-size:0.82rem;letter-spacing:0.1em;cursor:pointer;text-decoration:none;display:inline-block;transition:background 0.2s; }
+        .points-action-btn:hover { background:var(--accent-light); }
+        .points-action-btn.outline { background:transparent;color:var(--text-muted);border:1px solid var(--border); }
+        .points-action-btn.outline:hover { color:var(--white);border-color:rgba(255,255,255,0.2); }
+        .points-how { background:var(--surface);border:1px solid var(--border);padding:1.3rem;margin-bottom:1.2rem; }
+        .points-how-title { font-family:'Oswald',sans-serif;font-size:0.68rem;letter-spacing:0.3em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.9rem; }
+        .points-how-item { display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);font-size:0.84rem; }
+        .points-how-item:last-child { border-bottom:none; }
+        .points-how-earn { color:#44CC88;font-family:'Oswald',sans-serif;font-size:0.88rem;font-weight:700; }
+        .points-history-card { background:var(--surface);border:1px solid var(--border);padding:1.3rem; }
+        .points-history-item { display:flex;justify-content:space-between;align-items:flex-start;padding:0.75rem 0;border-bottom:1px solid var(--border); }
+        .points-history-item:last-child { border-bottom:none; }
+        .points-history-desc { font-size:0.84rem;color:var(--text);line-height:1.4; }
+        .points-history-date { font-size:0.7rem;color:var(--text-muted);margin-top:0.15rem; }
+        .points-history-amount { font-family:'Oswald',sans-serif;font-size:0.95rem;font-weight:700;white-space:nowrap; }
+        .earn { color:#44CC88; }
+        .spend { color:var(--accent); }
+
+        /* ===== NAV DROPDOWN ===== */
+        .nav-item-drop { position:relative; }
+        .nav-drop-menu { position:absolute;top:calc(100% + 0.9rem);left:50%;transform:translateX(-50%);background:rgba(10,14,24,0.99);border:1px solid var(--border);min-width:150px;display:none;flex-direction:column;z-index:200;padding:0.4rem 0;backdrop-filter:blur(20px); }
+        .nav-item-drop:hover .nav-drop-menu { display:flex; }
+        .nav-drop-menu a { display:block;padding:0.55rem 1rem;font-family:'Oswald',sans-serif;font-size:0.72rem;color:var(--text-muted);white-space:nowrap;text-decoration:none;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.15s,background 0.15s; }
+        .nav-drop-menu a:hover { color:var(--white);background:rgba(255,255,255,0.04); }
+
+        /* ===== TOAST ===== */
+        .toast { position:fixed;bottom:2rem;right:2rem;z-index:999;pointer-events:none; }
+        .toast-msg { background:var(--accent);color:white;padding:0.85rem 1.5rem;font-size:0.85rem;box-shadow:0 6px 30px rgba(255,51,0,0.35);animation:fadeUp 0.3s ease;margin-top:0.5rem; }
+        .toast-msg.green { background:#1a7a4a; }
+
+        @media(max-width:900px) {
+            nav { padding:1rem 1.5rem; }
+            .nav-links { display:none; }
+            .mypage-wrap { grid-template-columns:1fr; }
+            .sidebar { position:static; }
+            .form-grid { grid-template-columns:1fr; }
+            .addr-form-grid { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html" class="logo">LEGA<em>CY</em></a>
+    <ul class="nav-links">
+        <li><a href="index.html">홈</a></li>
+        <li><a href="index.html#players">선수</a></li>
+        <li><a href="index.html#goods">굿즈</a></li>
+        <li><a href="community.html">커뮤니티</a></li>
+        <li><a href="schedule.html">경기일정</a></li>
+        <li class="nav-item-drop">
+            <a href="mypage.html" style="color:var(--accent);">마이페이지 ▾</a>
+            <div class="nav-drop-menu">
+                <a href="mypage.html">내 정보</a>
+                <a href="mypage.html#orders">주문내역</a>
+                <a href="mypage.html#address">배송지관리</a>
+                <a href="mypage.html#favorites">관심선수</a>
+                <a href="mypage.html#points">포인트</a>
+            </div>
+        </li>
+    </ul>
+    <div class="nav-right">
+        <a href="#" onclick="doLogout()">로그아웃</a>
+        <a href="cart.html">🛒 장바구니</a>
+    </div>
+</nav>
+
+<div class="mypage-wrap">
+
+    <!-- ===== 사이드바 ===== -->
+    <aside class="sidebar">
+        <div class="user-card">
+            <div class="user-avatar-wrap">
+                <div class="user-avatar" id="avatar-display"></div>
+                <label class="avatar-edit-btn" for="avatar-input" title="사진 변경">✎</label>
+                <input type="file" id="avatar-input" class="avatar-input" accept="image/*" onchange="changeAvatar(this)">
+            </div>
+            <div class="user-nickname" id="sidebar-nickname">—</div>
+            <div class="user-email-disp" id="sidebar-email">—</div>
+            <div class="user-grade">LEGACY FAN</div>
+        </div>
+
+        <nav class="side-nav">
+            <a class="side-nav-item active" onclick="showTab('profile')">👤 내 정보</a>
+            <a class="side-nav-item" onclick="showTab('orders')">📦 주문 내역</a>
+            <a class="side-nav-item" onclick="showTab('address')">📍 배송지 관리</a>
+            <a class="side-nav-item" onclick="showTab('password')">🔒 비밀번호 변경</a>
+            <a class="side-nav-item" onclick="showTab('favorites')">⭐ 관심 선수</a>
+            <a class="side-nav-item" onclick="showTab('points')" style="color:var(--gold);">💎 포인트</a>
+            <a class="side-nav-item danger" onclick="showTab('leave')">회원 탈퇴</a>
+        </nav>
+    </aside>
+
+    <!-- ===== 콘텐츠 ===== -->
+    <div class="content-area">
+
+        <!-- 내 정보 -->
+        <div class="tab-panel active" id="tab-profile">
+            <div class="panel-title">내 정보</div>
+            <p class="panel-sub">프로필 정보를 확인하고 수정할 수 있습니다.</p>
+
+            <div class="form-section">
+                <div class="form-section-title">기본 정보</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">이름</label>
+                        <input type="text" class="form-input" id="input-name" placeholder="홍길동">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">닉네임</label>
+                        <input type="text" class="form-input" id="input-nickname" placeholder="팬네임">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">이메일 (변경 불가)</label>
+                        <input type="email" class="form-input" id="input-email" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">휴대폰 번호</label>
+                        <input type="text" class="form-input" id="input-phone" placeholder="010-0000-0000" oninput="formatPhone(this)">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">한 줄 소개</label>
+                        <input type="text" class="form-input" id="input-bio" placeholder="파이터의 서사를 사랑하는 팬입니다.">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title">생년월일</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">생년월일</label>
+                        <input type="date" class="form-input" id="input-birth">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">성별</label>
+                        <select class="form-input" id="input-gender">
+                            <option value="">선택 안함</option>
+                            <option value="m">남성</option>
+                            <option value="f">여성</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:0.8rem;margin-top:0.5rem;">
+                <button class="btn-save" onclick="saveProfile()">변경사항 저장</button>
+            </div>
+        </div>
+
+        <!-- 주문 내역 -->
+        <div class="tab-panel" id="tab-orders">
+            <div class="panel-title">주문 내역</div>
+            <p class="panel-sub">최근 주문한 굿즈를 확인할 수 있습니다.</p>
+            <div id="orders-list"></div>
+        </div>
+
+        <!-- 배송지 관리 -->
+        <div class="tab-panel" id="tab-address">
+            <div class="panel-title">배송지 관리</div>
+            <p class="panel-sub">배송지를 최대 5개까지 등록할 수 있습니다.</p>
+
+            <div id="addr-list"></div>
+
+            <!-- 배송지 추가 폼 -->
+            <div class="addr-form" id="addr-add-form">
+                <div class="addr-form-title">배송지 추가</div>
+                <div class="addr-form-grid">
+                    <div class="form-group">
+                        <label class="form-label">수령인</label>
+                        <input type="text" class="form-input" id="new-addr-name" placeholder="홍길동">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">휴대폰</label>
+                        <input type="text" class="form-input" id="new-addr-phone" placeholder="010-0000-0000">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">우편번호</label>
+                        <input type="text" class="form-input" id="new-addr-zip" placeholder="00000" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">배송지명</label>
+                        <input type="text" class="form-input" id="new-addr-label" placeholder="집 / 회사 / 기타">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">주소</label>
+                        <input type="text" class="form-input" id="new-addr-addr" placeholder="서울시 강남구 테헤란로 123">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">상세 주소</label>
+                        <input type="text" class="form-input" id="new-addr-detail" placeholder="101동 202호">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                            <input type="checkbox" id="new-addr-default" style="accent-color:var(--accent);width:15px;height:15px;">
+                            기본 배송지로 설정
+                        </label>
+                    </div>
+                </div>
+                <div class="addr-form-actions">
+                    <button class="btn-outline" onclick="closeAddrForm()">취소</button>
+                    <button class="btn-save" onclick="saveAddress()">배송지 저장</button>
+                </div>
+            </div>
+
+            <button class="btn-outline" id="btn-add-addr" onclick="openAddrForm()" style="width:100%;margin-top:0.5rem;">+ 새 배송지 추가</button>
+        </div>
+
+        <!-- 비밀번호 변경 -->
+        <div class="tab-panel" id="tab-password">
+            <div class="panel-title">비밀번호 변경</div>
+            <p class="panel-sub">주기적으로 비밀번호를 변경하면 보안이 강화됩니다.</p>
+
+            <div class="form-section">
+                <div class="form-section-title">비밀번호 변경</div>
+                <div style="max-width:420px;display:flex;flex-direction:column;gap:1rem;">
+                    <div class="form-group">
+                        <label class="form-label">현재 비밀번호</label>
+                        <input type="password" class="form-input" id="cur-pw" placeholder="현재 비밀번호 입력">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">새 비밀번호</label>
+                        <input type="password" class="form-input" id="new-pw" placeholder="8자 이상, 영문+숫자 조합" oninput="checkNewPw()">
+                        <div class="pw-strength"><div class="pw-strength-bar" id="pw-bar"></div></div>
+                        <p class="form-hint" id="new-pw-hint">영문+숫자 포함 8자 이상</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">새 비밀번호 확인</label>
+                        <input type="password" class="form-input" id="new-pw2" placeholder="새 비밀번호 재입력" oninput="checkNewPw2()">
+                        <p class="form-hint" id="new-pw2-hint"></p>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-save" onclick="changePw()">비밀번호 변경</button>
+        </div>
+
+        <!-- 관심 선수 -->
+        <div class="tab-panel" id="tab-favorites">
+            <div class="panel-title">관심 선수</div>
+            <p class="panel-sub">응원하는 파이터의 신규 굿즈 알림을 받을 수 있습니다.</p>
+
+            <div class="form-section">
+                <div class="form-section-title">파이터 선택</div>
+                <div style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1.5rem;" id="fighter-chips"></div>
+                <p class="form-hint">선택한 파이터의 신규 굿즈 출시 시 알림을 받습니다.</p>
+            </div>
+            <button class="btn-save" onclick="saveFavorites()">저장</button>
+        </div>
+
+        <!-- 포인트 -->
+        <div class="tab-panel" id="tab-points">
+            <div class="panel-title">포인트</div>
+            <p class="panel-sub">승부예측 참여로 포인트를 적립하고 굿즈 응모에 사용하세요.</p>
+
+            <div class="points-hero">
+                <div class="points-hero-val" id="points-display">0 P</div>
+                <div class="points-hero-label">현재 보유 포인트</div>
+                <div class="points-actions">
+                    <a href="community.html" class="points-action-btn">승부예측 참여하기</a>
+                    <a href="community.html#raffle" class="points-action-btn outline" onclick="localStorage.setItem('openRaffle','1')">굿즈 응모하기</a>
+                </div>
+            </div>
+
+            <div class="points-how">
+                <div class="points-how-title">포인트 적립 방법</div>
+                <div class="points-how-item">
+                    <span>🥊 승부예측 참여 (경기당)</span>
+                    <span class="points-how-earn">+50 P</span>
+                </div>
+                <div class="points-how-item">
+                    <span>✅ 예측 적중 보너스 (결과 발표 후)</span>
+                    <span class="points-how-earn">+200 P</span>
+                </div>
+                <div class="points-how-item">
+                    <span>📝 커뮤니티 게시글 작성</span>
+                    <span class="points-how-earn">+10 P</span>
+                </div>
+                <div class="points-how-item">
+                    <span>🛒 굿즈 구매 (1,000원당)</span>
+                    <span class="points-how-earn">+5 P</span>
+                </div>
+            </div>
+
+            <div class="points-history-card">
+                <div class="form-section-title" style="margin-bottom:1rem;">포인트 내역</div>
+                <div id="points-history-list">
+                    <div class="empty-state"><div class="icon">💎</div><p>포인트 내역이 없습니다.<br>승부예측에 참여하여 포인트를 적립하세요!</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 회원 탈퇴 -->
+        <div class="tab-panel" id="tab-leave">
+            <div class="panel-title">회원 탈퇴</div>
+            <p class="panel-sub">탈퇴 전 아래 내용을 반드시 확인해주세요.</p>
+
+            <div class="danger-box">
+                <div class="danger-title">탈퇴 전 주의사항</div>
+                <div class="danger-desc">
+                    • 탈퇴 시 모든 주문 내역, 배송지 정보, 포인트가 삭제됩니다.<br>
+                    • 삭제된 계정 정보는 복구할 수 없습니다.<br>
+                    • 이메일 아이디는 즉시 재사용이 불가능합니다.<br>
+                    • 미완료 주문이 있을 경우 처리 후 탈퇴해주세요.
+                </div>
+                <div class="form-group" style="margin-bottom:1.2rem;">
+                    <label class="form-label">탈퇴 사유 (선택)</label>
+                    <select class="form-input" id="leave-reason">
+                        <option value="">선택해주세요</option>
+                        <option>굿즈 구매가 마음에 들지 않아서</option>
+                        <option>이용 빈도가 낮아서</option>
+                        <option>개인정보 보호를 위해</option>
+                        <option>서비스 이용이 불편해서</option>
+                        <option>기타</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:1.5rem;">
+                    <label class="form-label">이메일 확인 (탈퇴를 위해 이메일을 입력하세요)</label>
+                    <input type="email" class="form-input" id="leave-email" placeholder="가입한 이메일 주소">
+                </div>
+                <button class="btn-danger" onclick="handleLeave()">회원 탈퇴</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="toast" id="toast-container"></div>
+
+<script>
+/* ================================================================
+   데이터 로드
+   ================================================================ */
+let user = JSON.parse(localStorage.getItem('legacy_user') || 'null');
+
+if (!user) {
+    showToast('로그인이 필요합니다.', false);
+    setTimeout(() => window.location.href = 'login.html', 1200);
+}
+
+const FIGHTERS = ['정찬성','최두호','김동현','김상욱','고석현','유주상','이스라엘 아데산야','더스틴 포이리에','코너 맥그리거','알렉스 페레이라'];
+
+function loadUserData() {
+    if (!user) return;
+    document.getElementById('sidebar-nickname').textContent = user.nickname || '닉네임 없음';
+    document.getElementById('sidebar-email').textContent = user.email || '';
+
+    const initial = (user.nickname || user.name || '?')[0];
+    const avatarEl = document.getElementById('avatar-display');
+    if (user.avatarDataUrl) {
+        avatarEl.innerHTML = `<img src="${user.avatarDataUrl}" alt="프로필">`;
+    } else {
+        avatarEl.textContent = initial;
+    }
+
+    document.getElementById('input-name').value = user.name || '';
+    document.getElementById('input-nickname').value = user.nickname || '';
+    document.getElementById('input-email').value = user.email || '';
+    document.getElementById('input-phone').value = user.phone || '';
+    document.getElementById('input-bio').value = user.bio || '';
+    document.getElementById('input-birth').value = user.birth || '';
+    if (user.gender) document.getElementById('input-gender').value = user.gender;
+
+    renderOrders();
+    renderAddresses();
+    renderFighters();
+    renderPoints();
+}
+
+/* ================================================================
+   탭
+   ================================================================ */
+function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.side-nav-item').forEach(i => i.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+    if (id === 'orders') renderOrders();
+    if (id === 'address') renderAddresses();
+    if (id === 'favorites') renderFighters();
+    if (id === 'points') renderPoints();
+    location.hash = id !== 'profile' ? '#' + id : '#';
+}
+
+/* ================================================================
+   내 정보 저장
+   ================================================================ */
+function saveProfile() {
+    user.name = document.getElementById('input-name').value.trim();
+    user.nickname = document.getElementById('input-nickname').value.trim();
+    user.phone = document.getElementById('input-phone').value.trim();
+    user.bio = document.getElementById('input-bio').value.trim();
+    user.birth = document.getElementById('input-birth').value;
+    user.gender = document.getElementById('input-gender').value;
+    localStorage.setItem('legacy_user', JSON.stringify(user));
+    document.getElementById('sidebar-nickname').textContent = user.nickname || '닉네임 없음';
+    showToast('내 정보가 저장되었습니다.', true);
+}
+
+function formatPhone(el) {
+    let v = el.value.replace(/\D/g,'');
+    if (v.length <= 3) el.value = v;
+    else if (v.length <= 7) el.value = v.slice(0,3)+'-'+v.slice(3);
+    else el.value = v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);
+}
+
+/* ================================================================
+   프로필 이미지
+   ================================================================ */
+function changeAvatar(input) {
+    if (!input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        user.avatarDataUrl = e.target.result;
+        localStorage.setItem('legacy_user', JSON.stringify(user));
+        document.getElementById('avatar-display').innerHTML = `<img src="${e.target.result}" alt="프로필">`;
+        showToast('프로필 사진이 변경되었습니다.', true);
+    };
+    reader.readAsDataURL(input.files[0]);
+}
+
+/* ================================================================
+   주문 내역
+   ================================================================ */
+function renderOrders() {
+    const orders = user.orders || [];
+    const container = document.getElementById('orders-list');
+    if (orders.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="icon">📦</div><p>주문 내역이 없습니다.</p><a href="index.html#goods" style="display:inline-block;background:var(--accent);color:white;text-decoration:none;padding:0.8rem 1.8rem;font-family:'Oswald',sans-serif;font-size:0.9rem;">굿즈 보러가기</a></div>`;
+        return;
+    }
+    const statusMap = { '결제완료':'paid', '배송중':'shipping', '배송완료':'done' };
+    container.innerHTML = orders.map(o => `
+        <div class="order-card">
+            <div class="order-top">
+                <div>
+                    <div class="order-num">${o.id}</div>
+                    <div class="order-date">${o.date}</div>
+                </div>
+                <span class="order-status ${statusMap[o.status]||'paid'}">${o.status}</span>
+            </div>
+            <div class="order-items">${Array.isArray(o.items) ? o.items.join('<br>') : o.items}</div>
+            <div class="order-bottom">
+                <span class="order-total">${typeof o.total === 'string' ? o.total : o.total.toLocaleString('ko-KR')+'원'}</span>
+                <div class="order-actions">
+                    <button class="order-btn">배송조회</button>
+                    <button class="order-btn">교환/환불</button>
+                </div>
+            </div>
+        </div>`).join('');
+}
+
+/* ================================================================
+   배송지 관리
+   ================================================================ */
+function renderAddresses() {
+    const addrs = user.addresses || [];
+    const list = document.getElementById('addr-list');
+    if (addrs.length === 0) {
+        list.innerHTML = `<div class="empty-state"><div class="icon">📍</div><p>등록된 배송지가 없습니다.</p></div>`;
+    } else {
+        list.innerHTML = addrs.map((a, i) => `
+            <div class="addr-card ${a.isDefault ? 'default' : ''}">
+                <div class="addr-top">
+                    <span class="addr-name">${a.label || '배송지'} · ${a.name}</span>
+                    ${a.isDefault ? '<span class="addr-default-badge">기본배송지</span>' : ''}
+                </div>
+                <div class="addr-info">
+                    ${a.zip ? '['+a.zip+'] ' : ''}${a.addr} ${a.detail || ''}<br>
+                    ${a.phone}
+                </div>
+                <div class="addr-actions">
+                    ${!a.isDefault ? `<button class="addr-btn" onclick="setDefault(${i})">기본 설정</button>` : ''}
+                    <button class="addr-btn del" onclick="deleteAddr(${i})">삭제</button>
+                </div>
+            </div>`).join('');
+    }
+}
+
+function openAddrForm() {
+    document.getElementById('addr-add-form').classList.add('open');
+    document.getElementById('btn-add-addr').style.display = 'none';
+}
+function closeAddrForm() {
+    document.getElementById('addr-add-form').classList.remove('open');
+    document.getElementById('btn-add-addr').style.display = 'block';
+    ['name','phone','zip','addr','detail','label'].forEach(k => document.getElementById('new-addr-'+k).value = '');
+    document.getElementById('new-addr-default').checked = false;
+}
+
+function saveAddress() {
+    const name = document.getElementById('new-addr-name').value.trim();
+    const phone = document.getElementById('new-addr-phone').value.trim();
+    const addr = document.getElementById('new-addr-addr').value.trim();
+    if (!name || !phone || !addr) { showToast('수령인, 휴대폰, 주소는 필수입니다.', false); return; }
+    const isDefault = document.getElementById('new-addr-default').checked;
+    if (!user.addresses) user.addresses = [];
+    if (isDefault) user.addresses.forEach(a => a.isDefault = false);
+    user.addresses.push({
+        name, phone,
+        zip: document.getElementById('new-addr-zip').value.trim(),
+        addr, detail: document.getElementById('new-addr-detail').value.trim(),
+        label: document.getElementById('new-addr-label').value.trim() || '배송지',
+        isDefault: isDefault || user.addresses.length === 0
+    });
+    localStorage.setItem('legacy_user', JSON.stringify(user));
+    closeAddrForm();
+    renderAddresses();
+    showToast('배송지가 저장되었습니다.', true);
+}
+
+function setDefault(idx) {
+    user.addresses.forEach((a,i) => a.isDefault = i === idx);
+    localStorage.setItem('legacy_user', JSON.stringify(user));
+    renderAddresses();
+    showToast('기본 배송지가 변경되었습니다.', true);
+}
+
+function deleteAddr(idx) {
+    if (!confirm('이 배송지를 삭제할까요?')) return;
+    user.addresses.splice(idx, 1);
+    if (user.addresses.length > 0 && !user.addresses.some(a => a.isDefault)) user.addresses[0].isDefault = true;
+    localStorage.setItem('legacy_user', JSON.stringify(user));
+    renderAddresses();
+    showToast('배송지가 삭제되었습니다.', false);
+}
+
+/* ================================================================
+   비밀번호 변경
+   ================================================================ */
+function checkNewPw() {
+    const v = document.getElementById('new-pw').value;
+    const bar = document.getElementById('pw-bar');
+    const hint = document.getElementById('new-pw-hint');
+    let strength = 0;
+    if (v.length >= 8) strength++;
+    if (/[a-zA-Z]/.test(v)) strength++;
+    if (/[0-9]/.test(v)) strength++;
+    if (/[^a-zA-Z0-9]/.test(v)) strength++;
+    const colors = ['','#FF5555','#FFAA33','#C9A23E','#44CC88'];
+    const widths = ['0%','25%','50%','75%','100%'];
+    const labels = ['','너무 짧습니다','보통','양호','강력한 비밀번호'];
+    bar.style.width = widths[strength]; bar.style.background = colors[strength];
+    hint.className = 'form-hint ' + (strength >= 3 ? 'ok' : strength > 0 ? 'err' : '');
+    hint.textContent = v.length === 0 ? '영문+숫자 포함 8자 이상' : labels[strength];
+}
+function checkNewPw2() {
+    const v1 = document.getElementById('new-pw').value;
+    const v2 = document.getElementById('new-pw2').value;
+    const hint = document.getElementById('new-pw2-hint');
+    if (!v2) { hint.textContent = ''; return; }
+    hint.className = 'form-hint ' + (v1 === v2 ? 'ok' : 'err');
+    hint.textContent = v1 === v2 ? '비밀번호가 일치합니다' : '비밀번호가 일치하지 않습니다';
+}
+
+function changePw() {
+    const newPw = document.getElementById('new-pw').value;
+    const newPw2 = document.getElementById('new-pw2').value;
+    if (newPw.length < 8 || !/[a-zA-Z]/.test(newPw) || !/[0-9]/.test(newPw)) { showToast('비밀번호 조건을 확인해주세요.', false); return; }
+    if (newPw !== newPw2) { showToast('새 비밀번호가 일치하지 않습니다.', false); return; }
+    user.pw = newPw;
+    localStorage.setItem('legacy_user', JSON.stringify(user));
+    ['cur-pw','new-pw','new-pw2'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('pw-bar').style.width = '0';
+    document.getElementById('new-pw-hint').textContent = '영문+숫자 포함 8자 이상';
+    document.getElementById('new-pw-hint').className = 'form-hint';
+    document.getElementById('new-pw2-hint').textContent = '';
+    showToast('비밀번호가 변경되었습니다.', true);
+}
+
+/* ================================================================
+   관심 선수
+   ================================================================ */
+function renderFighters() {
+    const fav = user.favorites || [];
+    document.getElementById('fighter-chips').innerHTML = FIGHTERS.map(f => `
+        <button onclick="this.classList.toggle('fav-on')" class="fav-chip ${fav.includes(f) ? 'fav-on' : ''}"
+            style="padding:0.4rem 1rem;border:1px solid ${fav.includes(f)?'var(--accent)':'var(--border)'};background:${fav.includes(f)?'rgba(255,51,0,0.08)':'transparent'};color:${fav.includes(f)?'var(--accent)':'var(--text-muted)'};font-family:'Noto Sans KR',sans-serif;font-size:0.82rem;cursor:pointer;transition:all 0.2s;"
+            onmouseenter="if(!this.classList.contains('fav-on')){this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='var(--white)';}"
+            onmouseleave="if(!this.classList.contains('fav-on')){this.style.borderColor='var(--border)';this.style.color='var(--text-muted)';}">
+            ${f}
+        </button>`).join('');
+}
+
+function saveFavorites() {
+    const selected = [...document.querySelectorAll('.fav-chip.fav-on')].map(c => c.textContent.trim());
+    user.favorites = selected;
+    localStorage.setItem('legacy_user', JSON.stringify(user));
+    showToast('관심 선수가 저장되었습니다.', true);
+}
+
+/* ================================================================
+   회원 탈퇴
+   ================================================================ */
+function handleLeave() {
+    const email = document.getElementById('leave-email').value.trim();
+    if (email !== user.email) { showToast('이메일이 일치하지 않습니다.', false); return; }
+    if (!confirm('정말로 탈퇴하시겠습니까? 모든 정보가 삭제됩니다.')) return;
+    localStorage.removeItem('legacy_user');
+    localStorage.removeItem('legacy_loggedIn');
+    showToast('탈퇴되었습니다. 이용해주셔서 감사합니다.', false);
+    setTimeout(() => window.location.href = 'index.html', 1500);
+}
+
+/* ================================================================
+   포인트
+   ================================================================ */
+function renderPoints() {
+    if (!user) return;
+    const pts = user.points || 0;
+    document.getElementById('points-display').textContent = pts.toLocaleString('ko-KR') + ' P';
+    const hist = user.pointsHistory || [];
+    const listEl = document.getElementById('points-history-list');
+    if (hist.length === 0) {
+        listEl.innerHTML = `<div class="empty-state"><div class="icon">💎</div><p>포인트 내역이 없습니다.<br>승부예측에 참여하여 포인트를 적립하세요!</p></div>`;
+    } else {
+        listEl.innerHTML = hist.map(h => `
+            <div class="points-history-item">
+                <div>
+                    <div class="points-history-desc">${h.desc}</div>
+                    <div class="points-history-date">${h.date}</div>
+                </div>
+                <div class="points-history-amount ${h.amount > 0 ? 'earn' : 'spend'}">${h.amount > 0 ? '+' : ''}${h.amount.toLocaleString('ko-KR')} P</div>
+            </div>`).join('');
+    }
+}
+
+/* ================================================================
+   공통
+   ================================================================ */
+function doLogout() {
+    localStorage.removeItem('legacy_loggedIn');
+    window.location.href = 'index.html';
+}
+
+function showToast(msg, success = true) {
+    const container = document.getElementById('toast-container');
+    const el = document.createElement('div');
+    el.className = 'toast-msg' + (success ? ' green' : '');
+    el.textContent = msg;
+    container.appendChild(el);
+    setTimeout(() => el.remove(), 2400);
+}
+
+// 해시로 탭 직접 이동
+const HASH_MAP = {orders:'orders',address:'address',favorites:'favorites',points:'points',password:'password'};
+const hashId = HASH_MAP[location.hash.replace('#','')];
+if (hashId) {
+    const navItem = document.querySelector(`.side-nav-item[onclick="showTab('${hashId}')"]`);
+    if (navItem) {
+        document.querySelectorAll('.side-nav-item').forEach(i=>i.classList.remove('active'));
+        navItem.classList.add('active');
+        document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+        document.getElementById('tab-'+hashId).classList.add('active');
+    }
+}
+
+loadUserData();
+</script>
+</body>
+</html>

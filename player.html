@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>선수 — LEGACY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;500;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070A12;
+    --surface: #0D1220;
+    --surface-2: #131A2E;
+    --border: rgba(255,255,255,0.07);
+    --text: #EDE8DC;
+    --text-muted: #68738A;
+    --accent: #FF3300;
+    --gold: #C9A23E;
+    --white: #FAFAF8;
+    --player-color: #FF3300;
+    --nav-h: 64px;
+    --tab-h: 52px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--player-color); border-radius: 3px; }
+
+  a { color: inherit; text-decoration: none; }
+
+  img { display: block; max-width: 100%; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    background: rgba(7,10,18,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 300;
+    gap: 1.5rem;
+  }
+
+  .logo {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.45rem;
+    letter-spacing: 0.18em;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+  .logo em { color: var(--accent); font-style: normal; }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 0.25rem;
+  }
+  .nav-links a {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0.4rem 0.75rem;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-item-drop { position: relative; }
+  .nav-drop-menu {
+    position: absolute;
+    top: calc(100% + 0.9rem);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10,14,24,0.99);
+    border: 1px solid var(--border);
+    min-width: 150px;
+    display: none;
+    flex-direction: column;
+    z-index: 200;
+    padding: 0.4rem 0;
+    backdrop-filter: blur(20px);
+  }
+  .nav-item-drop:hover .nav-drop-menu { display: flex; }
+  .nav-drop-menu a {
+    display: block;
+    padding: 0.55rem 1rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    text-decoration: none;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+  .nav-drop-menu a:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+  .nav-right a {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: color 0.15s;
+  }
+  .nav-right a:hover { color: var(--white); }
+  .nav-cart {
+    background: var(--accent);
+    color: var(--white) !important;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.72rem !important;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+
+  #hero-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    transform: scale(1.04);
+    transition: transform 8s ease;
+  }
+  #hero-bg.loaded { transform: scale(1); }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      160deg,
+      rgba(7,10,18,0.35) 0%,
+      rgba(7,10,18,0.1) 30%,
+      rgba(7,10,18,0.7) 65%,
+      rgba(7,10,18,0.97) 100%
+    );
+  }
+  .hero-color-wash {
+    position: absolute;
+    inset: 0;
+    opacity: 0.18;
+    background: var(--player-color);
+    mix-blend-mode: multiply;
+  }
+
+  .hero-back {
+    position: absolute;
+    top: calc(var(--nav-h) + 1.25rem);
+    left: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    transition: color 0.2s;
+    z-index: 10;
+  }
+  .hero-back:hover { color: var(--white); }
+  .hero-back::before {
+    content: '←';
+    font-size: 1rem;
+  }
+
+  .hero-org-badge {
+    position: absolute;
+    top: calc(var(--nav-h) + 1.25rem);
+    right: 2rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--player-color);
+    color: var(--player-color);
+    z-index: 10;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    padding: 0 2.5rem 4rem;
+    max-width: 900px;
+    animation: heroFadeUp 0.9s ease both;
+  }
+
+  @keyframes heroFadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-badge {
+    display: inline-block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--player-color);
+    margin-bottom: 0.75rem;
+    padding: 0.3rem 0.8rem;
+    border-left: 3px solid var(--player-color);
+    background: rgba(0,0,0,0.35);
+  }
+
+  .hero-name {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.95;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-nickname {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    font-style: italic;
+    color: var(--player-color);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.25rem;
+    opacity: 0.9;
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-record {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--white);
+    background: rgba(255,255,255,0.1);
+    padding: 0.3rem 0.85rem;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .hero-weight {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .hero-quote {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+    font-style: italic;
+    color: var(--gold);
+    font-weight: 300;
+    line-height: 1.65;
+    max-width: 620px;
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--gold);
+    opacity: 0.9;
+  }
+
+  .hero-socials {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .social-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.45rem 1rem;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .social-btn:hover {
+    border-color: rgba(255,255,255,0.5);
+    color: var(--white);
+    background: rgba(255,255,255,0.05);
+  }
+  .social-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .cta-primary {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.85rem 2rem;
+    background: var(--player-color);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .cta-primary:hover { opacity: 0.88; transform: translateY(-2px); }
+
+  .cta-outline {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.85rem 2rem;
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.35);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .cta-outline:hover {
+    border-color: var(--white);
+    background: rgba(255,255,255,0.06);
+    transform: translateY(-2px);
+  }
+
+  /* ── STICKY TABS ── */
+  #tab-bar {
+    position: sticky;
+    top: var(--nav-h);
+    z-index: 200;
+    background: rgba(7,10,18,0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  #tab-bar::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    flex-shrink: 0;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 1.5rem;
+    height: var(--tab-h);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--white); }
+  .tab-btn.active {
+    color: var(--white);
+    border-bottom-color: var(--player-color);
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  section:last-child { border-bottom: none; }
+
+  .section-inner {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+  }
+
+  .section-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--player-color);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 80px;
+  }
+
+  .section-title {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: var(--white);
+    line-height: 1.05;
+    margin-bottom: 2rem;
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── STORY ── */
+  .story-excerpt {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--white);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .story-body p {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+
+  .story-pullquote {
+    margin: 3rem 0;
+    padding: 2rem 2.5rem;
+    background: var(--surface);
+    border-left: 4px solid var(--player-color);
+    position: relative;
+  }
+  .story-pullquote::before {
+    content: '"';
+    position: absolute;
+    top: -0.3rem;
+    left: 1.5rem;
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 5rem;
+    color: var(--player-color);
+    opacity: 0.25;
+    line-height: 1;
+  }
+  .story-pullquote p {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--gold);
+    line-height: 1.65;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Timeline */
+  .timeline {
+    margin-top: 3.5rem;
+  }
+  .timeline-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1.75rem;
+  }
+  .timeline-track {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  .timeline-track::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6rem;
+    bottom: 0.6rem;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--player-color), transparent);
+  }
+  .timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 0.55rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--player-color);
+    box-shadow: 0 0 8px var(--player-color);
+  }
+  .timeline-year {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--player-color);
+    min-width: 46px;
+    padding-top: 0.1rem;
+    flex-shrink: 0;
+  }
+  .timeline-event {
+    font-size: 0.92rem;
+    color: var(--text);
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  /* ── HIGHLIGHTS ── */
+  .highlight-video-wrap {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .video-ratio {
+    position: relative;
+    padding-bottom: 56.25%;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .video-ratio iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .video-more-btn {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+  .video-more-btn a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 0.6rem 1.4rem;
+    transition: all 0.2s;
+  }
+  .video-more-btn a:hover { color: var(--white); border-color: rgba(255,255,255,0.3); }
+
+  .yt-channel-card {
+    max-width: 560px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3.5rem 2.5rem;
+    text-align: center;
+  }
+  .yt-icon {
+    width: 64px;
+    height: 45px;
+    margin: 0 auto 1.5rem;
+  }
+  .yt-card-name {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 1.5rem;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+  }
+  .yt-card-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 2rem;
+  }
+  .yt-visit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.85rem 2rem;
+    background: #FF0000;
+    color: #fff;
+    transition: opacity 0.2s, transform 0.15s;
+    margin-bottom: 1rem;
+  }
+  .yt-visit-btn:hover { opacity: 0.88; transform: translateY(-2px); }
+  .yt-ig-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 0.55rem 1.2rem;
+    transition: all 0.2s;
+    margin-left: 0.75rem;
+  }
+  .yt-ig-btn:hover { color: var(--white); border-color: rgba(255,255,255,0.3); }
+
+  /* ── GOODS ── */
+  .goods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .goods-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .goods-card:hover {
+    border-color: rgba(255,255,255,0.18);
+    transform: translateY(-4px);
+  }
+
+  .goods-img-wrap {
+    aspect-ratio: 1/1;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .goods-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .goods-card:hover .goods-img-wrap img { transform: scale(1.05); }
+  .goods-emoji-placeholder {
+    font-size: 5rem;
+    opacity: 0.6;
+  }
+
+  .goods-info {
+    padding: 1.25rem;
+  }
+  .goods-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+  .goods-price {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--player-color);
+    margin-bottom: 1rem;
+  }
+  .cart-btn {
+    width: 100%;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.65rem;
+    background: var(--player-color);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .cart-btn:hover { opacity: 0.85; }
+
+  /* ── SCHEDULE ── */
+  .fight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.75rem 2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    transition: border-color 0.2s;
+  }
+  .fight-card:hover { border-color: rgba(255,255,255,0.18); }
+
+  .fight-info {}
+  .fight-event {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--white);
+    margin-bottom: 0.35rem;
+  }
+  .fight-details {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .fight-status {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--player-color);
+    color: var(--player-color);
+    flex-shrink: 0;
+  }
+  .fight-status.tbd {
+    border-color: var(--text-muted);
+    color: var(--text-muted);
+  }
+
+  .schedule-cta-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  .schedule-predict-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.8rem 1.75rem;
+    background: var(--player-color);
+    color: var(--white);
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .schedule-predict-btn:hover { opacity: 0.88; transform: translateY(-2px); }
+  .schedule-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.8rem 1.75rem;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .schedule-all-btn:hover { color: var(--white); border-color: rgba(255,255,255,0.3); }
+
+  /* ── FAN BOARD ── */
+  .fanboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .fanboard-count {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .fanboard-count span {
+    color: var(--player-color);
+    font-weight: 600;
+  }
+
+  /* Post form */
+  .post-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+  }
+  .post-form-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+  .form-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .form-input {
+    flex: 1;
+    min-width: 180px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.7rem 1rem;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--player-color); }
+  .form-input::placeholder { color: var(--text-muted); }
+
+  .form-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.9rem 1rem;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s;
+    margin-bottom: 0.75rem;
+    display: block;
+    width: 100%;
+  }
+  .form-textarea:focus { border-color: var(--player-color); }
+  .form-textarea::placeholder { color: var(--text-muted); }
+
+  .form-submit {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.7rem 1.75rem;
+    background: var(--player-color);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .form-submit:hover { opacity: 0.85; }
+
+  /* Message cards */
+  .messages-list {}
+  .msg-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    gap: 1rem;
+    transition: border-color 0.2s;
+  }
+  .msg-card:hover { border-color: rgba(255,255,255,0.12); }
+
+  .msg-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--player-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 1rem;
+    color: var(--white);
+    flex-shrink: 0;
+    opacity: 0.85;
+  }
+
+  .msg-body { flex: 1; min-width: 0; }
+  .msg-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .msg-author {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--white);
+  }
+  .msg-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .msg-content {
+    font-size: 0.9rem;
+    color: var(--text);
+    line-height: 1.65;
+    word-break: break-word;
+  }
+  .msg-like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.78rem;
+    padding: 0.25rem 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .msg-like-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .msg-like-btn.liked {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(255,51,0,0.08);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+  .footer-logo {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.2em;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+  }
+  .footer-logo em { color: var(--accent); font-style: normal; }
+  footer p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* ── TOAST ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 960px) {
+    nav { padding: 0 1.25rem; }
+    .nav-links { display: none; }
+
+    .hero-content { padding: 0 1.5rem 3rem; }
+    .hero-back { left: 1.5rem; }
+    .hero-org-badge { right: 1.5rem; }
+
+    .section-inner { padding: 0 1.5rem; }
+
+    section { padding: 3.5rem 0; }
+
+    .fight-card { flex-direction: column; align-items: flex-start; }
+
+    .yt-channel-card { padding: 2.5rem 1.5rem; }
+  }
+
+  @media (max-width: 540px) {
+    .hero-ctas { flex-direction: column; }
+    .cta-primary, .cta-outline { text-align: center; }
+    .schedule-cta-row { flex-direction: column; }
+    .form-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">LEGA<em>CY</em></a>
+  <ul class="nav-links">
+    <li><a href="index.html">홈</a></li>
+    <li><a href="index.html#players">선수</a></li>
+    <li><a href="index.html#goods">굿즈</a></li>
+    <li><a href="community.html">커뮤니티</a></li>
+    <li><a href="schedule.html">경기일정</a></li>
+    <li class="nav-item-drop" id="nav-mypage-li" style="display:none">
+      <a href="mypage.html">마이페이지 ▾</a>
+      <div class="nav-drop-menu">
+        <a href="mypage.html">내 정보</a>
+        <a href="mypage.html#orders">주문내역</a>
+        <a href="mypage.html#address">배송지관리</a>
+        <a href="mypage.html#favorites">관심선수</a>
+        <a href="mypage.html#points">포인트</a>
+      </div>
+    </li>
+  </ul>
+  <div class="nav-right" id="nav-auth-wrap">
+    <a href="login.html">로그인</a>
+    <a href="cart.html" class="nav-cart">🛒 장바구니</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div id="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-color-wash"></div>
+  <a href="index.html" class="hero-back">선수 목록</a>
+  <div class="hero-org-badge" id="hero-org-badge">UFC · 페더급</div>
+  <div class="hero-content">
+    <div class="hero-badge" id="hero-badge">코리안 좀비</div>
+    <h1 class="hero-name" id="hero-name">정찬성</h1>
+    <div class="hero-nickname" id="hero-nickname">"Korean Zombie"</div>
+    <div class="hero-meta">
+      <div class="hero-record" id="hero-record">17승 7패</div>
+      <div class="hero-weight" id="hero-weight">페더급</div>
+    </div>
+    <p class="hero-quote" id="hero-quote">나는 멈추지 않는다. 그게 나의 싸움 방식이다.</p>
+    <div class="hero-socials" id="hero-socials"></div>
+    <div class="hero-ctas">
+      <a href="#goods" class="cta-primary" onclick="smoothScroll('goods')">굿즈 보기</a>
+      <a href="#fanboard" class="cta-outline" onclick="smoothScroll('fanboard')">응원하기</a>
+    </div>
+  </div>
+</section>
+
+<!-- STICKY TAB BAR -->
+<div id="tab-bar">
+  <button class="tab-btn active" data-target="story" onclick="scrollToSection('story')">서사</button>
+  <button class="tab-btn" data-target="highlights" onclick="scrollToSection('highlights')">하이라이트</button>
+  <button class="tab-btn" data-target="goods" onclick="scrollToSection('goods')">굿즈</button>
+  <button class="tab-btn" data-target="schedule" onclick="scrollToSection('schedule')">경기일정</button>
+  <button class="tab-btn" data-target="fanboard" onclick="scrollToSection('fanboard')">응원게시판</button>
+</div>
+
+<!-- STORY -->
+<section id="story">
+  <div class="section-inner reveal">
+    <div class="section-label">STORY</div>
+    <h2 class="section-title" id="story-title">선수 스토리</h2>
+    <p class="story-excerpt" id="story-excerpt"></p>
+    <div class="story-body" id="story-body"></div>
+    <div class="story-pullquote" id="story-pullquote">
+      <p id="story-quote-text"></p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-label">CAREER TIMELINE</div>
+      <div class="timeline-track" id="timeline-track"></div>
+    </div>
+  </div>
+</section>
+
+<!-- HIGHLIGHTS -->
+<section id="highlights">
+  <div class="section-inner reveal">
+    <div class="section-label">HIGHLIGHTS</div>
+    <h2 class="section-title">하이라이트</h2>
+    <div id="highlights-content"></div>
+  </div>
+</section>
+
+<!-- GOODS -->
+<section id="goods">
+  <div class="section-inner reveal">
+    <div class="section-label">OFFICIAL GOODS</div>
+    <h2 class="section-title">공식 굿즈</h2>
+    <div class="goods-grid" id="goods-grid"></div>
+  </div>
+</section>
+
+<!-- SCHEDULE -->
+<section id="schedule">
+  <div class="section-inner reveal">
+    <div class="section-label">UPCOMING FIGHTS</div>
+    <h2 class="section-title">경기 일정</h2>
+    <div id="schedule-content"></div>
+    <div class="schedule-cta-row">
+      <a href="community.html" class="schedule-predict-btn">🥊 승부예측 참여하기</a>
+      <a href="schedule.html" class="schedule-all-btn">전체 경기 일정 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAN BOARD -->
+<section id="fanboard">
+  <div class="section-inner reveal">
+    <div class="section-label">FAN BOARD</div>
+    <h2 class="section-title">응원 게시판</h2>
+    <div class="fanboard-header">
+      <div class="fanboard-count">팬 메시지 <span id="msg-count">0</span>개</div>
+    </div>
+    <div class="post-form">
+      <div class="post-form-title">응원 메시지 남기기</div>
+      <div class="form-row">
+        <input type="text" class="form-input" id="fan-author" placeholder="닉네임" maxlength="20">
+      </div>
+      <textarea class="form-textarea" id="fan-content" placeholder="선수에게 응원의 메시지를 남겨주세요..." maxlength="400"></textarea>
+      <button class="form-submit" onclick="submitFanMessage()">메시지 등록</button>
+    </div>
+    <div class="messages-list" id="messages-list"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">LEGA<em>CY</em></div>
+  <p>대한민국 MMA의 전설을 기록합니다<br>
+  © 2026 LEGACY MMA Platform. All rights reserved.</p>
+</footer>
+
+<script>
+// ============================================================
+// PLAYERS DATA
+// ============================================================
+const PLAYERS = [
+  { id:1, name:"정찬성", nickname:"Korean Zombie", weightClass:"페더급", org:"UFC", record:"17승 7패",
+    photo:"images/jungchansung.webp", color:"#CC1100", badge:"코리안 좀비",
+    quote:"나는 멈추지 않는다. 그게 나의 싸움 방식이다.",
+    excerpt:"군 복무로 2년을 잃었다. 하지만 그는 더 강해진 모습으로 UFC 옥타곤에 돌아왔다.",
+    story:`정찬성은 단순한 파이터가 아닙니다. 그는 하나의 정신입니다. "절대 뒤로 물러서지 않는다"는 그의 철학은 UFC 팬들에게 '코리안 좀비'라는 전설적인 닉네임을 안겨주었습니다.\n\n2012년 더스틴 포이리에와의 경기에서 UFC 역사 최초로 '트위스터' 서브미션을 성공시키며 전 세계를 놀라게 했습니다. 이후 병역 의무를 위해 2년간 UFC를 떠나야 했지만, 전역 후 더욱 완성된 파이터로 돌아왔습니다.\n\n브라이언 오르테가와의 챔피언십 5라운드 혈투, 알렉산더 볼카노프스키와의 타이틀전까지—그의 모든 경기는 '혼신을 다한 싸움'이라는 단어로만 설명됩니다.`,
+    goods:[{name:"트위스터 서브미션 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/정찬성 피규어.png",type:"figure"}],
+    instagram:"https://www.instagram.com/koreanzombiemma/",
+    youtube:"https://www.youtube.com/@koreanzombie",
+    highlightVideoId: null,
+    career:[
+      {year:"2007",event:"MMA 데뷔"},
+      {year:"2010",event:"UFC/WEC 합류 · 트위스터 서브미션 역사 최초 성공"},
+      {year:"2012",event:"포이리에 전 패배 후 군 복무"},
+      {year:"2015",event:"UFC 복귀 · 호혹 디아즈 KO 승"},
+      {year:"2021",event:"볼카노프스키와 타이틀전"},
+      {year:"2023",event:"은퇴 발표 후 복귀 가능성 열어둠"},
+    ]
+  },
+  { id:2, name:"최두호", nickname:"Korean Superboy", weightClass:"페더급", org:"UFC", record:"16승 4패",
+    photo:"images/choidooho.webp", color:"#0055BB", badge:"코리안 슈퍼보이",
+    quote:"두려움 없이 싸울 때, 비로소 진짜 파이터가 된다.",
+    excerpt:"22세에 UFC 데뷔. 쿱 스완슨과의 '올해의 경기'로 세계를 홀린 소년.",
+    story:`2016년 12월, UFC 206. 최두호 대 쿱 스완슨. 이 경기는 단순한 MMA 경기가 아니었습니다. UFC 역사에 길이 남을 명승부였고, 양측 모두 '올해의 경기' 후보에 올랐습니다.\n\n22세의 나이로 UFC 무대에 선 최두호는 처음부터 달랐습니다. 두려움이라고는 없는 눈빛, 한 방에 상대를 끝낼 수 있는 폭발적인 파워.\n\n"지는 것이 두렵지 않다. 싸우지 않는 것이 두렵다." 그의 말처럼, 그는 언제나 최선을 다해 싸웁니다.`,
+    goods:[{name:"vs 쿱 스완슨 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/최두호피규어.png",type:"figure"}],
+    instagram:"https://www.instagram.com/koreansuperboy/",
+    youtube:"https://www.youtube.com/watch?v=BRJSALPkWM4",
+    highlightVideoId:"BRJSALPkWM4",
+    career:[
+      {year:"2014",event:"MMA 데뷔"},
+      {year:"2016",event:"UFC 데뷔 · vs 쿱 스완슨 '올해의 경기'"},
+      {year:"2017",event:"UFC 206 이후 연속 활약"},
+      {year:"2019",event:"부상 및 재활"},
+      {year:"2022",event:"UFC 복귀전"},
+    ]
+  },
+  { id:3, name:"김동현", nickname:"Stun Gun", weightClass:"웰터급", org:"UFC", record:"22승 7패",
+    photo:"images/kimdongyhyun.webp", color:"#007744", badge:"스턴건",
+    quote:"한국 MMA의 역사를 써내려가는 것, 그것이 나의 사명이다.",
+    excerpt:"한국 MMA 역사의 산증인. UFC에서 10년 넘게 활약한 개척자.",
+    story:`김동현이 없었다면, 오늘날 한국 MMA는 없었습니다. 그는 한국 파이터들이 UFC에서도 싸울 수 있다는 것을 몸으로 증명한 최초의 세대였습니다.\n\n'스턴건'이라는 닉네임처럼, 그의 경기는 상대를 순식간에 마비시키는 강렬한 테이크다운과 그라운드 앤 파운드로 유명합니다. UFC에서만 20경기 이상을 치르며 한국 선수 최다 UFC 경기 기록을 보유했습니다.\n\n"포기는 너희가 결정하는 것이 아니다. 심판이 경기를 멈출 때까지 싸워라."`,
+    goods:[{name:"백스핀 엘보우 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/김동현 피규어.png",type:"figure"}],
+    instagram:"https://www.instagram.com/stungunkim/",
+    youtube:"https://www.youtube.com/@stungunTV",
+    highlightVideoId: null,
+    career:[
+      {year:"2003",event:"MMA 데뷔"},
+      {year:"2008",event:"UFC 입성 · 한국인 최초 UFC 메인카드 출전"},
+      {year:"2012",event:"UFC 웰터급 세계 랭킹 진입"},
+      {year:"2017",event:"UFC 한국 선수 최다 출전 기록"},
+      {year:"2020",event:"은퇴 후 코칭 활동"},
+    ]
+  },
+  { id:4, name:"김상욱", nickname:"DEADPOOL", weightClass:"웰터급", org:"AFC", record:"12승 3패",
+    photo:"images/kimsangwook.webp", color:"#CC6600", badge:"데드풀",
+    quote:"죽어도 다시 살아 돌아온다. 그게 데드풀이고, 그게 나다.",
+    excerpt:"대한민국 해군 특수전전단(UDT) 출신. AFC 챔피언.",
+    story:`김상욱을 이해하려면 먼저 그의 두 개의 얼굴을 알아야 합니다. 하나는 대한민국 해군 특수전전단(UDT) 대원—지상 최강의 특수부대원. 다른 하나는 어린 시절 오랜 학교폭력을 견뎌낸 소년입니다.\n\nUDT에서 극한의 훈련을 통해 자신의 한계를 넘은 뒤, MMA에 대한 확신이 생겼습니다. '데드풀'이라는 닉네임처럼—죽어도 다시 살아 돌아와 싸우겠다는 각오입니다.\n\n2022년 AFC 웰터급 챔피언에 올랐고, 2023년 '로드 투 UFC'에서 준결승까지 진출하며 세계 무대에 이름을 알렸습니다.`,
+    goods:[{name:"AFC 챔피언전 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/김상욱 피규어.png",type:"figure"}],
+    instagram:"https://www.instagram.com/seal_103/",
+    youtube:"https://www.youtube.com/watch?v=hFIEhqITcQY",
+    highlightVideoId:"hFIEhqITcQY",
+    career:[
+      {year:"2016",event:"해군 UDT 전역 후 MMA 전향"},
+      {year:"2019",event:"국내 무대 본격 활약 시작"},
+      {year:"2022",event:"AFC 웰터급 챔피언 등극"},
+      {year:"2023",event:"로드 투 UFC 준결승 진출"},
+      {year:"2024",event:"글로벌 MMA 무대 진출 준비"},
+    ]
+  },
+  { id:5, name:"고석현", nickname:"Korean Tyson", weightClass:"웰터급", org:"UFC", record:"13승 2패",
+    photo:"images/goseokyhyun.webp", color:"#770099", badge:"코리안 타이슨",
+    quote:"매일 훈련장에서 죽는다. 그래야 경기장에서 산다.",
+    excerpt:"삼보 세계챔피언 출신. UFC 2연승 중인 웰터급 다크호스.",
+    story:`고석현은 스포츠 엘리트 코스를 밟은 파이터입니다. 어린 시절부터 유도를 시작해 대학에서 유도 특기생으로 입학했고, 그 탄탄한 기반 위에 삼보를 더했습니다. 2017년 세계 컴뱃삼보 선수권대회 82kg급 금메달.\n\n2024년 9월, '데이나 화이트 컨텐더 시리즈'에서 만장일치 판정승으로 UFC 계약을 따냈습니다.\n\nUFC 입성 후 오반 엘리엇, 필 로우를 연파하며 현재 2연승 행진 중. "코리안 타이슨"의 강렬한 타격과 삼보 기반 그라운드가 상대를 압도합니다.`,
+    goods:[{name:"vs 오반 엘리엇 승리 세레모니 피규어",price:"49,000원",emoji:"🗿",image:"images/고석현피규어.png",type:"figure"}],
+    instagram:"https://www.instagram.com/ko.seokhyeon/",
+    youtube:"https://www.youtube.com/watch?v=v1IcTjMNhRc",
+    highlightVideoId:"v1IcTjMNhRc",
+    career:[
+      {year:"2017",event:"세계 컴뱃삼보 선수권 82kg급 금메달"},
+      {year:"2019",event:"AFC 웰터급 챔피언"},
+      {year:"2021",event:"AFC 미들급 챔피언"},
+      {year:"2024",event:"UFC 컨텐더 시리즈 합격 · UFC 계약"},
+      {year:"2025",event:"UFC 2연승 (오반 엘리엇, 필 로우)"},
+    ]
+  },
+  { id:6, name:"유주상", nickname:"ZOMBIE JUNIOR", weightClass:"페더급", org:"UFC", record:"10승 1패",
+    photo:"images/yujusang.webp", color:"#003399", badge:"좀비주니어",
+    quote:"나의 싸움은 팬들에게 보내는 편지다.",
+    excerpt:"맥그리거의 체육관 SBG 아일랜드를 찾아간 청년. 28초 KO로 UFC 데뷔.",
+    story:`유주상의 꿈은 처음부터 선명했습니다. 롤모델은 코너 맥그리거—그래서 실제로 맥그리거의 체육관 SBG 아일랜드로 직접 건너가 훈련했습니다.\n\nZFN을 거쳐 쌓은 9전 무패의 기록 위에, 2025년 UFC 316에서 젝카 사라기를 단 28초 만에 KO로 쓰러뜨리며 UFC에 데뷔했습니다. ZFN에서 UFC로 직행한 최초의 한국인.\n\n빠른 스텝과 복싱 기반의 타격, 예측 불가한 움직임—유주상의 경기는 언제나 관중을 열광시킵니다.`,
+    goods:[{name:"UFC 316 28초 KO 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/유주상 피규어.png",type:"figure"}],
+    instagram:"https://www.instagram.com/myownhero_yoo/",
+    youtube:"https://www.youtube.com/watch?v=lsMO11zdbO0",
+    highlightVideoId:"lsMO11zdbO0",
+    career:[
+      {year:"2019",event:"아마추어 MMA 시작"},
+      {year:"2022",event:"ZFN 입성 · 프로 데뷔"},
+      {year:"2024",event:"ZFN 9전 전승 · 아일랜드 SBG 훈련"},
+      {year:"2025",event:"UFC 316 데뷔전 28초 KO 승"},
+      {year:"2026",event:"UFC 페더급 랭킹 진입 준비"},
+    ]
+  },
+  { id:7, name:"이스라엘 아데산야", nickname:"The Last Stylebender", weightClass:"미들급", org:"UFC", record:"24승 3패",
+    photo:"images/아데산야.webp", color:"#FFD700", badge:"라스트 스타일벤더",
+    quote:"나는 나 자신의 예술을 만들어낸다. 싸움은 곧 춤이다.",
+    excerpt:"나이지리아→뉴질랜드 이민 소년. 학교 괴롭힘이 세계 챔피언을 만들었다.",
+    story:`나이지리아 라고스에서 태어난 아데산야는 열 살에 뉴질랜드로 이민을 갔습니다. 피부색이 다르다는 이유로 끝없는 괴롭힘에 시달렸습니다.\n\n18세가 되던 해, '옹박'을 보고 킥복싱 도장 문을 두드렸습니다. 아마추어 킥복싱 32승 1패, K-1, Glory 무대를 종횡무진하다 UFC로 향했습니다.\n\n2019년 UFC 243에서 로버트 위태커를 2라운드 KO로 제압, UFC 미들급 챔피언이 됐습니다.`,
+    goods:[{name:"와이드 스탠스 핑거 베킹 피규어",price:"49,000원",emoji:"🗿",image:"images/아데산야 피규어.png",type:"figure"}],
+    instagram:"https://www.instagram.com/stylebender/",
+    youtube:"https://www.youtube.com/c/FreeStylebender",
+    highlightVideoId: null,
+    career:[
+      {year:"2012",event:"킥복싱 아마추어 32승 1패"},
+      {year:"2018",event:"UFC 입성"},
+      {year:"2019",event:"UFC 243 — 위태커 꺾고 미들급 챔피언"},
+      {year:"2022",event:"페레이라에게 타이틀 내줌"},
+      {year:"2023",event:"UFC 287 리매치 — 페레이라 KO 복수"},
+    ]
+  },
+  { id:8, name:"더스틴 포이리에", nickname:"The Diamond", weightClass:"라이트급", org:"UFC", record:"29승 9패",
+    photo:"images/포이리에.webp", color:"#1B4FA8", badge:"더 다이아몬드",
+    quote:"챔피언 벨트보다 소중한 건 포기하지 않는 태도다.",
+    excerpt:"루이지애나 빈민가 출신. 맥그리거에게 두 번 복수한 다이아몬드.",
+    story:`더스틴 포이리에는 미국 루이지애나 주 라파예트의 가난한 집안에서 자랐습니다. 고등학교를 중퇴하고 거리를 떠돌던 소년에게 MMA는 탈출구이자 삶의 이유가 됐습니다.\n\n첫 UFC 타이틀 도전에서 실패했을 때, 많은 이들이 그를 포기했습니다. 하지만 포이리에는 달랐습니다. 2019년 인터림 라이트급 챔피언 등극.\n\n2021년 UFC 257과 264, 두 번의 리매치에서 연속으로 맥그리거를 무너뜨렸습니다.`,
+    goods:[{name:"vs 맥그리거 2차전 명장면 피규어",price:"49,000원",emoji:"🗿",image:"images/포이리에 피규어.png",type:"figure"}],
+    instagram:"https://www.instagram.com/dustinpoirier/",
+    youtube:"https://www.youtube.com/channel/UCJRMs0w779vFt41udYeXs9A",
+    highlightVideoId: null,
+    career:[
+      {year:"2009",event:"MMA 데뷔"},
+      {year:"2011",event:"UFC 입성"},
+      {year:"2019",event:"인터림 라이트급 챔피언"},
+      {year:"2021",event:"맥그리거 2·3차전 연속 KO 승"},
+      {year:"2023",event:"찰스 올리베이라와 타이틀 도전"},
+    ]
+  },
+  { id:9, name:"코너 맥그리거", nickname:"The Notorious", weightClass:"라이트급 · 페더급", org:"UFC", record:"22승 6패",
+    photo:"images/맥그리거.webp", color:"#880000", badge:"더 노토리어스",
+    quote:"나는 아무것도 없는 곳에서 모든 것을 만들었다.",
+    excerpt:"아일랜드 배관공 보조에서 UFC 두 체급 챔피언으로. 스포츠 역사상 가장 극적인 역전 서사.",
+    story:`코너 맥그리거는 아일랜드 더블린의 노동자 계층 집안에서 태어났습니다. 배관공 보조로 일하며 아일랜드 정부의 생활보조금에 의존했습니다. 그럼에도 그는 말했습니다. "나는 언젠가 챔피언이 될 것이다."\n\n2013년 UFC 데뷔, 단 4초 KO승으로 세상을 충격에 빠뜨렸습니다. 2015년 UFC 페더급 챔피언—아일랜드 역사상 최초.\n\n2016년에는 사상 최초로 두 체급 챔피언 벨트를 동시에 거머쥐었습니다.`,
+    goods:[{name:"2체급 챔피언 등극 세레모니 피규어",price:"49,000원",emoji:"🗿",image:"images/맥그리거 피구어.png",type:"figure"}],
+    instagram:"https://www.instagram.com/thenotoriousmma/",
+    youtube:"https://www.youtube.com/@ConorMcGregor",
+    highlightVideoId: null,
+    career:[
+      {year:"2008",event:"MMA 데뷔"},
+      {year:"2013",event:"UFC 입성 · 4초 KO 데뷔"},
+      {year:"2015",event:"페더급 챔피언 — 아일랜드 최초"},
+      {year:"2016",event:"UFC 205 — 두 체급 동시 챔피언"},
+      {year:"2021",event:"포이리에에게 2·3차전 연속 패"},
+      {year:"2026",event:"UFC 329 복귀전 — vs 맥스 할로웨이"},
+    ]
+  },
+  { id:10, name:"알렉스 페레이라", nickname:"Poatan", weightClass:"라이트헤비급", org:"UFC", record:"14승 3패",
+    photo:"images/페레이라.webp", color:"#B8460B", badge:"포아탄",
+    quote:"나는 KO를 위해 싸우지 않는다. KO는 제대로 싸웠을 때 따라오는 결과다.",
+    excerpt:"킥복싱·MMA 양 종목에서 두 체급 제패한 유일한 파이터.",
+    story:`알렉스 페레이라는 브라질 상파울루의 노동자 계층 집안에서 자랐습니다. 십대 시절 거리의 싸움꾼이었던 그가 킥복싱 도장 문을 두드린 것은 살아남기 위해서였습니다.\n\nGLORY 미들급과 라이트헤비급 챔피언 벨트를 동시에 거머쥔 최초의 파이터. 아데산야를 킥복싱에서 두 번 KO로 쓰러뜨린 유일한 인간.\n\n2022년 UFC 281에서 아데산야 TKO로 미들급 챔피언, 이후 라이트헤비급도 제패. "포아탄(Poatan)"—포르투갈어로 '돌주먹'.`,
+    goods:[{name:"아처 입장 세레모니 피규어",price:"49,000원",emoji:"🗿",image:"images/페레이라 피규어.png",type:"figure"}],
+    instagram:"https://www.instagram.com/alexpoatanpereira/",
+    youtube:"https://www.youtube.com/@Poatan.AlexPereira",
+    highlightVideoId: null,
+    career:[
+      {year:"2015",event:"킥복싱 프로 데뷔"},
+      {year:"2017",event:"GLORY 미들급 챔피언"},
+      {year:"2021",event:"UFC 입성"},
+      {year:"2022",event:"UFC 281 — 아데산야 TKO · 미들급 챔피언"},
+      {year:"2023",event:"라이트헤비급 이동 · 챔피언 등극"},
+      {year:"2026",event:"UFC Freedom 250 헤비급 인터림 타이틀 도전"},
+    ]
+  },
+];
+
+// ============================================================
+// SCHEDULE DATA
+// ============================================================
+const SCHEDULE_DATA = {
+  9:  [{ event:"UFC 329: McGregor vs. Holloway 2", date:"2026.07.11", venue:"T-Mobile Arena, 라스베이거스", status:"예정" }],
+  10: [{ event:"UFC Freedom 250", date:"2026.06.14", venue:"워싱턴 DC", status:"예정" }],
+  7:  [{ event:"다음 경기 협의 중", date:"TBD", venue:"미정", status:"tbd" }],
+  8:  [{ event:"다음 경기 협의 중", date:"TBD", venue:"미정", status:"tbd" }],
+  1:  [{ event:"ZFN / Road FC 관련 발표 예정", date:"TBD", venue:"미정", status:"tbd" }],
+  2:  [{ event:"다음 경기 발표 예정", date:"TBD", venue:"미정", status:"tbd" }],
+  3:  [{ event:"코칭 및 출전 협의 중", date:"TBD", venue:"미정", status:"tbd" }],
+  4:  [{ event:"Road to UFC 및 국내 행사 예정", date:"TBD", venue:"미정", status:"tbd" }],
+  5:  [{ event:"UFC 웰터급 랭킹 매치 협의 중", date:"TBD", venue:"미정", status:"tbd" }],
+  6:  [{ event:"UFC 페더급 랭킹 진입 경기 예정", date:"TBD", venue:"미정", status:"tbd" }],
+};
+
+// ============================================================
+// INIT
+// ============================================================
+const params = new URLSearchParams(location.search);
+const playerId = parseInt(params.get('id') || '1');
+const p = PLAYERS.find(x => x.id === playerId) || PLAYERS[0];
+
+if (!p) { location.href = 'index.html'; }
+
+document.title = p.name + ' — LEGACY';
+document.documentElement.style.setProperty('--player-color', p.color);
+
+// ── NAV AUTH ──
+(function(){
+  const user = JSON.parse(localStorage.getItem('legacy_user') || 'null');
+  if (user) {
+    document.getElementById('nav-mypage-li').style.display = 'block';
+    document.getElementById('nav-auth-wrap').innerHTML =
+      '<a href="#" onclick="doLogout()">로그아웃</a>' +
+      '<a href="cart.html" class="nav-cart">🛒 장바구니</a>';
+    const authorInput = document.getElementById('fan-author');
+    if (authorInput && user.nickname) authorInput.value = user.nickname;
+  }
+})();
+
+function doLogout() {
+  localStorage.removeItem('legacy_loggedIn');
+  localStorage.removeItem('legacy_user');
+  location.href = 'index.html';
+}
+
+// ============================================================
+// HERO
+// ============================================================
+function renderHero() {
+  const bg = document.getElementById('hero-bg');
+  bg.style.backgroundImage = 'url(' + p.photo + ')';
+  setTimeout(() => bg.classList.add('loaded'), 100);
+
+  document.getElementById('hero-org-badge').textContent = p.org + ' · ' + p.weightClass;
+  document.getElementById('hero-badge').textContent = p.badge;
+  document.getElementById('hero-name').textContent = p.name;
+  document.getElementById('hero-nickname').textContent = '"' + p.nickname + '"';
+  document.getElementById('hero-record').textContent = p.record;
+  document.getElementById('hero-weight').textContent = p.weightClass;
+  document.getElementById('hero-quote').textContent = p.quote;
+
+  // Socials
+  const socialsEl = document.getElementById('hero-socials');
+  let socialsHTML = '';
+  if (p.instagram) {
+    socialsHTML += '<a href="' + p.instagram + '" target="_blank" rel="noopener" class="social-btn">' +
+      '<svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>' +
+      'Instagram</a>';
+  }
+  if (p.youtube) {
+    socialsHTML += '<a href="' + p.youtube + '" target="_blank" rel="noopener" class="social-btn">' +
+      '<svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>' +
+      'YouTube</a>';
+  }
+  socialsEl.innerHTML = socialsHTML;
+}
+
+// ============================================================
+// STORY
+// ============================================================
+function renderStory() {
+  document.getElementById('story-title').textContent = p.name + '의 이야기';
+  document.getElementById('story-excerpt').textContent = p.excerpt;
+  document.getElementById('story-quote-text').textContent = p.quote;
+
+  const bodyEl = document.getElementById('story-body');
+  const paragraphs = p.story.split('\n\n');
+  bodyEl.innerHTML = paragraphs.map(par => '<p>' + par + '</p>').join('');
+
+  const timelineEl = document.getElementById('timeline-track');
+  timelineEl.innerHTML = p.career.map(item =>
+    '<div class="timeline-item">' +
+      '<div class="timeline-year">' + item.year + '</div>' +
+      '<div class="timeline-event">' + item.event + '</div>' +
+    '</div>'
+  ).join('');
+}
+
+// ============================================================
+// HIGHLIGHTS
+// ============================================================
+function getEmbedId(player) {
+  if (player.highlightVideoId) return player.highlightVideoId;
+  const url = player.youtube || '';
+  const m = url.match(/(?:watch\?v=|shorts\/)([^&\/?]+)/);
+  return m ? m[1] : null;
+}
+
+function renderHighlights() {
+  const el = document.getElementById('highlights-content');
+  const vid = getEmbedId(p);
+
+  if (vid) {
+    el.innerHTML =
+      '<div class="highlight-video-wrap">' +
+        '<div class="video-ratio">' +
+          '<iframe src="https://www.youtube.com/embed/' + vid + '?rel=0&modestbranding=1" ' +
+            'allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" ' +
+            'title="' + p.name + ' 하이라이트"></iframe>' +
+        '</div>' +
+        '<div class="video-more-btn">' +
+          '<a href="' + p.youtube + '" target="_blank" rel="noopener">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>' +
+            'YouTube에서 더 보기' +
+          '</a>' +
+        '</div>' +
+      '</div>';
+  } else {
+    el.innerHTML =
+      '<div class="yt-channel-card">' +
+        '<svg class="yt-icon" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>' +
+        '<div class="yt-card-name">' + p.name + '</div>' +
+        '<p class="yt-card-desc">이 선수의 YouTube 채널에서 하이라이트를 만나보세요.<br>훈련 영상, 경기 하이라이트, 인터뷰까지 모두 담겨 있습니다.</p>' +
+        '<div>' +
+          '<a href="' + p.youtube + '" target="_blank" rel="noopener" class="yt-visit-btn">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>' +
+            'YouTube 방문하기 →' +
+          '</a>' +
+          (p.instagram ? '<a href="' + p.instagram + '" target="_blank" rel="noopener" class="yt-ig-btn">Instagram</a>' : '') +
+        '</div>' +
+      '</div>';
+  }
+}
+
+// ============================================================
+// GOODS
+// ============================================================
+function renderGoods() {
+  const grid = document.getElementById('goods-grid');
+  grid.innerHTML = p.goods.map(g => {
+    const imgContent = g.image
+      ? '<img src="' + g.image + '" alt="' + g.name + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
+        '<div class="goods-emoji-placeholder" style="display:none">' + g.emoji + '</div>'
+      : '<div class="goods-emoji-placeholder">' + g.emoji + '</div>';
+    return '<div class="goods-card">' +
+      '<div class="goods-img-wrap">' + imgContent + '</div>' +
+      '<div class="goods-info">' +
+        '<div class="goods-name">' + g.name + '</div>' +
+        '<div class="goods-price">' + g.price + '</div>' +
+        '<button class="cart-btn" onclick="addToCart(' +
+          JSON.stringify(p.name) + ',' +
+          JSON.stringify(g.name) + ',' +
+          JSON.stringify(g.price) +
+        ')">장바구니 담기</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ============================================================
+// SCHEDULE
+// ============================================================
+function renderSchedule() {
+  const el = document.getElementById('schedule-content');
+  const fights = SCHEDULE_DATA[p.id] || [{ event:"다음 경기 발표 예정", date:"TBD", venue:"미정", status:"tbd" }];
+
+  el.innerHTML = fights.map(f =>
+    '<div class="fight-card">' +
+      '<div class="fight-info">' +
+        '<div class="fight-event">' + f.event + '</div>' +
+        '<div class="fight-details">' + f.date + (f.venue !== '미정' ? ' &nbsp;·&nbsp; ' + f.venue : '') + '</div>' +
+      '</div>' +
+      '<div class="fight-status ' + (f.status === 'tbd' ? 'tbd' : '') + '">' +
+        (f.status === 'tbd' ? 'TBD' : '확정') +
+      '</div>' +
+    '</div>'
+  ).join('');
+}
+
+// ============================================================
+// FAN BOARD
+// ============================================================
+function getSeedMessages() {
+  return [
+    { id:'s1', author:'MMA팬', content:p.name + ' 선수 항상 응원합니다! 다음 경기도 파이팅! 🥊', date:'2026.06.01', likes:24 },
+    { id:'s2', author:'파이터사랑', content:p.nickname + ' 최고! LEGACY에서 굿즈도 샀어요. 퀄리티 대박이에요!', date:'2026.06.05', likes:18 },
+    { id:'s3', author:'옥타곤러버', content:'오늘도 훈련하시나요? 언제나 파이팅입니다. 한국 MMA의 자랑!', date:'2026.06.10', likes:31 },
+  ];
+}
+
+function getFanMessages() {
+  const stored = JSON.parse(localStorage.getItem('legacy_fanboard_' + p.id) || '[]');
+  const seed = getSeedMessages();
+  return [...stored, ...seed];
+}
+
+function renderFanBoard() {
+  const msgs = getFanMessages();
+  const likeCounts = JSON.parse(localStorage.getItem('legacy_fan_likes') || '{}');
+
+  document.getElementById('msg-count').textContent = msgs.length;
+
+  const listEl = document.getElementById('messages-list');
+  listEl.innerHTML = msgs.map(msg => {
+    const liked = !!sessionStorage.getItem('liked_' + msg.id);
+    const totalLikes = (msg.likes || 0) + (likeCounts[msg.id] || 0);
+    const initial = msg.author.charAt(0);
+    return '<div class="msg-card" id="msg-' + msg.id + '">' +
+      '<div class="msg-avatar">' + initial + '</div>' +
+      '<div class="msg-body">' +
+        '<div class="msg-top">' +
+          '<span class="msg-author">' + escapeHTML(msg.author) + '</span>' +
+          '<span class="msg-date">' + msg.date + '</span>' +
+        '</div>' +
+        '<div class="msg-content">' + escapeHTML(msg.content) + '</div>' +
+        '<button class="msg-like-btn ' + (liked ? 'liked' : '') + '" onclick="likeMessage(' + JSON.stringify(msg.id) + ')">' +
+          '❤️ ' + totalLikes +
+        '</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function submitFanMessage() {
+  const authorEl = document.getElementById('fan-author');
+  const contentEl = document.getElementById('fan-content');
+  const author = (authorEl.value || '').trim() || '익명';
+  const content = (contentEl.value || '').trim();
+
+  if (!content) { showToast('메시지를 입력해주세요.', '#CC1100'); return; }
+
+  const msgs = JSON.parse(localStorage.getItem('legacy_fanboard_' + p.id) || '[]');
+  msgs.unshift({
+    id: 'fan_' + Date.now(),
+    author,
+    content,
+    date: new Date().toLocaleDateString('ko-KR'),
+    likes: 0
+  });
+  localStorage.setItem('legacy_fanboard_' + p.id, JSON.stringify(msgs));
+  contentEl.value = '';
+  renderFanBoard();
+  showToast('응원 메시지가 등록되었습니다! 💪', '#1a7a4a');
+}
+
+function likeMessage(msgId) {
+  const key = 'liked_' + msgId;
+  if (sessionStorage.getItem(key)) {
+    showToast('이미 좋아요를 눌렀습니다.', '#333');
+    return;
+  }
+  sessionStorage.setItem(key, '1');
+  const likeCounts = JSON.parse(localStorage.getItem('legacy_fan_likes') || '{}');
+  likeCounts[msgId] = (likeCounts[msgId] || 0) + 1;
+  localStorage.setItem('legacy_fan_likes', JSON.stringify(likeCounts));
+  renderFanBoard();
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function showToast(msg, color) {
+  color = color || '#FF3300';
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;bottom:2rem;right:2rem;background:' + color + ';color:white;padding:0.85rem 1.5rem;font-family:\'Noto Sans KR\',sans-serif;font-size:0.85rem;z-index:9999;box-shadow:0 6px 30px rgba(0,0,0,0.35);pointer-events:none;animation:fadeUp 0.3s ease both;border-radius:2px;';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(function() { el.remove(); }, 2200);
+}
+
+function addToCart(pName, gName, gPrice) {
+  const cart = JSON.parse(localStorage.getItem('legacy_cart') || '[]');
+  const key = pName + ' - ' + gName;
+  const existing = cart.find(function(i) { return i.name === key; });
+  if (existing) {
+    existing.qty = (existing.qty || 1) + 1;
+  } else {
+    cart.push({ name: key, price: gPrice, qty: 1, fighter: pName, emoji: '🗿' });
+  }
+  localStorage.setItem('legacy_cart', JSON.stringify(cart));
+  showToast('장바구니에 담겼습니다 ✓', '#1a7a4a');
+}
+
+function escapeHTML(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function smoothScroll(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    const top = el.getBoundingClientRect().top + window.scrollY - parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) - parseInt(getComputedStyle(document.documentElement).getPropertyValue('--tab-h'));
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  }
+  return false;
+}
+
+function scrollToSection(id) {
+  smoothScroll(id);
+}
+
+// ============================================================
+// STICKY TAB ACTIVE STATE
+// ============================================================
+(function() {
+  const sections = ['story','highlights','goods','schedule','fanboard'];
+  const tabs = document.querySelectorAll('.tab-btn');
+  const navH = 64;
+  const tabH = 52;
+  const offset = navH + tabH + 20;
+
+  function updateActive() {
+    let current = sections[0];
+    sections.forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= offset) {
+        current = id;
+      }
+    });
+    tabs.forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.target === current);
+    });
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+})();
+
+// ============================================================
+// SCROLL REVEAL
+// ============================================================
+(function() {
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(function(el) { io.observe(el); });
+})();
+
+// ============================================================
+// BOOT
+// ============================================================
+renderHero();
+renderStory();
+renderHighlights();
+renderGoods();
+renderSchedule();
+renderFanBoard();
+</script>
+</body>
+</html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>경기일정 — LEGACY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070A12;--surface:#0D1220;--surface-2:#131A2E;--border:rgba(255,255,255,0.07);--text:#EDE8DC;--text-muted:#68738A;--accent:#FF3300;--gold:#C9A23E;--white:#FAFAF8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-weight:300;min-height:100vh;}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 5rem;display:flex;justify-content:space-between;align-items:center;background:rgba(7,10,18,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Oswald',sans-serif;font-weight:700;font-size:1.6rem;letter-spacing:0.18em;color:var(--white);text-decoration:none;}
+.logo em{color:var(--accent);font-style:normal;}
+.nav-links{display:flex;gap:2.5rem;list-style:none;align-items:center;}
+.nav-links a{color:var(--text-muted);text-decoration:none;font-family:'Oswald',sans-serif;font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--white);}
+.nav-item-drop{position:relative;}
+.nav-drop-menu{position:absolute;top:calc(100% + 0.9rem);left:50%;transform:translateX(-50%);background:rgba(10,14,24,0.99);border:1px solid var(--border);min-width:150px;display:none;flex-direction:column;z-index:200;padding:0.4rem 0;backdrop-filter:blur(20px);}
+.nav-item-drop:hover .nav-drop-menu{display:flex;}
+.nav-drop-menu a{display:block;padding:0.55rem 1rem;font-family:'Oswald',sans-serif;font-size:0.72rem;color:var(--text-muted);white-space:nowrap;text-decoration:none;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.15s,background 0.15s;}
+.nav-drop-menu a:hover{color:var(--white);background:rgba(255,255,255,0.04);}
+.nav-right{display:flex;align-items:center;gap:1.2rem;}
+.nav-right a{font-family:'Oswald',sans-serif;font-size:0.78rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s;}
+.nav-right a:hover{color:var(--white);}
+.nav-cart{background:var(--accent)!important;color:white!important;padding:0.45rem 1rem;}
+
+/* PAGE HEADER */
+.page-header{padding:7.5rem 5rem 2.5rem;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(255,51,0,0.05) 0%,transparent 100%);}
+.page-header-inner{max-width:1200px;margin:0 auto;}
+.page-label{font-family:'Oswald',sans-serif;font-size:0.68rem;letter-spacing:0.45em;color:var(--accent);text-transform:uppercase;margin-bottom:0.4rem;}
+.page-title{font-weight:800;font-size:2rem;color:var(--white);letter-spacing:-0.02em;margin-bottom:0.5rem;}
+.page-sub{font-size:0.85rem;color:var(--text-muted);}
+
+/* ORG TABS */
+.org-tabs-wrap{background:var(--surface);border-bottom:1px solid var(--border);}
+.org-tabs{max-width:1200px;margin:0 auto;padding:0 5rem;}
+.org-tab-bar{display:flex;gap:0;overflow-x:auto;}
+.org-tab{padding:1rem 1.6rem;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Oswald',sans-serif;font-size:0.8rem;letter-spacing:0.18em;cursor:pointer;transition:all 0.2s;margin-bottom:-1px;white-space:nowrap;text-transform:uppercase;}
+.org-tab:hover{color:var(--white);}
+.org-tab.active{color:var(--white);border-bottom-color:var(--accent);}
+
+/* MAIN */
+.main-content{max-width:1200px;margin:0 auto;padding:2.5rem 5rem 5rem;}
+
+/* ORG SECTION */
+.org-section{margin-bottom:3rem;}
+.org-section-head{display:flex;align-items:center;gap:0.8rem;margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border);}
+.org-badge{font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.2em;padding:0.25rem 0.7rem;text-transform:uppercase;font-weight:700;}
+.org-ufc{background:rgba(204,51,0,0.2);color:#FF5533;border:1px solid rgba(204,51,0,0.3);}
+.org-zfn{background:rgba(0,102,255,0.15);color:#5599FF;border:1px solid rgba(0,102,255,0.25);}
+.org-roadfc{background:rgba(255,153,0,0.15);color:#FFBB33;border:1px solid rgba(255,153,0,0.25);}
+.org-one{background:rgba(204,0,0,0.15);color:#FF4444;border:1px solid rgba(204,0,0,0.25);}
+.org-black{background:rgba(160,160,160,0.1);color:#CCCCCC;border:1px solid rgba(160,160,160,0.2);}
+.org-section-head h2{font-family:'Oswald',sans-serif;font-size:1rem;color:var(--white);letter-spacing:0.05em;}
+.org-section-head .upcoming-count{font-family:'Oswald',sans-serif;font-size:0.65rem;color:#44CC88;letter-spacing:0.1em;margin-left:auto;}
+
+/* EVENT GRID */
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;}
+
+/* EVENT CARD */
+.event-card{background:var(--surface);border:1px solid var(--border);overflow:hidden;transition:border-color 0.2s,transform 0.15s;}
+.event-card:hover:not(.past){border-color:rgba(255,255,255,0.14);transform:translateY(-2px);}
+.event-card.past{opacity:0.52;}
+
+.event-card-top{padding:0.7rem 1.1rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.15);}
+.event-type{font-family:'Oswald',sans-serif;font-size:0.6rem;letter-spacing:0.15em;color:var(--text-muted);text-transform:uppercase;}
+.event-status{font-family:'Oswald',sans-serif;font-size:0.65rem;letter-spacing:0.08em;}
+.status-done{color:var(--text-muted);}
+.status-upcoming{color:#44CC88;}
+.status-soon{color:#FFB800;}
+.status-tbd{color:var(--text-muted);font-style:italic;}
+
+.event-card-body{padding:1.1rem 1.2rem;}
+.event-name{font-family:'Oswald',sans-serif;font-size:0.98rem;color:var(--white);margin-bottom:0.5rem;letter-spacing:0.02em;line-height:1.3;}
+
+.event-meta{display:flex;flex-direction:column;gap:0.25rem;margin-bottom:0.8rem;}
+.event-date{font-family:'Oswald',sans-serif;font-size:0.8rem;color:var(--accent);}
+.event-venue{font-size:0.74rem;color:var(--text-muted);}
+
+.event-main{padding:0.7rem 0.9rem;background:rgba(0,0,0,0.2);border-left:2px solid var(--accent);margin-bottom:0.8rem;}
+.event-main.past-main{border-left-color:var(--text-muted);}
+.event-main-label{font-family:'Oswald',sans-serif;font-size:0.55rem;letter-spacing:0.28em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.35rem;}
+.event-matchup{font-weight:700;font-size:0.86rem;color:var(--white);line-height:1.4;}
+.event-weight{font-size:0.68rem;color:var(--text-muted);margin-top:0.15rem;}
+
+.event-dday{display:inline-flex;align-items:center;gap:0.5rem;margin-top:0.2rem;}
+.dday-box{font-family:'Oswald',sans-serif;font-size:0.88rem;font-weight:700;padding:0.28rem 0.7rem;background:var(--accent);color:white;letter-spacing:0.05em;}
+.dday-box.soon{background:#FFB800;color:#000;}
+.dday-box.today{background:#44CC88;color:white;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
+.dday-text{font-size:0.73rem;color:var(--text-muted);}
+
+.event-note{margin-top:0.6rem;font-size:0.7rem;color:var(--gold);line-height:1.5;}
+
+/* TBD card */
+.event-card.tbd{border-style:dashed;}
+
+/* SOLO VIEW (single org) */
+.solo-view .events-grid{grid-template-columns:repeat(auto-fill,minmax(340px,1fr));}
+
+/* NOTICE */
+.schedule-notice{max-width:1200px;margin:0 auto;padding:0 5rem 3rem;}
+.notice-box{background:var(--surface);border:1px solid var(--border);padding:1.1rem 1.4rem;font-size:0.78rem;color:var(--text-muted);line-height:1.9;}
+.notice-box strong{color:var(--text);}
+
+/* EMPTY */
+.no-events{text-align:center;padding:4rem 0;color:var(--text-muted);font-size:0.9rem;}
+
+@media(max-width:960px){
+  nav{padding:1rem 1.5rem;}
+  .nav-links{display:none;}
+  .org-tabs{padding:0 1.5rem;}
+  .main-content{padding:2rem 1.5rem 4rem;}
+  .schedule-notice{padding:0 1.5rem 3rem;}
+  .events-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">LEGA<em>CY</em></a>
+  <ul class="nav-links">
+    <li><a href="index.html">홈</a></li>
+    <li><a href="index.html#players">선수</a></li>
+    <li><a href="index.html#goods">굿즈</a></li>
+    <li><a href="community.html">커뮤니티</a></li>
+    <li><a href="schedule.html" class="active">경기일정</a></li>
+    <li class="nav-item-drop" id="nav-mypage-li" style="display:none">
+      <a href="mypage.html">마이페이지 ▾</a>
+      <div class="nav-drop-menu">
+        <a href="mypage.html">내 정보</a>
+        <a href="mypage.html#orders">주문내역</a>
+        <a href="mypage.html#address">배송지관리</a>
+        <a href="mypage.html#favorites">관심선수</a>
+        <a href="mypage.html#points">포인트</a>
+      </div>
+    </li>
+  </ul>
+  <div class="nav-right" id="nav-auth-wrap">
+    <a href="login.html">로그인</a>
+    <a href="cart.html" class="nav-cart">🛒 장바구니</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <p class="page-label">Fight Schedule</p>
+    <h1 class="page-title">경기 일정</h1>
+    <p class="page-sub">UFC · ZFN · Road FC · ONE Championship · Black Combat 실제 경기 일정</p>
+  </div>
+</div>
+
+<div class="org-tabs-wrap">
+  <div class="org-tabs">
+    <div class="org-tab-bar">
+      <button class="org-tab active" data-org="ALL" onclick="setOrg('ALL',this)">전체</button>
+      <button class="org-tab" data-org="UFC" onclick="setOrg('UFC',this)">UFC</button>
+      <button class="org-tab" data-org="ZFN" onclick="setOrg('ZFN',this)">ZFN</button>
+      <button class="org-tab" data-org="ROADFC" onclick="setOrg('ROADFC',this)">Road FC</button>
+      <button class="org-tab" data-org="ONE" onclick="setOrg('ONE',this)">ONE Championship</button>
+      <button class="org-tab" data-org="BLACK" onclick="setOrg('BLACK',this)">Black Combat</button>
+    </div>
+  </div>
+</div>
+
+<div class="main-content" id="main-content">
+  <div id="events-container"></div>
+</div>
+
+<div class="schedule-notice">
+  <div class="notice-box">
+    <strong>📌 안내</strong> — 경기 일정 및 매치업은 주최사 사정에 따라 변동될 수 있습니다. 최신 정보는 각 단체 공식 SNS 및 홈페이지를 확인해주세요.<br>
+    완료된 경기는 흐리게 표시됩니다. 날짜는 <strong>한국시간(KST)</strong> 기준입니다.
+  </div>
+</div>
+
+<script>
+const TODAY_STR = '2026-06-15';
+const TODAY = new Date(TODAY_STR);
+
+function daysUntil(isoDate) {
+  if (isoDate === 'TBD') return null;
+  return Math.ceil((new Date(isoDate) - TODAY) / (1000*60*60*24));
+}
+function isPast(isoDate) { return isoDate !== 'TBD' && daysUntil(isoDate) < 0; }
+
+const EVENTS = [
+  /* ===== UFC ===== */
+  {org:'UFC',type:'PPV',
+   name:'UFC Freedom 250',
+   date:'2026.06.14',dateISO:'2026-06-14',
+   venue:'Capital One Arena, 워싱턴 DC, USA',
+   main:'일리아 토푸리아 vs. 저스틴 게이치',
+   mainType:'라이트급 통합 타이틀전',
+   note:'역사적 맥락 — 미국 수도 특별 이벤트'},
+
+  {org:'UFC',type:'Fight Night',
+   name:'UFC Fight Night 279',
+   date:'2026.06.20',dateISO:'2026-06-20',
+   venue:'UFC APEX, 라스베이거스, USA',
+   main:'마넬 카페 vs. 호리구치 교지',
+   mainType:'플라이급 매치',
+   note:''},
+
+  {org:'UFC',type:'Fight Night',
+   name:'UFC Fight Night 280',
+   date:'2026.06.27',dateISO:'2026-06-27',
+   venue:'Baku Crystal Hall, 바쿠, 아제르바이잔',
+   main:'라파엘 피지에프 vs. 조아킴 토레스',
+   mainType:'라이트급 매치',
+   note:'아제르바이잔 첫 UFC 이벤트 · UFC "Ataman" 홈커밍'},
+
+  {org:'UFC',type:'PPV',
+   name:'UFC 329: McGregor vs. Holloway 2',
+   date:'2026.07.11',dateISO:'2026-07-11',
+   venue:'T-Mobile Arena, 라스베이거스, USA',
+   main:'코너 맥그리거 vs. 맥스 할로웨이',
+   mainType:'웰터급 5라운드 특별경기',
+   note:'🔥 역대급 리매치 — 맥그리거 복귀전'},
+
+  {org:'UFC',type:'Fight Night',
+   name:'UFC Fight Night 281',
+   date:'2026.07.18',dateISO:'2026-07-18',
+   venue:'Paycom Center, 오클라호마시티, USA',
+   main:'메인 이벤트 발표 예정',
+   mainType:'',
+   note:''},
+
+  {org:'UFC',type:'Fight Night',
+   name:'UFC Fight Night 282',
+   date:'2026.07.25',dateISO:'2026-07-25',
+   venue:'Etihad Arena, 아부다비, UAE',
+   main:'메인 이벤트 발표 예정',
+   mainType:'',
+   note:'Fight Island 귀환'},
+
+  /* ===== ZFN ===== */
+  {org:'ZFN',type:'Event',
+   name:'ZFN 04',
+   date:'2026.05.09',dateISO:'2026-05-09',
+   venue:'올림픽공원 핸드볼경기장 (티켓링크라이브아레나), 서울',
+   main:'메인카드 8경기 · 언더카드 5경기',
+   mainType:'종합격투기',
+   note:'UFC Fight Pass 해외 중계 (라틴아메리카 제외)'},
+
+  {org:'ZFN',type:'Event',
+   name:'ZFN 05',
+   date:'미정',dateISO:'TBD',
+   venue:'일정 발표 예정',
+   main:'매치업 발표 예정',
+   mainType:'',
+   note:''},
+
+  /* ===== ROAD FC ===== */
+  {org:'ROADFC',type:'Event',
+   name:'굽네 Road FC 076',
+   date:'2026.03.15',dateISO:'2026-03-15',
+   venue:'장충체육관, 서울',
+   main:'헤비급 챔피언십 타이틀전',
+   mainType:'헤비급',
+   note:'굽네 스폰서십 이벤트'},
+
+  {org:'ROADFC',type:'Event',
+   name:'Road FC 077',
+   date:'미정',dateISO:'TBD',
+   venue:'일정 발표 예정',
+   main:'매치업 발표 예정',
+   mainType:'',
+   note:''},
+
+  /* ===== ONE Championship ===== */
+  {org:'ONE',type:'Fight Night',
+   name:'ONE Fight Night 39',
+   date:'2026.01.24',dateISO:'2026-01-24',
+   venue:'룸피니 경기장, 방콕, 태국',
+   main:'아시아 정예 격투기 매치',
+   mainType:'MMA · 무에타이 · 킥복싱',
+   note:'Prime Video 미국 생중계 (ET 9PM)'},
+
+  {org:'ONE',type:'Fight Night',
+   name:'ONE Fight Night 40',
+   date:'2026.02.14',dateISO:'2026-02-14',
+   venue:'룸피니 경기장, 방콕, 태국',
+   main:'아시아 정예 격투기 매치',
+   mainType:'MMA · 무에타이 · 킥복싱',
+   note:'Prime Video 미국 생중계'},
+
+  {org:'ONE',type:'PPV',
+   name:'ONE 174',
+   date:'2026.04.03',dateISO:'2026-04-03',
+   venue:'개최지 추후 발표',
+   main:'챔피언십 매치 다수',
+   mainType:'MMA · 무에타이',
+   note:'ONE 넘버드 이벤트'},
+
+  {org:'ONE',type:'PPV',
+   name:'ONE 175',
+   date:'2026.04.29',dateISO:'2026-04-29',
+   venue:'아리아케 아레나, 도쿄, 일본',
+   main:'챔피언십 매치 다수',
+   mainType:'MMA · 무에타이 · 킥복싱',
+   note:'일본 특별 이벤트 · 도쿄 귀환'},
+
+  {org:'ONE',type:'Fight Night',
+   name:'ONE Fight Night (Denver)',
+   date:'2026.06.26',dateISO:'2026-06-26',
+   venue:'Ball Arena, 덴버, 미국',
+   main:'챔피언십 매치',
+   mainType:'MMA · 킥복싱',
+   note:'미국 본토 이벤트 · Prime Video 생중계'},
+
+  /* ===== Black Combat ===== */
+  {org:'BLACK',type:'Black Cup',
+   name:'BLACK CUP — Korea Alpha vs. USA',
+   date:'2026.03.14',dateISO:'2026-03-14',
+   venue:'블랙 아고라, 오산',
+   main:'한국 Alpha팀 vs. 미국팀',
+   mainType:'국가대항전 MMA',
+   note:'세계 최초 MMA 국가대항전 월드컵 형식'},
+
+  {org:'BLACK',type:'Black Cup',
+   name:'BLACK CUP — Japan vs. Brazil',
+   date:'2026.03.28',dateISO:'2026-03-28',
+   venue:'블랙 아고라, 오산',
+   main:'일본팀 vs. 브라질팀',
+   mainType:'국가대항전 MMA',
+   note:'BLACK CUP 2026 조별예선 2라운드'},
+
+  {org:'BLACK',type:'Black Cup',
+   name:'BLACK CUP — Mongolia vs. China',
+   date:'2026.04.11',dateISO:'2026-04-11',
+   venue:'블랙 아고라, 오산',
+   main:'몽골팀 vs. 중국팀',
+   mainType:'국가대항전 MMA',
+   note:'BLACK CUP 2026 조별예선 3라운드'},
+
+  {org:'BLACK',type:'Black Cup',
+   name:'BLACK CUP — Korea Omega vs. Eurasia',
+   date:'2026.04.25',dateISO:'2026-04-25',
+   venue:'블랙 아고라, 오산',
+   main:'한국 Omega팀 vs. 유라시아팀',
+   mainType:'국가대항전 MMA',
+   note:'BLACK CUP 2026 조별예선 최종전'},
+
+  {org:'BLACK',type:'Rise',
+   name:'Black Combat Rise 09',
+   date:'2026.06.06',dateISO:'2026-06-06',
+   venue:'서울 (장소 추후 공개)',
+   main:'정규 리그 시즌 9',
+   mainType:'MMA',
+   note:''},
+
+  {org:'BLACK',type:'Rise',
+   name:'Black Combat Rise 10',
+   date:'미정',dateISO:'TBD',
+   venue:'일정 발표 예정',
+   main:'매치업 발표 예정',
+   mainType:'',
+   note:''},
+];
+
+const ORG_META = {
+  UFC:  {label:'UFC',       badgeClass:'org-ufc',   title:'UFC 경기 일정'},
+  ZFN:  {label:'ZFN',       badgeClass:'org-zfn',   title:'ZFN 경기 일정'},
+  ROADFC:{label:'ROAD FC',  badgeClass:'org-roadfc', title:'Road FC 경기 일정'},
+  ONE:  {label:'ONE',       badgeClass:'org-one',   title:'ONE Championship 경기 일정'},
+  BLACK:{label:'BLACK COMBAT',badgeClass:'org-black',title:'Black Combat 경기 일정'},
+};
+
+let currentOrg = 'ALL';
+
+function setOrg(org, btn) {
+  currentOrg = org;
+  document.querySelectorAll('.org-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderEvents();
+}
+
+function sortEvents(list) {
+  const upcoming = list.filter(e => e.dateISO !== 'TBD' && !isPast(e.dateISO)).sort((a,b) => new Date(a.dateISO)-new Date(b.dateISO));
+  const tbd = list.filter(e => e.dateISO === 'TBD');
+  const past = list.filter(e => e.dateISO !== 'TBD' && isPast(e.dateISO)).sort((a,b) => new Date(b.dateISO)-new Date(a.dateISO));
+  return [...upcoming, ...tbd, ...past];
+}
+
+function renderCard(e) {
+  const isTBD = e.dateISO === 'TBD';
+  const past = !isTBD && isPast(e.dateISO);
+  const days = isTBD ? null : daysUntil(e.dateISO);
+  const isSoon = !past && !isTBD && days !== null && days <= 7;
+  const isToday = days === 0;
+
+  let statusHtml;
+  if (past)       statusHtml = `<span class="event-status status-done">✓ 완료</span>`;
+  else if (isTBD) statusHtml = `<span class="event-status status-tbd">일정 미정</span>`;
+  else if (isSoon)statusHtml = `<span class="event-status status-soon">🔥 D-${days}</span>`;
+  else            statusHtml = `<span class="event-status status-upcoming">D-${days}</span>`;
+
+  let ddayHtml = '';
+  if (!past && !isTBD) {
+    const boxClass = isToday ? 'today' : isSoon ? 'soon' : '';
+    ddayHtml = `<div class="event-dday">
+      <span class="dday-box ${boxClass}">${isToday?'TODAY!':'D-'+days}</span>
+      <span class="dday-text">${isToday?'오늘 경기!':days+'일 후'}</span>
+    </div>`;
+  }
+
+  const noteHtml = e.note ? `<div class="event-note">💡 ${e.note}</div>` : '';
+  const mainBorderClass = past ? 'past-main' : '';
+
+  return `<div class="event-card ${past?'past':''} ${isTBD?'tbd':''}">
+    <div class="event-card-top">
+      <span class="event-type">${e.type}</span>
+      ${statusHtml}
+    </div>
+    <div class="event-card-body">
+      <div class="event-name">${e.name}</div>
+      <div class="event-meta">
+        <span class="event-date">📅 ${e.date}</span>
+        <span class="event-venue">📍 ${e.venue}</span>
+      </div>
+      ${e.main ? `<div class="event-main ${mainBorderClass}">
+        <div class="event-main-label">메인 이벤트</div>
+        <div class="event-matchup">${e.main}</div>
+        ${e.mainType ? `<div class="event-weight">${e.mainType}</div>` : ''}
+      </div>` : ''}
+      ${ddayHtml}
+      ${noteHtml}
+    </div>
+  </div>`;
+}
+
+function renderEvents() {
+  const container = document.getElementById('events-container');
+  const mc = document.getElementById('main-content');
+
+  if (currentOrg === 'ALL') {
+    mc.classList.remove('solo-view');
+    const orgs = ['UFC','ZFN','ROADFC','ONE','BLACK'];
+    let html = '';
+    orgs.forEach(org => {
+      const list = sortEvents(EVENTS.filter(e => e.org === org));
+      const m = ORG_META[org];
+      const upcomingCount = list.filter(e => !isPast(e.dateISO) && e.dateISO !== 'TBD').length;
+      html += `<div class="org-section">
+        <div class="org-section-head">
+          <span class="org-badge ${m.badgeClass}">${m.label}</span>
+          <h2>${m.title}</h2>
+          ${upcomingCount>0?`<span class="upcoming-count">▶ 예정 ${upcomingCount}경기</span>`:''}
+        </div>
+        <div class="events-grid">${list.map(e=>renderCard(e)).join('')}</div>
+      </div>`;
+    });
+    container.innerHTML = html;
+  } else {
+    mc.classList.add('solo-view');
+    const list = sortEvents(EVENTS.filter(e => e.org === currentOrg));
+    if (list.length === 0) {
+      container.innerHTML = '<div class="no-events">해당 단체의 경기 일정이 없습니다.</div>';
+    } else {
+      container.innerHTML = `<div class="events-grid">${list.map(e=>renderCard(e)).join('')}</div>`;
+    }
+  }
+}
+
+/* NAV AUTH */
+(function(){
+  const user = JSON.parse(localStorage.getItem('legacy_user')||'null');
+  if(user){
+    document.getElementById('nav-mypage-li').style.display = 'block';
+    document.getElementById('nav-auth-wrap').innerHTML = `
+      <a href="#" onclick="doLogout()" style="font-family:'Oswald',sans-serif;font-size:0.78rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--text-muted)'">로그아웃</a>
+      <a href="cart.html" class="nav-cart">🛒 장바구니</a>`;
+  }
+})();
+function doLogout(){localStorage.removeItem('legacy_loggedIn');location.href='index.html';}
+
+renderEvents();
+</script>
+</body>
+</html>

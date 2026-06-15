@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>게시글 — LEGACY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070A12;--surface:#0D1220;--surface-2:#131A2E;--border:rgba(255,255,255,0.07);--text:#EDE8DC;--text-muted:#68738A;--accent:#FF3300;--gold:#C9A23E;--white:#FAFAF8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-weight:300;min-height:100vh;}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 5rem;display:flex;justify-content:space-between;align-items:center;background:rgba(7,10,18,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Oswald',sans-serif;font-weight:700;font-size:1.6rem;letter-spacing:0.18em;color:var(--white);text-decoration:none;}
+.logo em{color:var(--accent);font-style:normal;}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{color:var(--text-muted);text-decoration:none;font-family:'Oswald',sans-serif;font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--white);}
+.nav-right{display:flex;align-items:center;gap:1.2rem;}
+.nav-right a{font-family:'Oswald',sans-serif;font-size:0.78rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s;}
+.nav-right a:hover{color:var(--white);}
+.nav-cart{background:var(--accent)!important;color:white!important;padding:0.45rem 1rem;}
+
+/* LAYOUT */
+.page-wrap{max-width:860px;margin:0 auto;padding:6.5rem 2rem 5rem;}
+
+/* BACK BUTTON */
+.back-btn{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text-muted);font-family:'Oswald',sans-serif;font-size:0.78rem;letter-spacing:0.1em;text-decoration:none;text-transform:uppercase;transition:color 0.2s;cursor:pointer;background:none;border:none;margin-bottom:1.8rem;}
+.back-btn:hover{color:var(--white);}
+.back-btn svg{transition:transform 0.2s;}
+.back-btn:hover svg{transform:translateX(-3px);}
+
+/* POST HEADER */
+.post-header{padding-bottom:1.6rem;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.post-cat-row{display:flex;align-items:center;gap:0.7rem;margin-bottom:0.9rem;}
+.post-badge{font-family:'Oswald',sans-serif;font-size:0.6rem;letter-spacing:0.1em;padding:0.2rem 0.55rem;text-transform:uppercase;border:1px solid;}
+.badge-notice{background:rgba(255,51,0,0.12);color:var(--accent);border-color:rgba(255,51,0,0.3);}
+.badge-hot{background:rgba(201,162,62,0.12);color:var(--gold);border-color:rgba(201,162,62,0.3);}
+.badge-review{background:rgba(68,204,136,0.1);color:#44CC88;border-color:rgba(68,204,136,0.25);}
+.badge-free{background:rgba(255,255,255,0.04);color:var(--text-muted);border-color:var(--border);}
+.badge-event{background:rgba(0,85,187,0.12);color:#5599FF;border-color:rgba(0,85,187,0.3);}
+.fighter-tag{font-family:'Oswald',sans-serif;font-size:0.62rem;letter-spacing:0.25em;color:var(--accent);text-transform:uppercase;}
+
+.post-title{font-size:1.6rem;font-weight:700;color:var(--white);line-height:1.35;letter-spacing:-0.02em;margin-bottom:1rem;}
+.post-meta-row{display:flex;align-items:center;gap:1.4rem;font-size:0.78rem;color:var(--text-muted);}
+.post-meta-row span{display:flex;align-items:center;gap:0.3rem;}
+.like-btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.35rem 0.9rem;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:'Noto Sans KR',sans-serif;font-size:0.75rem;cursor:pointer;transition:all 0.2s;margin-left:auto;}
+.like-btn:hover{border-color:var(--accent);color:var(--accent);}
+.like-btn.liked{background:rgba(255,51,0,0.12);border-color:var(--accent);color:var(--accent);}
+
+/* POST BODY */
+.post-body{font-size:0.95rem;line-height:1.95;color:var(--text);margin-bottom:2.5rem;white-space:pre-wrap;word-break:break-word;}
+
+/* LIKE AREA (bottom) */
+.post-like-area{display:flex;justify-content:center;margin-bottom:2.5rem;padding:1.8rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.like-big-btn{display:inline-flex;align-items:center;gap:0.7rem;padding:0.9rem 2.2rem;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:'Noto Sans KR',sans-serif;font-size:0.88rem;cursor:pointer;transition:all 0.25s;}
+.like-big-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(255,51,0,0.06);}
+.like-big-btn.liked{background:rgba(255,51,0,0.12);border-color:var(--accent);color:var(--accent);}
+.like-big-btn .heart{font-size:1.2rem;transition:transform 0.2s;}
+.like-big-btn.liked .heart{transform:scale(1.2);}
+.like-big-btn .like-count{font-family:'Oswald',sans-serif;font-size:1rem;font-weight:600;}
+
+/* COMMENTS SECTION */
+.comments-section{margin-bottom:3rem;}
+.comments-title{font-family:'Oswald',sans-serif;font-size:0.8rem;letter-spacing:0.25em;color:var(--text-muted);text-transform:uppercase;margin-bottom:1.3rem;display:flex;align-items:center;gap:0.7rem;}
+.comments-title .cmt-count{color:var(--accent);}
+
+/* Comment Write */
+.cmt-write{background:var(--surface);border:1px solid var(--border);padding:1.2rem;margin-bottom:1.5rem;}
+.cmt-write-header{display:flex;gap:0.8rem;margin-bottom:0.7rem;}
+.cmt-author-input{flex:1;max-width:180px;padding:0.6rem 0.8rem;background:var(--surface-2);border:1px solid var(--border);color:var(--white);font-family:'Noto Sans KR',sans-serif;font-size:0.82rem;outline:none;transition:border-color 0.2s;}
+.cmt-author-input:focus{border-color:var(--accent);}
+.cmt-author-input::placeholder{color:var(--text-muted);}
+.cmt-textarea{width:100%;padding:0.8rem 0.9rem;background:var(--surface-2);border:1px solid var(--border);color:var(--white);font-family:'Noto Sans KR',sans-serif;font-size:0.85rem;outline:none;resize:none;line-height:1.65;transition:border-color 0.2s;min-height:90px;}
+.cmt-textarea:focus{border-color:var(--accent);}
+.cmt-textarea::placeholder{color:var(--text-muted);}
+.cmt-write-footer{display:flex;justify-content:flex-end;margin-top:0.7rem;}
+.cmt-submit-btn{background:var(--accent);color:white;border:none;padding:0.6rem 1.4rem;font-family:'Oswald',sans-serif;font-size:0.8rem;letter-spacing:0.1em;cursor:pointer;transition:background 0.2s;}
+.cmt-submit-btn:hover{background:#ff5533;}
+
+/* Comment List */
+.cmt-list{display:flex;flex-direction:column;gap:0;}
+.cmt-item{padding:1.1rem 0;border-bottom:1px solid var(--border);}
+.cmt-item:first-child{border-top:1px solid var(--border);}
+.cmt-header{display:flex;align-items:center;gap:0.7rem;margin-bottom:0.5rem;}
+.cmt-avatar{width:28px;height:28px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--text-muted);font-family:'Oswald',sans-serif;flex-shrink:0;}
+.cmt-author{font-size:0.82rem;font-weight:500;color:var(--white);}
+.cmt-date{font-size:0.68rem;color:var(--text-muted);margin-left:auto;}
+.cmt-body{font-size:0.85rem;line-height:1.7;color:var(--text);padding-left:36px;word-break:break-word;}
+.cmt-like{padding-left:36px;margin-top:0.4rem;display:flex;align-items:center;gap:0.5rem;}
+.cmt-like-btn{background:none;border:none;color:var(--text-muted);font-size:0.72rem;cursor:pointer;transition:color 0.2s;display:flex;align-items:center;gap:0.25rem;}
+.cmt-like-btn:hover,.cmt-like-btn.liked{color:var(--accent);}
+.no-comments{padding:2rem 0;text-align:center;font-size:0.85rem;color:var(--text-muted);}
+
+/* NOT FOUND */
+.not-found{text-align:center;padding:5rem 2rem;}
+.not-found h2{font-family:'Oswald',sans-serif;font-size:1.5rem;color:var(--white);margin-bottom:0.7rem;}
+.not-found p{color:var(--text-muted);font-size:0.88rem;margin-bottom:1.8rem;}
+.not-found a{display:inline-block;padding:0.75rem 1.8rem;background:var(--accent);color:white;text-decoration:none;font-family:'Oswald',sans-serif;font-size:0.85rem;letter-spacing:0.1em;}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:white;padding:0.8rem 1.4rem;font-size:0.82rem;z-index:999;box-shadow:0 6px 24px rgba(255,51,0,0.35);pointer-events:none;animation:fadeUp 0.3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* RELATED / FOOTER NAV */
+.post-nav{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2.5rem;}
+.post-nav-item{padding:1rem 1.1rem;background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:border-color 0.2s;}
+.post-nav-item:hover{border-color:rgba(255,255,255,0.15);}
+.post-nav-label{font-family:'Oswald',sans-serif;font-size:0.6rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.3rem;}
+.post-nav-title{font-size:0.82rem;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.post-nav-item.prev .post-nav-label::before{content:'← ';}
+.post-nav-item.next{text-align:right;}
+.post-nav-item.next .post-nav-label::after{content:' →';}
+
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem;}
+  .nav-links{display:none;}
+  .page-wrap{padding:5.5rem 1.2rem 4rem;}
+  .post-title{font-size:1.25rem;}
+  .post-nav{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">LEGA<em>CY</em></a>
+  <ul class="nav-links">
+    <li><a href="index.html">홈</a></li>
+    <li><a href="index.html#players">선수</a></li>
+    <li><a href="index.html#goods">굿즈</a></li>
+    <li><a href="community.html" class="active">커뮤니티</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="login.html">로그인</a>
+    <a href="cart.html" class="nav-cart">🛒 장바구니</a>
+  </div>
+</nav>
+
+<div class="page-wrap" id="pageWrap">
+  <!-- JS renders here -->
+</div>
+
+<script>
+/* =====================================================
+   SEED POSTS (must match community.html)
+===================================================== */
+const SEED_POSTS = [
+  {id:'seed_1',cat:'notice',fighter:'',badge:'notice',title:'[공지] LEGACY 플랫폼 오픈 안내',author:'운영자',date:'2026.05.20',views:1240,likes:88,comments:14,
+   body:'안녕하세요, LEGACY 운영팀입니다.\n\n한국 MMA 파이터의 서사를 담은 굿즈 플랫폼 LEGACY가 공식 오픈했습니다!\n\n정찬성, 최두호, 김동현을 비롯한 한국 MMA를 빛낸 파이터들의 이야기와 그 감동을 담은 굿즈를 만나보실 수 있습니다.\n\n커뮤니티에서 자유롭게 소통하고 굿즈 리뷰도 남겨주세요. 여러분의 많은 참여를 부탁드립니다.\n\n감사합니다.'},
+  {id:'seed_2',cat:'event',fighter:'정찬성',badge:'event',title:'[이벤트] 정찬성 한정 글러브 팬 사인 이벤트',author:'운영자',date:'2026.05.22',views:892,likes:156,comments:33,
+   body:'코리안 좀비 정찬성 선수의 시그니처 글러브를 구매하신 분 중 추첨을 통해 선수 친필 사인 글러브를 증정합니다!\n\n참여 방법:\n1. LEGACY 공식 인스타그램 팔로우\n2. 해당 게시물 좋아요 및 친구 태그\n3. 정찬성 시그니처 글러브 구매\n\n당첨자 발표: 2026년 6월 10일\n\n파이터의 서사를 당신의 손 위에서 느껴보세요. 🥊'},
+  {id:'seed_3',cat:'review',fighter:'정찬성',badge:'hot',title:'정찬성 글러브 받았습니다!! 퀄리티 미쳤어요 🥊',author:'zombie_fan',date:'2026.05.25',views:634,likes:248,comments:42,
+   body:'드디어 코리안 좀비 시그니처 글러브 받았습니다!!\n\n솔직히 기대를 좀 낮추고 받았는데 완전 기대 이상이에요.\n\n가죽 질감이 진짜 고급스럽고, 손목 부분에 새겨진 "KOREAN ZOMBIE" 레터링이 너무 멋있어요. 실제로 착용했을 때 핏도 정말 잘 맞고요.\n\n박스 패키징도 고급스럽게 되어 있어서 선물용으로도 완벽할 것 같습니다.\n\n정찬성 팬이라면 무조건 구매 추천합니다!! 진짜 후회 없을 거예요.'},
+  {id:'seed_4',cat:'fighter',fighter:'정찬성',badge:'free',title:'코리안 좀비 복귀전 응원 메시지 모아요',author:'UFC팬',date:'2026.05.24',views:511,likes:189,comments:67,
+   body:'정찬성 선수 다음 경기 발표 됐죠?\n\n진짜 UFC 커리어 내내 한 번도 포기하는 모습 안 보여줬는데 이번에도 멋진 모습 기대됩니다.\n\n군 복무 후 복귀, 부상 후 복귀... 매번 더 강해진 모습으로 돌아오는 게 진짜 코리안 좀비다운 것 같아요.\n\n응원 메시지 남겨주세요! 이걸 모아서 선수한테 전달해보려고 합니다 ✊'},
+  {id:'seed_5',cat:'review',fighter:'최두호',badge:'review',title:'최두호 슈퍼보이 포토카드 전부 모았다! 언박싱 후기',author:'superboy_fan',date:'2026.05.23',views:423,likes:134,comments:28,
+   body:'드디어 슈퍼보이 포토카드 6종 풀셋 완성했어요!!!\n\n각 카드마다 다른 포즈로 찍혀있는데 진짜 사진이 너무 잘 나왔어요. 특히 옥타곤에서 파이팅 포즈 잡은 카드가 제일 멋있는 것 같아요.\n\n카드 재질도 고급스럽고 두께감도 적당해서 훼손될 걱정 없을 것 같습니다.\n\n슬리브에 넣어서 책상에 전시해 두었는데 방 분위기가 확 달라졌어요 😊\n\n최두호 팬이라면 꼭 사세요!!'},
+  {id:'seed_6',cat:'free',fighter:'고석현',badge:'free',title:'고석현 코리안 타이슨 별명 어울리나요?',author:'MMA러버',date:'2026.05.23',views:318,likes:98,comments:54,
+   body:'고석현 선수 닉네임이 "코리안 타이슨"이라고 하는데 실제로 경기 보신 분들은 어떻게 생각하세요?\n\n저는 개인적으로 엄청 잘 어울린다고 생각해요. 파이팅 스타일이 진짜 철권 마냥 한 방 한 방이 묵직하거든요.\n\n타이슨이 한창 전성기 때 던지던 그 훅이 생각나는 느낌? ㅋㅋ\n\n여러분은 어떻게 생각하세요?'},
+  {id:'seed_7',cat:'fighter',fighter:'김동현',badge:'free',title:'스턴건 김동현 커리어 하이라이트 보고 울었다',author:'스턴건매니아',date:'2026.05.22',views:287,likes:112,comments:19,
+   body:'어제 유튜브에서 김동현 선수 커리어 하이라이트 영상 봤는데 진짜 눈물 났어요...\n\n한국 MMA가 아무것도 없던 시절에 혼자 UFC에서 10년 넘게 싸워온 거잖아요.\n\n지금 정찬성이나 최두호 같은 선수들이 UFC에서 활약할 수 있는 게 다 김동현 선수가 먼저 길을 닦아줬기 때문이라고 생각해요.\n\n진짜 한국 MMA의 살아있는 역사.'},
+  {id:'seed_8',cat:'review',fighter:'김동현',badge:'review',title:'스턴건 머그컵 매일 아침 커피 마실 때 쓰고 있어요',author:'그라운드앤파운드',date:'2026.05.21',views:245,likes:76,comments:11,
+   body:'김동현 선수 머그컵 산 지 한 달 됐는데 정말 잘 쓰고 있어요!\n\n컵 크기도 딱 적당하고 그림도 안 벗겨지고 식기세척기에도 잘 견디더라고요.\n\n아침에 커피 마실 때마다 스턴건 보면서 오늘도 파이팅 하게 되는 기분 ㅋㅋ\n\n일상 굿즈로는 머그컵이 최고인 것 같아요. 실용적이고 매일 볼 수 있고!'},
+];
+
+/* =====================================================
+   HELPERS
+===================================================== */
+const badgeClass = {notice:'badge-notice',hot:'badge-hot',review:'badge-review',free:'badge-free',event:'badge-event'};
+const badgeLabel = {notice:'공지',hot:'HOT',review:'리뷰',free:'자유',event:'이벤트'};
+
+function getPostById(id) {
+  if (id.startsWith('seed_')) {
+    return SEED_POSTS.find(p => p.id === id) || null;
+  }
+  const userPosts = JSON.parse(localStorage.getItem('legacy_posts') || '[]');
+  return userPosts.find(p => p.id === id) || null;
+}
+
+function getComments(postId) {
+  return JSON.parse(localStorage.getItem(`legacy_cmt_${postId}`) || '[]');
+}
+
+function saveComments(postId, arr) {
+  localStorage.setItem(`legacy_cmt_${postId}`, JSON.stringify(arr));
+}
+
+function getLikes(postId) {
+  const data = JSON.parse(localStorage.getItem('legacy_post_likes') || '{}');
+  return data;
+}
+
+function isLiked(postId) {
+  const data = JSON.parse(localStorage.getItem('legacy_post_likes') || '{}');
+  return !!data[postId];
+}
+
+function getLikeCount(post) {
+  const extra = parseInt(localStorage.getItem(`legacy_likes_extra_${post.id}`) || '0');
+  return (post.likes || 0) + extra;
+}
+
+function toggleLike(postId, baseLikes) {
+  const data = JSON.parse(localStorage.getItem('legacy_post_likes') || '{}');
+  const extra = parseInt(localStorage.getItem(`legacy_likes_extra_${postId}`) || '0');
+  if (data[postId]) {
+    delete data[postId];
+    localStorage.setItem(`legacy_likes_extra_${postId}`, String(Math.max(0, extra - 1)));
+  } else {
+    data[postId] = true;
+    localStorage.setItem(`legacy_likes_extra_${postId}`, String(extra + 1));
+  }
+  localStorage.setItem('legacy_post_likes', JSON.stringify(data));
+}
+
+function getCmtLikes(postId, cmtIdx) {
+  const data = JSON.parse(localStorage.getItem(`legacy_cmt_likes_${postId}`) || '{}');
+  return data[cmtIdx] || 0;
+}
+
+function isCmtLiked(postId, cmtIdx) {
+  const data = JSON.parse(localStorage.getItem(`legacy_cmt_liked_${postId}`) || '{}');
+  return !!data[cmtIdx];
+}
+
+function toggleCmtLike(postId, cmtIdx) {
+  const counts = JSON.parse(localStorage.getItem(`legacy_cmt_likes_${postId}`) || '{}');
+  const liked = JSON.parse(localStorage.getItem(`legacy_cmt_liked_${postId}`) || '{}');
+  if (liked[cmtIdx]) {
+    delete liked[cmtIdx];
+    counts[cmtIdx] = Math.max(0, (counts[cmtIdx] || 1) - 1);
+  } else {
+    liked[cmtIdx] = true;
+    counts[cmtIdx] = (counts[cmtIdx] || 0) + 1;
+  }
+  localStorage.setItem(`legacy_cmt_likes_${postId}`, JSON.stringify(counts));
+  localStorage.setItem(`legacy_cmt_liked_${postId}`, JSON.stringify(liked));
+}
+
+function getAdjacentPosts(currentId) {
+  const userPosts = JSON.parse(localStorage.getItem('legacy_posts') || '[]');
+  const allPosts = [...userPosts, ...SEED_POSTS];
+  const idx = allPosts.findIndex(p => p.id === currentId);
+  return {
+    prev: idx > 0 ? allPosts[idx - 1] : null,
+    next: idx < allPosts.length - 1 ? allPosts[idx + 1] : null
+  };
+}
+
+function fmt(n) { return Number(n).toLocaleString('ko-KR'); }
+
+function showToast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2200);
+}
+
+/* =====================================================
+   RENDER
+===================================================== */
+function renderPost(post) {
+  const b = post.badge || (post.cat === 'review' ? 'review' : 'free');
+  const liked = isLiked(post.id);
+  const likeCount = getLikeCount(post);
+
+  return `
+    <button class="back-btn" onclick="window.location.href='community.html'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      커뮤니티로 돌아가기
+    </button>
+
+    <div class="post-header">
+      <div class="post-cat-row">
+        <span class="post-badge ${badgeClass[b]}">${badgeLabel[b] || '자유'}</span>
+        ${post.fighter ? `<span class="fighter-tag">${post.fighter}</span>` : ''}
+      </div>
+      <h1 class="post-title">${escHtml(post.title)}</h1>
+      <div class="post-meta-row">
+        <span>👤 ${escHtml(post.author)}</span>
+        <span>📅 ${post.date}</span>
+        <span>👁 ${fmt(post.views || 0)}</span>
+        <span>💬 <span id="headerCmtCount">${getComments(post.id).length + (post.comments || 0)}</span></span>
+        <button class="like-btn ${liked ? 'liked' : ''}" id="topLikeBtn" onclick="handleLike('${post.id}', ${post.likes || 0})">
+          ♥ <span id="topLikeCount">${fmt(likeCount)}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="post-body">${escHtml(post.body)}</div>
+
+    <div class="post-like-area">
+      <button class="like-big-btn ${liked ? 'liked' : ''}" id="bigLikeBtn" onclick="handleLike('${post.id}', ${post.likes || 0})">
+        <span class="heart">♥</span>
+        <span>좋아요</span>
+        <span class="like-count" id="bigLikeCount">${fmt(likeCount)}</span>
+      </button>
+    </div>
+
+    <div class="comments-section" id="commentsSection">
+      ${renderComments(post.id, post.comments || 0)}
+    </div>
+
+    ${renderPostNav(post.id)}
+  `;
+}
+
+function renderComments(postId, seedCount) {
+  const cmts = getComments(postId);
+  const totalCount = cmts.length + seedCount;
+
+  let html = `
+    <div class="comments-title">댓글 <span class="cmt-count" id="cmtCountLabel">${totalCount}</span></div>
+    <div class="cmt-write">
+      <div class="cmt-write-header">
+        <input class="cmt-author-input" id="cmtAuthor" placeholder="닉네임 (선택)" maxlength="20">
+      </div>
+      <textarea class="cmt-textarea" id="cmtText" placeholder="댓글을 남겨보세요..." rows="3"></textarea>
+      <div class="cmt-write-footer">
+        <button class="cmt-submit-btn" onclick="submitComment('${postId}', ${seedCount})">댓글 등록</button>
+      </div>
+    </div>
+    <div class="cmt-list" id="cmtList">
+  `;
+
+  if (cmts.length === 0 && seedCount === 0) {
+    html += `<div class="no-comments">첫 번째 댓글을 남겨보세요! 💬</div>`;
+  } else {
+    cmts.forEach((c, i) => {
+      const initials = (c.author || '?').charAt(0).toUpperCase();
+      const cmtLiked = isCmtLiked(postId, i);
+      const cmtLikeCount = getCmtLikes(postId, i);
+      html += `
+        <div class="cmt-item" id="cmt_${i}">
+          <div class="cmt-header">
+            <div class="cmt-avatar">${initials}</div>
+            <span class="cmt-author">${escHtml(c.author || '익명')}</span>
+            <span class="cmt-date">${c.date}</span>
+          </div>
+          <div class="cmt-body">${escHtml(c.body)}</div>
+          <div class="cmt-like">
+            <button class="cmt-like-btn ${cmtLiked ? 'liked' : ''}" onclick="handleCmtLike('${postId}', ${i}, ${seedCount})">
+              ♥ ${cmtLikeCount > 0 ? cmtLikeCount : ''}
+            </button>
+          </div>
+        </div>
+      `;
+    });
+    if (seedCount > 0 && cmts.length === 0) {
+      html += `<div class="cmt-item"><div class="cmt-body" style="color:var(--text-muted);font-size:0.82rem;">이전 댓글 ${seedCount}개가 있습니다.</div></div>`;
+    }
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function renderPostNav(currentId) {
+  const { prev, next } = getAdjacentPosts(currentId);
+  if (!prev && !next) return '';
+
+  let html = `<div class="post-nav">`;
+  if (prev) {
+    html += `<div class="post-nav-item prev" onclick="window.location.href='post.html?id=${prev.id}'">
+      <div class="post-nav-label">이전 글</div>
+      <div class="post-nav-title">${escHtml(prev.title)}</div>
+    </div>`;
+  } else {
+    html += `<div></div>`;
+  }
+  if (next) {
+    html += `<div class="post-nav-item next" onclick="window.location.href='post.html?id=${next.id}'">
+      <div class="post-nav-label">다음 글</div>
+      <div class="post-nav-title">${escHtml(next.title)}</div>
+    </div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function renderNotFound() {
+  return `
+    <div class="not-found">
+      <h2>게시글을 찾을 수 없습니다</h2>
+      <p>삭제되었거나 잘못된 주소입니다.</p>
+      <a href="community.html">커뮤니티로 돌아가기</a>
+    </div>
+  `;
+}
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+let currentPost = null;
+
+function handleLike(postId, baseLikes) {
+  toggleLike(postId, baseLikes);
+  const liked = isLiked(postId);
+  const count = getLikeCount(currentPost);
+  const countFmt = fmt(count);
+
+  const topBtn = document.getElementById('topLikeBtn');
+  const topCount = document.getElementById('topLikeCount');
+  const bigBtn = document.getElementById('bigLikeBtn');
+  const bigCount = document.getElementById('bigLikeCount');
+
+  if (topBtn) topBtn.className = `like-btn ${liked ? 'liked' : ''}`;
+  if (topCount) topCount.textContent = countFmt;
+  if (bigBtn) bigBtn.className = `like-big-btn ${liked ? 'liked' : ''}`;
+  if (bigCount) bigCount.textContent = countFmt;
+
+  if (liked) showToast('좋아요를 눌렀습니다 ♥');
+}
+
+function submitComment(postId, seedCount) {
+  const authorEl = document.getElementById('cmtAuthor');
+  const textEl = document.getElementById('cmtText');
+  const author = (authorEl.value || '').trim() || '익명';
+  const body = (textEl.value || '').trim();
+
+  if (!body) { showToast('댓글 내용을 입력해주세요.'); return; }
+
+  const cmts = getComments(postId);
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  cmts.push({ author, body, date: dateStr });
+  saveComments(postId, cmts);
+
+  textEl.value = '';
+  authorEl.value = '';
+
+  // re-render comments section
+  const section = document.getElementById('commentsSection');
+  if (section) section.innerHTML = renderComments(postId, seedCount);
+
+  // update header comment count
+  const headerCount = document.getElementById('headerCmtCount');
+  if (headerCount) headerCount.textContent = cmts.length + seedCount;
+
+  showToast('댓글이 등록되었습니다!');
+}
+
+function handleCmtLike(postId, cmtIdx, seedCount) {
+  toggleCmtLike(postId, cmtIdx);
+  // re-render just the like button
+  const btn = document.querySelector(`#cmt_${cmtIdx} .cmt-like-btn`);
+  if (!btn) return;
+  const liked = isCmtLiked(postId, cmtIdx);
+  const count = getCmtLikes(postId, cmtIdx);
+  btn.className = `cmt-like-btn ${liked ? 'liked' : ''}`;
+  btn.innerHTML = `♥ ${count > 0 ? count : ''}`;
+}
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+/* =====================================================
+   INIT
+===================================================== */
+(function init() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  const wrap = document.getElementById('pageWrap');
+
+  if (!id) {
+    wrap.innerHTML = renderNotFound();
+    return;
+  }
+
+  const post = getPostById(id);
+  if (!post) {
+    wrap.innerHTML = renderNotFound();
+    return;
+  }
+
+  currentPost = post;
+  document.title = `${post.title} — LEGACY`;
+  wrap.innerHTML = renderPost(post);
+
+  // increment view count for user posts
+  if (id.startsWith('user_')) {
+    const posts = JSON.parse(localStorage.getItem('legacy_posts') || '[]');
+    const idx = posts.findIndex(p => p.id === id);
+    if (idx !== -1) {
+      posts[idx].views = (posts[idx].views || 0) + 1;
+      localStorage.setItem('legacy_posts', JSON.stringify(posts));
+    }
+  }
+})();
+</script>
+</body>
+</html>

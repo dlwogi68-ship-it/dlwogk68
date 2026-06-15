@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800">
+  <defs>
+    <linearGradient id="bg" x1="0.3" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00051c"/>
+      <stop offset="100%" stop-color="#020304"/>
+    </linearGradient>
+    <linearGradient id="tint" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#003399" stop-opacity="0.24"/>
+      <stop offset="60%" stop-color="#003399" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#003399" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="black" stop-opacity="0"/>
+      <stop offset="100%" stop-color="black" stop-opacity="0.97"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="600" height="800" fill="url(#bg)"/>
+  <rect width="600" height="800" fill="url(#tint)"/>
+
+  <g stroke="#003399" stroke-opacity="0.07" stroke-width="1">
+    <line x1="0" y1="133" x2="600" y2="133"/>
+    <line x1="0" y1="266" x2="600" y2="266"/>
+    <line x1="0" y1="400" x2="600" y2="400"/>
+    <line x1="0" y1="533" x2="600" y2="533"/>
+    <line x1="100" y1="0" x2="100" y2="650"/>
+    <line x1="200" y1="0" x2="200" y2="650"/>
+    <line x1="300" y1="0" x2="300" y2="650"/>
+    <line x1="400" y1="0" x2="400" y2="650"/>
+    <line x1="500" y1="0" x2="500" y2="650"/>
+  </g>
+
+  <polygon points="531,436 396,561 204,561 69,436 69,254 204,129 396,129 531,254"
+           fill="none" stroke="#003399" stroke-width="1.5" stroke-opacity="0.14"/>
+  <polygon points="511,426 381,546 219,546 89,426 89,264 219,144 381,144 511,264"
+           fill="none" stroke="#003399" stroke-width="0.5" stroke-opacity="0.07"/>
+
+  <!-- Korean character decorative background -->
+  <text x="580" y="580" font-family="'Malgun Gothic',Arial" font-weight="900"
+        font-size="340" fill="#003399" opacity="0.04" text-anchor="end">주</text>
+
+  <!-- Fighter silhouette — middleweight tall powerful stance -->
+  <g fill="#003399" opacity="0.38">
+    <!-- Head (slightly larger — middleweight frame) -->
+    <circle cx="300" cy="132" r="55"/>
+    <!-- Neck -->
+    <rect x="278" y="180" width="44" height="30" rx="10"/>
+    <!-- Torso (broader, taller) -->
+    <path d="M218,210 L382,210 Q400,210 403,228 L420,412 Q300,428 180,412 L197,228 Q200,210 218,210 Z"/>
+    <!-- Left arm -->
+    <path d="M222,240 L242,260 L72,350 L52,328 Z"/>
+    <ellipse cx="59" cy="339" rx="34" ry="26" transform="rotate(-10 59 339)"/>
+    <!-- Right arm -->
+    <path d="M378,240 L398,260 L436,348 L414,360 Z"/>
+    <ellipse cx="422" cy="368" rx="30" ry="23"/>
+    <!-- Left leg (longer — taller fighter) -->
+    <path d="M228,408 L286,408 L278,554 L218,554 Z"/>
+    <path d="M203,547 L283,547 L290,572 L197,572 Z"/>
+    <!-- Right leg -->
+    <path d="M314,408 L374,408 L392,558 L332,558 Z"/>
+    <path d="M323,552 L396,552 L403,576 L317,576 Z"/>
+  </g>
+
+  <!-- Steady horizontal lines (composed, cerebral fighter) -->
+  <line x1="0" y1="25" x2="600" y2="25" stroke="#003399" stroke-width="0.8" stroke-opacity="0.12"/>
+  <line x1="0" y1="48" x2="600" y2="48" stroke="#003399" stroke-width="0.4" stroke-opacity="0.07"/>
+  <line x1="0" y1="64" x2="600" y2="64" stroke="#003399" stroke-width="0.3" stroke-opacity="0.05"/>
+
+  <rect x="0" y="490" width="600" height="310" fill="url(#fade)"/>
+  <rect x="0" y="652" width="600" height="148" fill="#010205" opacity="0.98"/>
+
+  <rect x="0" y="652" width="600" height="2" fill="#003399" opacity="0.9"/>
+  <rect x="0" y="0" width="4" height="800" fill="#003399"/>
+  <polygon points="545,0 600,0 600,55" fill="#003399" opacity="0.55"/>
+
+  <text x="22" y="685" font-family="Impact, 'Arial Narrow', Arial" font-size="11"
+        fill="#4477DD" letter-spacing="4">MMA  ·  미들급</text>
+
+  <text x="22" y="742" font-size="64" font-weight="900"
+        font-family="'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',Arial"
+        fill="white">유주상</text>
+
+  <text x="22" y="768" font-family="Impact, Arial" font-size="13"
+        fill="#4477DD" opacity="0.85" letter-spacing="5">ZOMBIE JUNIOR</text>
+
+  <text x="22" y="791" font-family="Arial" font-size="11"
+        fill="white" opacity="0.38" letter-spacing="3">프로 MMA  •  미들급</text>
+</svg>

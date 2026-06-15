@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800">
+  <defs>
+    <linearGradient id="bg" x1="0.3" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#160900"/>
+      <stop offset="100%" stop-color="#040203"/>
+    </linearGradient>
+    <linearGradient id="tint" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#CC6600" stop-opacity="0.22"/>
+      <stop offset="60%" stop-color="#CC6600" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#CC6600" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="black" stop-opacity="0"/>
+      <stop offset="100%" stop-color="black" stop-opacity="0.97"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="600" height="800" fill="url(#bg)"/>
+  <rect width="600" height="800" fill="url(#tint)"/>
+
+  <g stroke="#CC6600" stroke-opacity="0.06" stroke-width="1">
+    <line x1="0" y1="133" x2="600" y2="133"/>
+    <line x1="0" y1="266" x2="600" y2="266"/>
+    <line x1="0" y1="400" x2="600" y2="400"/>
+    <line x1="0" y1="533" x2="600" y2="533"/>
+    <line x1="100" y1="0" x2="100" y2="650"/>
+    <line x1="200" y1="0" x2="200" y2="650"/>
+    <line x1="300" y1="0" x2="300" y2="650"/>
+    <line x1="400" y1="0" x2="400" y2="650"/>
+    <line x1="500" y1="0" x2="500" y2="650"/>
+  </g>
+
+  <polygon points="531,436 396,561 204,561 69,436 69,254 204,129 396,129 531,254"
+           fill="none" stroke="#CC6600" stroke-width="1.5" stroke-opacity="0.13"/>
+  <polygon points="511,426 381,546 219,546 89,426 89,264 219,144 381,144 511,264"
+           fill="none" stroke="#CC6600" stroke-width="0.5" stroke-opacity="0.06"/>
+
+  <!-- Korean character decorative background -->
+  <text x="580" y="580" font-family="'Malgun Gothic',Arial" font-weight="900"
+        font-size="340" fill="#CC6600" opacity="0.04" text-anchor="end">상</text>
+
+  <!-- Fighter silhouette — bantamweight quick stance -->
+  <g fill="#CC6600" opacity="0.36">
+    <!-- Head (slightly smaller — bantamweight) -->
+    <circle cx="300" cy="140" r="49"/>
+    <!-- Neck -->
+    <rect x="281" y="184" width="38" height="26" rx="9"/>
+    <!-- Torso (leaner build) -->
+    <path d="M225,210 L375,210 Q389,210 392,225 L406,396 Q300,410 194,396 L208,225 Q211,210 225,210 Z"/>
+    <!-- Left arm extended (quick jab) -->
+    <path d="M228,238 L248,258 L76,342 L56,320 Z"/>
+    <ellipse cx="63" cy="331" rx="33" ry="24" transform="rotate(-12 63 331)"/>
+    <!-- Right arm guard -->
+    <path d="M372,238 L390,258 L426,342 L406,354 Z"/>
+    <ellipse cx="413" cy="362" rx="28" ry="21"/>
+    <!-- Left leg -->
+    <path d="M234,392 L284,392 L276,524 L224,524 Z"/>
+    <path d="M210,518 L282,518 L289,542 L204,542 Z"/>
+    <!-- Right leg -->
+    <path d="M316,392 L368,392 L384,528 L332,528 Z"/>
+    <path d="M324,522 L388,522 L395,546 L318,546 Z"/>
+  </g>
+
+  <rect x="0" y="490" width="600" height="310" fill="url(#fade)"/>
+  <rect x="0" y="652" width="600" height="148" fill="#040201" opacity="0.98"/>
+
+  <rect x="0" y="652" width="600" height="2" fill="#CC6600" opacity="0.9"/>
+  <rect x="0" y="0" width="4" height="800" fill="#CC6600"/>
+  <polygon points="545,0 600,0 600,55" fill="#CC6600" opacity="0.55"/>
+
+  <text x="22" y="685" font-family="Impact, 'Arial Narrow', Arial" font-size="11"
+        fill="#CC6600" letter-spacing="4">MMA  ·  밴텀급</text>
+
+  <text x="22" y="742" font-size="64" font-weight="900"
+        font-family="'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',Arial"
+        fill="white">김상욱</text>
+
+  <text x="22" y="768" font-family="Impact, Arial" font-size="13"
+        fill="#CC6600" opacity="0.85" letter-spacing="5">DEADPOOL</text>
+
+  <text x="22" y="791" font-family="Arial" font-size="11"
+        fill="white" opacity="0.38" letter-spacing="3">프로 MMA  •  밴텀급</text>
+</svg>
