@@ -537,6 +537,9 @@ function changeAvatar(input) {
 
 /* ===== 주문 내역 ===== */
 function renderOrders() {
+    // localStorage를 항상 새로 읽어 최신 주문 데이터 반영
+    const latestUser = JSON.parse(localStorage.getItem('legacy_user') || 'null');
+    if (latestUser) user = latestUser;
     const orders = (user && user.orders) ? user.orders : [];
     const container = document.getElementById('orders-list');
     if (!container) return;

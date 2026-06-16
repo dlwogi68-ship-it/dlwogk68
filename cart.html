@@ -418,6 +418,12 @@ function selectDelivery(el, fee) {
 
 /* ---------- 결제 모달 ---------- */
 function handleCheckout() {
+    const currentUser = JSON.parse(localStorage.getItem('legacy_user') || 'null');
+    if (!currentUser) {
+        showToast('로그인 후 구매하실 수 있습니다.');
+        setTimeout(() => window.location.href = 'login.html', 1300);
+        return;
+    }
     const sel = cartItems.filter(i => i.selected);
     if (sel.length === 0) { showToast('선택된 상품이 없습니다.'); return; }
 
