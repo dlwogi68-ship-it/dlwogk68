@@ -485,6 +485,7 @@ function loadUserData() {
     document.getElementById('input-birth').value = user.birth || '';
     if (user.gender) document.getElementById('input-gender').value = user.gender;
 
+    renderOrders();
     renderAddresses();
     renderFighters();
     renderPoints();
@@ -548,7 +549,7 @@ function renderOrders() {
         return;
     }
     const statusMap = { '결제완료':'paid', '배송중':'shipping', '배송완료':'done' };
-    container.innerHTML = orders.slice().reverse().map(o => `
+    container.innerHTML = orders.map(o => `
         <div class="order-card">
             <div class="order-top">
                 <div>
@@ -758,14 +759,12 @@ function showToast(msg, success = true) {
 (function() {
     const hash = location.hash.replace('#', '');
     if (hash === 'orders') {
-        const navItem = document.querySelector(".side-nav-item[onclick=\"showTab('orders', this)\"]");
-        if (navItem) {
-            document.querySelectorAll('.side-nav-item').forEach(i => i.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            navItem.classList.add('active');
-            document.getElementById('tab-orders').classList.add('active');
-            renderOrders();
-        }
+        document.querySelectorAll('.side-nav-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.side-nav-item').forEach(item => {
+            if (item.textContent.trim().includes('주문')) item.classList.add('active');
+        });
+        document.getElementById('tab-orders').classList.add('active');
     }
 })();
 
