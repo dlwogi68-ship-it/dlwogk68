@@ -195,7 +195,6 @@
             <a href="mypage.html" style="color:var(--accent);">마이페이지 ▾</a>
             <div class="nav-drop-menu">
                 <a href="mypage.html">내 정보</a>
-                <a href="mypage.html#orders">주문내역</a>
             </div>
         </li>
     </ul>
@@ -222,7 +221,6 @@
 
         <nav class="side-nav">
             <a class="side-nav-item active" onclick="showTab('profile', this)">👤 내 정보</a>
-            <a class="side-nav-item" onclick="showTab('orders', this)">📦 주문 내역</a>
             <a class="side-nav-item" onclick="showTab('password', this)">🔒 비밀번호 변경</a>
             <a class="side-nav-item danger" onclick="showTab('leave', this)">회원 탈퇴</a>
         </nav>
@@ -380,12 +378,9 @@
                     <div class="empty-state"><div class="icon">💎</div><p>포인트 내역이 없습니다.<br>승부예측에 참여하여 포인트를 적립하세요!</p></div>
                 </div>
             </div>
-        </div>
 
-        <!-- ===== 주문 내역 ===== -->
-        <div class="tab-panel" id="tab-orders">
-            <div class="panel-title">주문 내역</div>
-            <p class="panel-sub">최근 주문한 굿즈를 확인할 수 있습니다.</p>
+            <!-- ─── 주문 내역 ─── -->
+            <div class="info-section-header"><h3>주문 내역</h3></div>
             <div id="orders-list"></div>
         </div>
 
@@ -497,7 +492,6 @@ function showTab(id, el) {
     document.querySelectorAll('.side-nav-item').forEach(i => i.classList.remove('active'));
     document.getElementById('tab-' + id).classList.add('active');
     el.classList.add('active');
-    if (id === 'orders') renderOrders();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     history.replaceState(null, '', id !== 'profile' ? '#' + id : location.pathname);
 }
@@ -759,17 +753,6 @@ function showToast(msg, success = true) {
 }
 
 /* 해시로 탭 직접 이동 (#orders) */
-(function() {
-    const hash = location.hash.replace('#', '');
-    if (hash === 'orders') {
-        document.querySelectorAll('.side-nav-item').forEach(i => i.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.side-nav-item').forEach(item => {
-            if (item.textContent.trim().includes('주문')) item.classList.add('active');
-        });
-        document.getElementById('tab-orders').classList.add('active');
-    }
-})();
 
 loadUserData();
 </script>

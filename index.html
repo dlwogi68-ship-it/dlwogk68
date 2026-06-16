@@ -1540,7 +1540,7 @@ function openFigure(pId, gIdx) {
     document.getElementById('fLightName').textContent = g.name;
     document.getElementById('fLightPrice').textContent = g.price;
     document.getElementById('fLightDesc').textContent = g.figureDesc || '';
-    document.getElementById('fLightCartBtn').onclick = () => { addToCart(p.name + ' - ' + g.name); closeFigure(); };
+    document.getElementById('fLightCartBtn').onclick = () => { addToCart(pId, gIdx); closeFigure(); };
     document.getElementById('figureOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
@@ -1580,7 +1580,7 @@ function renderGoods(filterId = 'all') {
                 <p class="goods-name">${g.name}</p>
                 <div class="goods-footer">
                     <span class="goods-price">${g.price}</span>
-                    <button class="btn-cart" tabindex="-1" onclick="event.stopPropagation();addToCart('${g.pName} - ${g.name}')">담기</button>
+                    <button class="btn-cart" tabindex="-1" onclick="event.stopPropagation();addToCart(${g.pId},${g.gIdx})">담기</button>
                 </div>
             </div>
         </div>`;
@@ -1598,11 +1598,29 @@ function goProduct(pId, gIdx) {
     window.location.href = `product.html?pid=${pId}&gid=${gIdx}`;
 }
 
-/* ------ 장바구니 토스트 ------ */
-function addToCart(name) {
-    cartCount++;
+/* ------ 장바구니 담기 ------ */
+function addToCart(pId, gIdx) {
+    const player = PLAYERS.find(p => p.id === pId);
+    if (!player) return;
+    const goods = player.goods[gIdx];
+    if (!goods) return;
+    const priceNum = parseInt(goods.price.replace(/[^0-9]/g, ''));
+    const cartKey = `${pId}_${gIdx}`;
+    const cart = JSON.parse(localStorage.getItem('legacy_cart') || '[]');
+    const existing = cart.find(item => item.cartKey === cartKey);
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.push({ cartKey, fighter: player.name, name: goods.name, price: priceNum,
+            qty: 1, emoji: goods.emoji || '🗿', image: goods.image || null,
+            color: player.color || '#CC1100', selected: true });
+    }
+    localStorage.setItem('legacy_cart', JSON.stringify(cart));
+    const total = cart.reduce((a, i) => a + i.qty, 0);
+    localStorage.setItem('legacy_cart_count', total);
+    cartCount = total;
     document.getElementById('cart-count').textContent = `(${cartCount})`;
-    showToast('장바구니에 담겼습니다 ✓');
+    showToast(`장바구니에 담겼습니다 ✓`);
 }
 
 function cartToast() { showToast('장바구니 기능은 준비 중입니다.'); }

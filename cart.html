@@ -347,10 +347,10 @@ let deliveryFee = 3000;
 let selectedMethod = null;
 
 const recommendations = [
-    { fighter:'최두호', name:'vs 쿱 스완슨 명장면 피규어', price:49000, emoji:'🗿', color:'#0055BB' },
-    { fighter:'유주상', name:'UFC 316 28초 KO 명장면 피규어', price:49000, emoji:'🗿', color:'#003399' },
-    { fighter:'맥그리거', name:'2체급 챔피언 등극 세레모니 피규어', price:49000, emoji:'🗿', color:'#880000' },
-    { fighter:'아데산야', name:'와이드 스탠스 핑거 베킹 피규어', price:49000, emoji:'🗿', color:'#FFD700' },
+    { fighter:'최두호', name:'vs 쿱 스완슨 명장면 피규어', price:49000, emoji:'🗿', color:'#0055BB', image:'images/최두호피규어.png' },
+    { fighter:'유주상', name:'UFC 316 28초 KO 명장면 피규어', price:49000, emoji:'🗿', color:'#003399', image:'images/유주상 피규어.png' },
+    { fighter:'맥그리거', name:'2체급 챔피언 등극 세레모니 피규어', price:49000, emoji:'🗿', color:'#880000', image:null },
+    { fighter:'아데산야', name:'와이드 스탠스 핑거 베킹 피규어', price:49000, emoji:'🗿', color:'#FFD700', image:'images/아데산야 피규어.png' },
 ];
 
 function fmt(n) { return n.toLocaleString('ko-KR') + '원'; }
@@ -507,7 +507,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closePayment
 function renderRecommend() {
     document.getElementById('recommend-grid').innerHTML = recommendations.map(r => `
         <div class="rec-card">
-            <div class="rec-img" style="background:linear-gradient(135deg,${r.color}18,${r.color}05);">${r.emoji}</div>
+            <div class="rec-img" style="background:linear-gradient(135deg,${r.color}18,${r.color}05);overflow:hidden;">${r.image ? `<img src="${r.image}" alt="${r.name}" style="width:100%;height:100%;object-fit:cover;">` : r.emoji}</div>
             <div class="rec-body">
                 <div class="rec-fighter">${r.fighter}</div>
                 <div class="rec-name">${r.name}</div>
