@@ -341,12 +341,7 @@
 <script>
 /* ---------- 장바구니 데이터 ---------- */
 let cartItems = JSON.parse(localStorage.getItem('legacy_cart') || '[]');
-if (cartItems.length === 0) {
-    cartItems = [
-        { id:1, fighter:'정찬성', name:'트위스터 서브미션 명장면 피규어', price:49000, qty:1, emoji:'🗿', color:'#CC1100', selected:true },
-        { id:2, fighter:'고석현', name:'vs 오반 엘리엇 승리 세레모니 피규어', price:49000, qty:1, emoji:'🗿', color:'#770099', selected:true },
-    ];
-}
+cartItems.forEach(i => { if (i.selected === undefined) i.selected = true; });
 
 let deliveryFee = 3000;
 let selectedMethod = null;
@@ -406,11 +401,15 @@ function updateSummary() {
     document.getElementById('total').textContent = fmt(sub + fee);
 }
 
-function changeQty(idx, d) { cartItems[idx].qty = Math.max(1, cartItems[idx].qty + d); renderCart(); }
-function removeItem(idx) { cartItems.splice(idx, 1); renderCart(); }
-function toggleItem(idx) { cartItems[idx].selected = !cartItems[idx].selected; updateSummary(); }
-function toggleSelectAll() { const c = document.getElementById('select-all').checked; cartItems.forEach(i => i.selected = c); renderCart(); }
-function removeSelected() { cartItems = cartItems.filter(i => !i.selected); renderCart(); }
+function saveCart() {
+    localStorage.setItem('legacy_cart', JSON.stringify(cartItems));
+    localStorage.setItem('legacy_cart_count', cartItems.reduce((a,i) => a + i.qty, 0));
+}
+function changeQty(idx, d) { cartItems[idx].qty = Math.max(1, cartItems[idx].qty + d); saveCart(); renderCart(); }
+function removeItem(idx) { cartItems.splice(idx, 1); saveCart(); renderCart(); }
+function toggleItem(idx) { cartItems[idx].selected = !cartItems[idx].selected; saveCart(); updateSummary(); }
+function toggleSelectAll() { const c = document.getElementById('select-all').checked; cartItems.forEach(i => i.selected = c); saveCart(); renderCart(); }
+function removeSelected() { cartItems = cartItems.filter(i => !i.selected); saveCart(); renderCart(); }
 function selectDelivery(el, fee) {
     document.querySelectorAll('.delivery-opt').forEach(d => { d.classList.remove('selected'); d.querySelector('input').checked = false; });
     el.classList.add('selected'); el.querySelector('input').checked = true;
@@ -466,13 +465,21 @@ function confirmPayment() {
         document.getElementById('pay-success-amt').textContent = '결제금액: ' + total;
 
         // 주문 내역 저장
+        const selectedItems = cartItems.filter(i => i.selected);
         const user = JSON.parse(localStorage.getItem('legacy_user') || 'null');
         if (user) {
             if (!user.orders) user.orders = [];
-            user.orders.unshift({ id: orderNum, date: new Date().toLocaleDateString('ko-KR'), items: cartItems.filter(i=>i.selected).map(i=>i.name), total, status:'결제완료' });
+            user.orders.unshift({
+                id: orderNum,
+                date: new Date().toLocaleDateString('ko-KR'),
+                items: selectedItems.map(i => `${i.fighter} · ${i.name}${i.qty > 1 ? ' × ' + i.qty : ''}`),
+                total,
+                status: '결제완료'
+            });
             localStorage.setItem('legacy_user', JSON.stringify(user));
         }
         cartItems = cartItems.filter(i => !i.selected);
+        saveCart();
         renderCart();
 
         document.getElementById('pay-success').classList.add('show');

@@ -482,7 +482,32 @@ function changeQty(d) {
 /* ---- 장바구니 / 구매 ---- */
 function addToCartAct() {
   const qty = parseInt(document.getElementById('qtyNum').value);
-  cartCount += qty;
+  const player = PLAYERS.find(p => p.id === currentPid);
+  if (!player) return;
+  const goods = player.goods[currentGid];
+  if (!goods) return;
+
+  const priceNum = parseInt(goods.price.replace(/[^0-9]/g, ''));
+  const cartKey = `${currentPid}_${currentGid}`;
+  const cart = JSON.parse(localStorage.getItem('legacy_cart') || '[]');
+  const existing = cart.find(item => item.cartKey === cartKey);
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    cart.push({
+      cartKey,
+      fighter: player.name,
+      name: goods.name,
+      price: priceNum,
+      qty,
+      emoji: goods.emoji || '🗿',
+      image: goods.image || null,
+      color: player.color || '#CC1100',
+      selected: true
+    });
+  }
+  localStorage.setItem('legacy_cart', JSON.stringify(cart));
+  cartCount = cart.reduce((a, i) => a + i.qty, 0);
   localStorage.setItem('legacy_cart_count', cartCount);
   updateCartDisplay();
   showToast(`장바구니에 ${qty}개 담겼습니다 ✓`);
