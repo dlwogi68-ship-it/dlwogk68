@@ -1650,7 +1650,7 @@ window.addEventListener('scroll', () => {
 /* ------ 네비 auth ------ */
 (function() {
     const user = JSON.parse(localStorage.getItem('legacy_user') || 'null');
-    if (user) {
+    if (user && localStorage.getItem('legacy_loggedIn') === 'true') {
         document.getElementById('nav-mypage-li').style.display = 'block';
         const wrap = document.getElementById('nav-auth-wrap');
         wrap.innerHTML = `

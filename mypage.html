@@ -457,7 +457,7 @@
 <script>
 let user = JSON.parse(localStorage.getItem('legacy_user') || 'null');
 
-if (!user) {
+if (!user || localStorage.getItem('legacy_loggedIn') !== 'true') {
     showToast('로그인이 필요합니다.', false);
     setTimeout(() => window.location.href = 'login.html', 1200);
 }

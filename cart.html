@@ -526,7 +526,7 @@ function showToast(msg) {
 /* ---------- 네비 auth ---------- */
 (function() {
     const user = JSON.parse(localStorage.getItem('legacy_user') || 'null');
-    if (user) {
+    if (user && localStorage.getItem('legacy_loggedIn') === 'true') {
         document.getElementById('nav-mypage-li').style.display = 'block';
         document.getElementById('nav-right').innerHTML = `
             <a href="#" onclick="doLogout()" style="font-family:'Oswald',sans-serif;font-size:0.78rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--text-muted)'">로그아웃</a>

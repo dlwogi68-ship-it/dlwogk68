@@ -1384,7 +1384,7 @@ document.documentElement.style.setProperty('--player-color', p.color);
 // ── NAV AUTH ──
 (function(){
   const user = JSON.parse(localStorage.getItem('legacy_user') || 'null');
-  if (user) {
+  if (user && localStorage.getItem('legacy_loggedIn') === 'true') {
     document.getElementById('nav-mypage-li').style.display = 'block';
     document.getElementById('nav-auth-wrap').innerHTML =
       '<a href="#" onclick="doLogout()">로그아웃</a>' +
@@ -1396,7 +1396,6 @@ document.documentElement.style.setProperty('--player-color', p.color);
 
 function doLogout() {
   localStorage.removeItem('legacy_loggedIn');
-  localStorage.removeItem('legacy_user');
   location.href = 'index.html';
 }
 

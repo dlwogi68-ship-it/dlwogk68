@@ -854,7 +854,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeWrite();});
 /* NAV AUTH */
 (function(){
   const user=JSON.parse(localStorage.getItem('legacy_user')||'null');
-  if(user){
+  if(user && localStorage.getItem('legacy_loggedIn')==='true'){
     document.getElementById('nav-mypage-li').style.display='block';
     document.getElementById('nav-auth-wrap').innerHTML=`
       <a href="mypage.html" style="font-family:'Oswald',sans-serif;font-size:0.78rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--text-muted)'">${user.nickname||'마이페이지'}</a>
