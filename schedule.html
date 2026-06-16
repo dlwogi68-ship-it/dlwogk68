@@ -64,9 +64,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 5rem;display:
 .events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;}
 
 /* EVENT CARD */
-.event-card{background:var(--surface);border:1px solid var(--border);overflow:hidden;transition:border-color 0.2s,transform 0.15s;}
+.event-card{background:var(--surface);border:1px solid var(--border);overflow:hidden;transition:border-color 0.2s,transform 0.15s,opacity 0.2s;}
 .event-card:hover:not(.past){border-color:rgba(255,255,255,0.14);transform:translateY(-2px);}
-.event-card.past{opacity:0.52;}
+.event-card.past{opacity:0.55;}
+.event-card.has-result{cursor:pointer;}
+.event-card.has-result:hover{border-color:rgba(201,162,62,0.45)!important;transform:translateY(-2px)!important;opacity:0.85!important;}
 
 .event-card-top{padding:0.7rem 1.1rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.15);}
 .event-type{font-family:'Oswald',sans-serif;font-size:0.6rem;letter-spacing:0.15em;color:var(--text-muted);text-transform:uppercase;}
@@ -98,6 +100,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 5rem;display:
 
 .event-note{margin-top:0.6rem;font-size:0.7rem;color:var(--gold);line-height:1.5;}
 
+/* Result Button on past cards */
+.result-peek-btn{display:inline-flex;align-items:center;gap:0.4rem;margin-top:0.6rem;font-family:'Oswald',sans-serif;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,162,62,0.4);padding:0.28rem 0.75rem;background:rgba(201,162,62,0.08);transition:all 0.2s;pointer-events:none;}
+.has-result:hover .result-peek-btn{background:rgba(201,162,62,0.2);border-color:var(--gold);}
+
 /* TBD card */
 .event-card.tbd{border-style:dashed;}
 
@@ -112,6 +118,32 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 5rem;display:
 /* EMPTY */
 .no-events{text-align:center;padding:4rem 0;color:var(--text-muted);font-size:0.9rem;}
 
+/* ===== RESULT MODAL ===== */
+.result-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+.result-overlay.open{opacity:1;pointer-events:all;}
+.result-modal{background:var(--surface);border:1px solid var(--border);max-width:580px;width:92%;max-height:82vh;overflow-y:auto;position:relative;animation:slideUp 0.25s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.rm-head{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;background:rgba(0,0,0,0.25);}
+.rm-head-info{}
+.rm-event-name{font-family:'Oswald',sans-serif;font-size:1rem;color:var(--white);letter-spacing:0.04em;margin-bottom:0.2rem;}
+.rm-event-meta{font-family:'Oswald',sans-serif;font-size:0.7rem;color:var(--text-muted);letter-spacing:0.08em;}
+.rm-close{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:1rem;cursor:pointer;padding:0.25rem 0.6rem;line-height:1;transition:all 0.2s;font-family:'Oswald',sans-serif;}
+.rm-close:hover{color:var(--white);border-color:var(--white);}
+.rm-body{padding:1rem 1.5rem 1.5rem;}
+.rm-section-label{font-family:'Oswald',sans-serif;font-size:0.58rem;letter-spacing:0.32em;color:var(--accent);text-transform:uppercase;margin-bottom:0.9rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);}
+.rm-fight{padding:0.8rem 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.rm-fight:last-child{border-bottom:none;}
+.rm-bout{font-family:'Oswald',sans-serif;font-size:0.58rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.35rem;}
+.rm-bout.main-bout{color:var(--gold);}
+.rm-fighters{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.3rem;}
+.rm-winner{font-family:'Oswald',sans-serif;font-size:0.92rem;font-weight:600;color:var(--white);}
+.rm-winner.korean-winner{color:#44BBFF;}
+.rm-def{font-size:0.68rem;color:var(--text-muted);font-family:'Oswald',sans-serif;}
+.rm-loser{font-family:'Oswald',sans-serif;font-size:0.85rem;color:var(--text-muted);}
+.rm-method{font-size:0.75rem;color:var(--gold);margin-top:0.1rem;}
+.rm-title-change{display:inline-block;font-family:'Oswald',sans-serif;font-size:0.58rem;letter-spacing:0.12em;padding:0.18rem 0.55rem;background:rgba(255,184,0,0.18);color:#FFB800;border:1px solid rgba(255,184,0,0.35);margin-left:0.5rem;vertical-align:middle;}
+.rm-win-badge{display:inline-block;font-family:'Oswald',sans-serif;font-size:0.55rem;letter-spacing:0.1em;padding:0.15rem 0.45rem;background:rgba(68,204,136,0.12);color:#44CC88;border:1px solid rgba(68,204,136,0.3);margin-left:0.4rem;vertical-align:middle;}
+
 @media(max-width:960px){
   nav{padding:1rem 1.5rem;}
   .nav-links{display:none;}
@@ -119,6 +151,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 5rem;display:
   .main-content{padding:2rem 1.5rem 4rem;}
   .schedule-notice{padding:0 1.5rem 3rem;}
   .events-grid{grid-template-columns:1fr;}
+  .result-modal{max-height:90vh;}
 }
 </style>
 </head>
@@ -152,7 +185,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 5rem;display:
   <div class="page-header-inner">
     <p class="page-label">Fight Schedule</p>
     <h1 class="page-title">경기 일정</h1>
-    <p class="page-sub">UFC · ZFN · Road FC · ONE Championship · Black Combat 실제 경기 일정</p>
+    <p class="page-sub">UFC · ZFN · Road FC · ONE Championship · Black Combat 실제 경기 일정 &nbsp;|&nbsp; 완료된 경기는 클릭하면 결과를 확인할 수 있습니다.</p>
   </div>
 </div>
 
@@ -176,12 +209,26 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.1rem 5rem;display:
 <div class="schedule-notice">
   <div class="notice-box">
     <strong>📌 안내</strong> — 경기 일정 및 매치업은 주최사 사정에 따라 변동될 수 있습니다. 최신 정보는 각 단체 공식 SNS 및 홈페이지를 확인해주세요.<br>
-    완료된 경기는 흐리게 표시됩니다. 날짜는 <strong>한국시간(KST)</strong> 기준입니다.
+    완료된 경기는 흐리게 표시되며 <strong>클릭하면 경기 결과를 확인</strong>할 수 있습니다. 날짜는 <strong>한국시간(KST)</strong> 기준입니다.
+  </div>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="result-overlay" id="resultOverlay" onclick="overlayCloseResult(event)">
+  <div class="result-modal" id="resultModal">
+    <div class="rm-head">
+      <div class="rm-head-info">
+        <div class="rm-event-name" id="rm-name"></div>
+        <div class="rm-event-meta" id="rm-meta"></div>
+      </div>
+      <button class="rm-close" onclick="closeResult()">✕ 닫기</button>
+    </div>
+    <div class="rm-body" id="rm-body"></div>
   </div>
 </div>
 
 <script>
-const TODAY_STR = '2026-06-15';
+const TODAY_STR = '2026-06-16';
 const TODAY = new Date(TODAY_STR);
 
 function daysUntil(isoDate) {
@@ -192,173 +239,292 @@ function isPast(isoDate) { return isoDate !== 'TBD' && daysUntil(isoDate) < 0; }
 
 const EVENTS = [
   /* ===== UFC ===== */
-  {org:'UFC',type:'PPV',
-   name:'UFC Freedom 250',
-   date:'2026.06.14',dateISO:'2026-06-14',
-   venue:'Capital One Arena, 워싱턴 DC, USA',
-   main:'일리아 토푸리아 vs. 저스틴 게이치',
-   mainType:'라이트급 통합 타이틀전',
-   note:'역사적 맥락 — 미국 수도 특별 이벤트'},
 
-  {org:'UFC',type:'Fight Night',
-   name:'UFC Fight Night 279',
-   date:'2026.06.20',dateISO:'2026-06-20',
-   venue:'UFC APEX, 라스베이거스, USA',
+  /* --- 완료된 경기 (5월~6월16일) --- */
+  {org:'UFC', type:'Fight Night',
+   name:'UFC Fight Night: Della Maddalena vs. Prates',
+   date:'2026.05.02', dateISO:'2026-05-02',
+   venue:'RAC Arena, 퍼스, 호주',
+   main:'카를로스 프라테스 vs. 잭 델라 마달레나',
+   mainType:'웰터급',
+   note:'퍼스 다섯 번째 UFC 개최 · 관중 13,839명',
+   result:{
+     fights:[
+       {bout:'메인 이벤트 · 웰터급', winner:'카를로스 프라테스', loser:'잭 델라 마달레나', method:'TKO — 레그킥+엘보우', rd:'3R 3:17', main:true},
+       {bout:'코메인 이벤트 · 라이트급', winner:'퀼란 살킬드', loser:'베닐 다리우쉬', method:'TKO — 파운딩', rd:'1R 3:29'},
+       {bout:'헤비급', winner:'브란도 페리치치', loser:'샤밀 가지에프', method:'KO — 펀치', rd:'2R 3:44'},
+       {bout:'미들급', winner:'마르완 라히키', loser:'올리 슈미트', method:'TKO — 파운딩', rd:'1R 2:47'},
+       {bout:'플라이급', winner:'스티브 에르쉑', loser:'팀 엘리엇', method:'판정 (29-28, 29-28, 29-28)', rd:'3R 5:00'},
+       {bout:'헤비급', winner:'루이 서덜랜드', loser:'타이 투이바사', method:'판정 (30-26, 30-26, 30-26)', rd:'3R 5:00'},
+     ]
+   }
+  },
+
+  {org:'UFC', type:'PPV',
+   name:'UFC 328: Chimaev vs. Strickland',
+   date:'2026.05.09', dateISO:'2026-05-09',
+   venue:'Prudential Center, 뉴어크, 미국',
+   main:'함자트 치마에프 (c) vs. 션 스트릭랜드',
+   mainType:'UFC 미들급 챔피언십',
+   note:'관중 17,783명 · 게이트 $7,518,918',
+   result:{
+     fights:[
+       {bout:'메인 이벤트 · 미들급 챔피언십', winner:'션 스트릭랜드', loser:'함자트 치마에프 (챔피언)', method:'스플릿 판정 (47-48, 48-47, 48-47)', rd:'5R 5:00', main:true, titleChange:true},
+       {bout:'코메인 이벤트 · 플라이급 챔피언십', winner:'조슈아 반 (챔피언)', loser:'타이라 타츠로', method:'TKO — 프런트킥+파운딩', rd:'5R 1:32'},
+       {bout:'헤비급', winner:'알렉산더 볼코프', loser:'왈도 코르테스-아코스타', method:'판정 (30-27, 29-28, 29-28)', rd:'3R 5:00'},
+       {bout:'웰터급', winner:'션 브레이디', loser:'호아킨 버클리', method:'판정 (30-25, 30-25, 30-27)', rd:'3R 5:00'},
+       {bout:'캐치웨이트 160lbs', winner:'킹 그린', loser:'제레미 스티븐스', method:'서브미션 — RNC', rd:'1R 4:20'},
+       {bout:'미들급', winner:'야로슬라프 아모소프', loser:'호엘 알바레스', method:'서브미션 — 암트라이앵글', rd:'2R 1:13'},
+     ]
+   }
+  },
+
+  {org:'UFC', type:'Fight Night',
+   name:'UFC Fight Night: Allen vs. Costa',
+   date:'2026.05.16', dateISO:'2026-05-16',
+   venue:'Meta Apex (UFC APEX), 라스베이거스, 미국',
+   main:'아놀드 앨런 vs. 멜퀴자엘 코스타',
+   mainType:'페더급 · 코메인 최두호 출전',
+   note:'🇰🇷 최두호 TKO 승리!',
+   result:{
+     fights:[
+       {bout:'메인 이벤트 · 페더급', winner:'아놀드 앨런', loser:'멜퀴자엘 코스타', method:'판정 (50-45, 50-45, 49-46)', rd:'5R 5:00', main:true},
+       {bout:'코메인 이벤트 · 페더급', winner:'최두호', loser:'다니엘 산토스', method:'TKO — 파운딩', rd:'2R 4:29', korean:true},
+       {bout:'밴텀급', winner:'후안 디아스', loser:'상대 선수', method:'서브미션 — RNC', rd:'2R 4:08'},
+       {bout:'웰터급', winner:'카오스 윌리엄스', loser:'상대 선수', method:'TKO', rd:'1R 3:31'},
+       {bout:'미들급', winner:'베르나르도 소파이', loser:'상대 선수', method:'서브미션 — RNC', rd:'2R 2:25'},
+     ]
+   }
+  },
+
+  {org:'UFC', type:'Fight Night',
+   name:'UFC Fight Night: Song vs. Figueiredo',
+   date:'2026.05.30', dateISO:'2026-05-30',
+   venue:'Galaxy Arena, 마카오, 중국',
+   main:'쏭 야동 vs. 데이베손 피게이레도',
+   mainType:'플라이급',
+   note:'관중 12,647명 · 마카오 특별 이벤트',
+   result:{
+     fights:[
+       {bout:'메인 이벤트 · 플라이급', winner:'쏭 야동', loser:'데이베손 피게이레도', method:'서브미션 — 길로틴 초크', rd:'2R 4:42', main:true},
+       {bout:'코메인 이벤트 · 라이트헤비급', winner:'알론조 메니필드', loser:'장 밍양', method:'TKO — 파운딩', rd:'1R 4:15'},
+       {bout:'헤비급', winner:'세르게이 파블로비치', loser:'탈리손 테이세이라', method:'KO — 펀치', rd:'1R 0:39'},
+       {bout:'밴텀급', winner:'카이 아사쿠라', loser:'카메론 스마더만', method:'KO — 펀치', rd:'1R 1:50'},
+       {bout:'웰터급', winner:'제이크 매튜스', loser:'칼스턴 해리스', method:'판정 (29-28, 29-28, 29-28)', rd:'3R 5:00'},
+     ]
+   }
+  },
+
+  {org:'UFC', type:'Fight Night',
+   name:'UFC Fight Night: Muhammad vs. Bonfim',
+   date:'2026.06.06', dateISO:'2026-06-06',
+   venue:'Meta Apex (UFC APEX), 라스베이거스, 미국',
+   main:'가브리엘 봉핌 vs. 벨랄 무하마드',
+   mainType:'웰터급',
+   note:'',
+   result:{
+     fights:[
+       {bout:'메인 이벤트 · 웰터급', winner:'가브리엘 봉핌', loser:'벨랄 무하마드', method:'판정 (50-45, 50-45, 50-45)', rd:'5R 5:00', main:true},
+       {bout:'코메인 이벤트 · 미들급', winner:'브렌든 앨런', loser:'에드멘 샤바지안', method:'판정 (30-27, 30-27, 29-28)', rd:'3R 5:00'},
+       {bout:'라이트급', winner:'톰 놀란', loser:'파레스 지암', method:'판정 (29-28, 29-28, 29-28)', rd:'3R 5:00'},
+       {bout:'밴텀급', winner:'브라이스 미첼', loser:'산티아고 루나', method:'서브미션 — 암트라이앵글', rd:'3R 4:52'},
+       {bout:'라이트헤비급', winner:'이보 바라니에프스키', loser:'주니어 타파', method:'TKO — 레그킥+파운딩', rd:'1R 1:25'},
+     ]
+   }
+  },
+
+  {org:'UFC', type:'PPV',
+   name:'UFC Freedom 250',
+   date:'2026.06.14', dateISO:'2026-06-14',
+   venue:'White House 잔디밭, 워싱턴 DC, 미국',
+   main:'저스틴 게이치 vs. 일리아 토푸리아 (c)',
+   mainType:'UFC 라이트급 통합 챔피언십',
+   note:'🔥 역사적 업셋 — 게이치, 토푸리아 꺾고 챔피언 등극!',
+   result:{
+     fights:[
+       {bout:'메인 이벤트 · 라이트급 통합 챔피언십', winner:'저스틴 게이치', loser:'일리아 토푸리아 (챔피언)', method:'TKO — 코너 스탑', rd:'4R 5:00', main:true, titleChange:true},
+       {bout:'코메인 이벤트 · 헤비급 인터림 챔피언십', winner:'시릴 간', loser:'알렉스 페레이라 (챔피언)', method:'TKO — 파운딩', rd:'2R 1:27', titleChange:true},
+       {bout:'밴텀급', winner:'숀 오말리', loser:'아이에만 자하비', method:'KO — 펀치', rd:'2R 4:02'},
+       {bout:'라이트급', winner:'마우리시오 루피', loser:'마이클 챈들러', method:'TKO — 타격', rd:'1R 4:29'},
+       {bout:'미들급', winner:'보 니칼', loser:'카일 다카우스', method:'TKO — 파운딩', rd:'1R 4:34'},
+       {bout:'페더급', winner:'디에고 로페스', loser:'스티브 가르시아', method:'TKO — 파운딩', rd:'2R 2:42'},
+       {bout:'헤비급', winner:'조쉬 호킷', loser:'데릭 루이스', method:'TKO — 파운딩', rd:'2R 4:09'},
+     ]
+   }
+  },
+
+  /* --- 예정된 경기 --- */
+  {org:'UFC', type:'Fight Night',
+   name:'UFC Fight Night: Kape vs. Horiguchi',
+   date:'2026.06.20', dateISO:'2026-06-20',
+   venue:'Meta Apex (UFC APEX), 라스베이거스, 미국',
    main:'마넬 카페 vs. 호리구치 교지',
    mainType:'플라이급 매치',
    note:''},
 
-  {org:'UFC',type:'Fight Night',
-   name:'UFC Fight Night 280',
-   date:'2026.06.27',dateISO:'2026-06-27',
-   venue:'Baku Crystal Hall, 바쿠, 아제르바이잔',
+  {org:'UFC', type:'Fight Night',
+   name:'UFC Fight Night: Fiziev vs. Torres',
+   date:'2026.06.27', dateISO:'2026-06-27',
+   venue:'National Gymnastics Arena, 바쿠, 아제르바이잔',
    main:'라파엘 피지에프 vs. 조아킴 토레스',
    mainType:'라이트급 매치',
-   note:'아제르바이잔 첫 UFC 이벤트 · UFC "Ataman" 홈커밍'},
+   note:'아제르바이잔 첫 UFC 이벤트'},
 
-  {org:'UFC',type:'PPV',
+  {org:'UFC', type:'PPV',
    name:'UFC 329: McGregor vs. Holloway 2',
-   date:'2026.07.11',dateISO:'2026-07-11',
-   venue:'T-Mobile Arena, 라스베이거스, USA',
+   date:'2026.07.11', dateISO:'2026-07-11',
+   venue:'T-Mobile Arena, 라스베이거스, 미국',
    main:'코너 맥그리거 vs. 맥스 할로웨이',
    mainType:'웰터급 5라운드 특별경기',
    note:'🔥 역대급 리매치 — 맥그리거 복귀전'},
 
-  {org:'UFC',type:'Fight Night',
+  {org:'UFC', type:'Fight Night',
    name:'UFC Fight Night 281',
-   date:'2026.07.18',dateISO:'2026-07-18',
-   venue:'Paycom Center, 오클라호마시티, USA',
+   date:'2026.07.18', dateISO:'2026-07-18',
+   venue:'Paycom Center, 오클라호마시티, 미국',
    main:'메인 이벤트 발표 예정',
    mainType:'',
    note:''},
 
-  {org:'UFC',type:'Fight Night',
+  {org:'UFC', type:'Fight Night',
    name:'UFC Fight Night 282',
-   date:'2026.07.25',dateISO:'2026-07-25',
+   date:'2026.07.25', dateISO:'2026-07-25',
    venue:'Etihad Arena, 아부다비, UAE',
    main:'메인 이벤트 발표 예정',
    mainType:'',
    note:'Fight Island 귀환'},
 
   /* ===== ZFN ===== */
-  {org:'ZFN',type:'Event',
+  {org:'ZFN', type:'Event',
    name:'ZFN 04',
-   date:'2026.05.09',dateISO:'2026-05-09',
-   venue:'올림픽공원 핸드볼경기장 (티켓링크라이브아레나), 서울',
-   main:'메인카드 8경기 · 언더카드 5경기',
-   mainType:'종합격투기',
-   note:'UFC Fight Pass 해외 중계 (라틴아메리카 제외)'},
+   date:'2026.05.09', dateISO:'2026-05-09',
+   venue:'티켓링크라이브아레나 (올림픽공원 핸드볼경기장), 서울',
+   main:'황인수 vs. 알렉스 폴리지아',
+   mainType:'종합격투기 · 메인카드 8경기',
+   note:'UFC Fight Pass 해외 중계',
+   result:{
+     fights:[
+       {bout:'메인 이벤트', winner:'황인수', loser:'알렉스 폴리지아', method:'TKO', rd:'3R', main:true, korean:true},
+     ]
+   }
+  },
 
-  {org:'ZFN',type:'Event',
+  {org:'ZFN', type:'Event',
    name:'ZFN 05',
-   date:'미정',dateISO:'TBD',
+   date:'미정', dateISO:'TBD',
    venue:'일정 발표 예정',
    main:'매치업 발표 예정',
    mainType:'',
    note:''},
 
   /* ===== ROAD FC ===== */
-  {org:'ROADFC',type:'Event',
+  {org:'ROADFC', type:'Event',
    name:'굽네 Road FC 076',
-   date:'2026.03.15',dateISO:'2026-03-15',
+   date:'2026.03.15', dateISO:'2026-03-15',
    venue:'장충체육관, 서울',
-   main:'헤비급 챔피언십 타이틀전',
-   mainType:'헤비급',
-   note:'굽네 스폰서십 이벤트'},
+   main:'김태인 vs. 세키노 타이세이',
+   mainType:'헤비급 타이틀전',
+   note:'굽네 스폰서십 이벤트 · 14경기',
+   result:{
+     fights:[
+       {bout:'메인 이벤트 · 헤비급 챔피언십', winner:'김태인', loser:'세키노 타이세이', method:'판정', rd:'3R 5:00', main:true, korean:true},
+     ]
+   }
+  },
 
-  {org:'ROADFC',type:'Event',
+  {org:'ROADFC', type:'Event',
    name:'Road FC 077',
-   date:'미정',dateISO:'TBD',
+   date:'미정', dateISO:'TBD',
    venue:'일정 발표 예정',
    main:'매치업 발표 예정',
    mainType:'',
    note:''},
 
   /* ===== ONE Championship ===== */
-  {org:'ONE',type:'Fight Night',
+  {org:'ONE', type:'Fight Night',
    name:'ONE Fight Night 39',
-   date:'2026.01.24',dateISO:'2026-01-24',
+   date:'2026.01.24', dateISO:'2026-01-24',
    venue:'룸피니 경기장, 방콕, 태국',
    main:'아시아 정예 격투기 매치',
    mainType:'MMA · 무에타이 · 킥복싱',
    note:'Prime Video 미국 생중계 (ET 9PM)'},
 
-  {org:'ONE',type:'Fight Night',
+  {org:'ONE', type:'Fight Night',
    name:'ONE Fight Night 40',
-   date:'2026.02.14',dateISO:'2026-02-14',
+   date:'2026.02.14', dateISO:'2026-02-14',
    venue:'룸피니 경기장, 방콕, 태국',
    main:'아시아 정예 격투기 매치',
    mainType:'MMA · 무에타이 · 킥복싱',
    note:'Prime Video 미국 생중계'},
 
-  {org:'ONE',type:'PPV',
+  {org:'ONE', type:'PPV',
    name:'ONE 174',
-   date:'2026.04.03',dateISO:'2026-04-03',
+   date:'2026.04.03', dateISO:'2026-04-03',
    venue:'개최지 추후 발표',
    main:'챔피언십 매치 다수',
    mainType:'MMA · 무에타이',
    note:'ONE 넘버드 이벤트'},
 
-  {org:'ONE',type:'PPV',
+  {org:'ONE', type:'PPV',
    name:'ONE 175',
-   date:'2026.04.29',dateISO:'2026-04-29',
+   date:'2026.04.29', dateISO:'2026-04-29',
    venue:'아리아케 아레나, 도쿄, 일본',
    main:'챔피언십 매치 다수',
    mainType:'MMA · 무에타이 · 킥복싱',
    note:'일본 특별 이벤트 · 도쿄 귀환'},
 
-  {org:'ONE',type:'Fight Night',
+  {org:'ONE', type:'Fight Night',
    name:'ONE Fight Night (Denver)',
-   date:'2026.06.26',dateISO:'2026-06-26',
+   date:'2026.06.26', dateISO:'2026-06-26',
    venue:'Ball Arena, 덴버, 미국',
    main:'챔피언십 매치',
    mainType:'MMA · 킥복싱',
    note:'미국 본토 이벤트 · Prime Video 생중계'},
 
   /* ===== Black Combat ===== */
-  {org:'BLACK',type:'Black Cup',
+  {org:'BLACK', type:'Black Cup',
    name:'BLACK CUP — Korea Alpha vs. USA',
-   date:'2026.03.14',dateISO:'2026-03-14',
+   date:'2026.03.14', dateISO:'2026-03-14',
    venue:'블랙 아고라, 오산',
    main:'한국 Alpha팀 vs. 미국팀',
    mainType:'국가대항전 MMA',
    note:'세계 최초 MMA 국가대항전 월드컵 형식'},
 
-  {org:'BLACK',type:'Black Cup',
+  {org:'BLACK', type:'Black Cup',
    name:'BLACK CUP — Japan vs. Brazil',
-   date:'2026.03.28',dateISO:'2026-03-28',
+   date:'2026.03.28', dateISO:'2026-03-28',
    venue:'블랙 아고라, 오산',
    main:'일본팀 vs. 브라질팀',
    mainType:'국가대항전 MMA',
    note:'BLACK CUP 2026 조별예선 2라운드'},
 
-  {org:'BLACK',type:'Black Cup',
+  {org:'BLACK', type:'Black Cup',
    name:'BLACK CUP — Mongolia vs. China',
-   date:'2026.04.11',dateISO:'2026-04-11',
+   date:'2026.04.11', dateISO:'2026-04-11',
    venue:'블랙 아고라, 오산',
    main:'몽골팀 vs. 중국팀',
    mainType:'국가대항전 MMA',
    note:'BLACK CUP 2026 조별예선 3라운드'},
 
-  {org:'BLACK',type:'Black Cup',
+  {org:'BLACK', type:'Black Cup',
    name:'BLACK CUP — Korea Omega vs. Eurasia',
-   date:'2026.04.25',dateISO:'2026-04-25',
+   date:'2026.04.25', dateISO:'2026-04-25',
    venue:'블랙 아고라, 오산',
    main:'한국 Omega팀 vs. 유라시아팀',
    mainType:'국가대항전 MMA',
    note:'BLACK CUP 2026 조별예선 최종전'},
 
-  {org:'BLACK',type:'Rise',
+  {org:'BLACK', type:'Rise',
    name:'Black Combat Rise 09',
-   date:'2026.06.06',dateISO:'2026-06-06',
+   date:'2026.06.06', dateISO:'2026-06-06',
    venue:'서울 (장소 추후 공개)',
    main:'정규 리그 시즌 9',
    mainType:'MMA',
    note:''},
 
-  {org:'BLACK',type:'Rise',
+  {org:'BLACK', type:'Rise',
    name:'Black Combat Rise 10',
-   date:'미정',dateISO:'TBD',
+   date:'미정', dateISO:'TBD',
    venue:'일정 발표 예정',
    main:'매치업 발표 예정',
    mainType:'',
@@ -366,11 +532,11 @@ const EVENTS = [
 ];
 
 const ORG_META = {
-  UFC:  {label:'UFC',       badgeClass:'org-ufc',   title:'UFC 경기 일정'},
-  ZFN:  {label:'ZFN',       badgeClass:'org-zfn',   title:'ZFN 경기 일정'},
-  ROADFC:{label:'ROAD FC',  badgeClass:'org-roadfc', title:'Road FC 경기 일정'},
-  ONE:  {label:'ONE',       badgeClass:'org-one',   title:'ONE Championship 경기 일정'},
-  BLACK:{label:'BLACK COMBAT',badgeClass:'org-black',title:'Black Combat 경기 일정'},
+  UFC:  {label:'UFC',        badgeClass:'org-ufc',    title:'UFC 경기 일정'},
+  ZFN:  {label:'ZFN',        badgeClass:'org-zfn',    title:'ZFN 경기 일정'},
+  ROADFC:{label:'ROAD FC',   badgeClass:'org-roadfc',  title:'Road FC 경기 일정'},
+  ONE:  {label:'ONE',        badgeClass:'org-one',    title:'ONE Championship 경기 일정'},
+  BLACK:{label:'BLACK COMBAT',badgeClass:'org-black', title:'Black Combat 경기 일정'},
 };
 
 let currentOrg = 'ALL';
@@ -389,18 +555,19 @@ function sortEvents(list) {
   return [...upcoming, ...tbd, ...past];
 }
 
-function renderCard(e) {
+function renderCard(e, idx) {
   const isTBD = e.dateISO === 'TBD';
   const past = !isTBD && isPast(e.dateISO);
   const days = isTBD ? null : daysUntil(e.dateISO);
   const isSoon = !past && !isTBD && days !== null && days <= 7;
   const isToday = days === 0;
+  const hasResult = past && e.result;
 
   let statusHtml;
-  if (past)       statusHtml = `<span class="event-status status-done">✓ 완료</span>`;
-  else if (isTBD) statusHtml = `<span class="event-status status-tbd">일정 미정</span>`;
-  else if (isSoon)statusHtml = `<span class="event-status status-soon">🔥 D-${days}</span>`;
-  else            statusHtml = `<span class="event-status status-upcoming">D-${days}</span>`;
+  if (past)        statusHtml = `<span class="event-status status-done">✓ 완료</span>`;
+  else if (isTBD)  statusHtml = `<span class="event-status status-tbd">일정 미정</span>`;
+  else if (isSoon) statusHtml = `<span class="event-status status-soon">🔥 D-${days}</span>`;
+  else             statusHtml = `<span class="event-status status-upcoming">D-${days}</span>`;
 
   let ddayHtml = '';
   if (!past && !isTBD) {
@@ -411,10 +578,12 @@ function renderCard(e) {
     </div>`;
   }
 
+  const resultBtn = hasResult ? `<div class="result-peek-btn">📋 경기 결과 보기</div>` : '';
   const noteHtml = e.note ? `<div class="event-note">💡 ${e.note}</div>` : '';
   const mainBorderClass = past ? 'past-main' : '';
+  const clickAttr = hasResult ? `onclick="openResult(${idx})"` : '';
 
-  return `<div class="event-card ${past?'past':''} ${isTBD?'tbd':''}">
+  return `<div class="event-card ${past?'past':''} ${isTBD?'tbd':''} ${hasResult?'has-result':''}" ${clickAttr}>
     <div class="event-card-top">
       <span class="event-type">${e.type}</span>
       ${statusHtml}
@@ -431,6 +600,7 @@ function renderCard(e) {
         ${e.mainType ? `<div class="event-weight">${e.mainType}</div>` : ''}
       </div>` : ''}
       ${ddayHtml}
+      ${resultBtn}
       ${noteHtml}
     </div>
   </div>`;
@@ -445,7 +615,8 @@ function renderEvents() {
     const orgs = ['UFC','ZFN','ROADFC','ONE','BLACK'];
     let html = '';
     orgs.forEach(org => {
-      const list = sortEvents(EVENTS.filter(e => e.org === org));
+      const orgEvents = EVENTS.map((e,i)=>({...e,_idx:i})).filter(e=>e.org===org);
+      const list = sortEvents(orgEvents);
       const m = ORG_META[org];
       const upcomingCount = list.filter(e => !isPast(e.dateISO) && e.dateISO !== 'TBD').length;
       html += `<div class="org-section">
@@ -454,20 +625,66 @@ function renderEvents() {
           <h2>${m.title}</h2>
           ${upcomingCount>0?`<span class="upcoming-count">▶ 예정 ${upcomingCount}경기</span>`:''}
         </div>
-        <div class="events-grid">${list.map(e=>renderCard(e)).join('')}</div>
+        <div class="events-grid">${list.map(e=>renderCard(e,e._idx)).join('')}</div>
       </div>`;
     });
     container.innerHTML = html;
   } else {
     mc.classList.add('solo-view');
-    const list = sortEvents(EVENTS.filter(e => e.org === currentOrg));
+    const orgEvents = EVENTS.map((e,i)=>({...e,_idx:i})).filter(e=>e.org===currentOrg);
+    const list = sortEvents(orgEvents);
     if (list.length === 0) {
       container.innerHTML = '<div class="no-events">해당 단체의 경기 일정이 없습니다.</div>';
     } else {
-      container.innerHTML = `<div class="events-grid">${list.map(e=>renderCard(e)).join('')}</div>`;
+      container.innerHTML = `<div class="events-grid">${list.map(e=>renderCard(e,e._idx)).join('')}</div>`;
     }
   }
 }
+
+/* ===== RESULT MODAL ===== */
+function openResult(idx) {
+  const e = EVENTS[idx];
+  if (!e || !e.result) return;
+
+  document.getElementById('rm-name').textContent = e.name;
+  document.getElementById('rm-meta').textContent = `📅 ${e.date}  ·  📍 ${e.venue}`;
+
+  const fightsHtml = e.result.fights.map(f => {
+    const mainClass = f.main ? 'main-bout' : '';
+    const koreanClass = f.korean ? 'korean-winner' : '';
+    const titleBadge = f.titleChange ? `<span class="rm-title-change">🏆 타이틀 교체</span>` : '';
+    const winBadge = f.korean ? `<span class="rm-win-badge">🇰🇷 KOR WIN</span>` : '';
+    return `<div class="rm-fight">
+      <div class="rm-bout ${mainClass}">${f.bout}</div>
+      <div class="rm-fighters">
+        <span class="rm-winner ${koreanClass}">${f.winner}</span>
+        ${titleBadge}${winBadge}
+        <span class="rm-def">def.</span>
+        <span class="rm-loser">${f.loser}</span>
+      </div>
+      <div class="rm-method">${f.method} &nbsp;·&nbsp; ${f.rd}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('rm-body').innerHTML = `
+    <div class="rm-section-label">경기 결과</div>
+    ${fightsHtml}
+  `;
+
+  document.getElementById('resultOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeResult() {
+  document.getElementById('resultOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function overlayCloseResult(e) {
+  if (e.target === document.getElementById('resultOverlay')) closeResult();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeResult(); });
 
 /* NAV AUTH */
 (function(){
