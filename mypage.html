@@ -18,7 +18,7 @@
         body { background:var(--bg); color:var(--text); font-family:'Noto Sans KR',sans-serif; font-weight:300; min-height:100vh; }
         ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--accent)}
 
-        /* ===== NAV ===== */
+        /* NAV */
         nav { position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 5rem;display:flex;justify-content:space-between;align-items:center;background:rgba(7,10,18,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border); }
         .logo { font-family:'Oswald',sans-serif;font-weight:700;font-size:1.6rem;letter-spacing:0.18em;color:var(--white);text-decoration:none; }
         .logo em { color:var(--accent);font-style:normal; }
@@ -28,11 +28,16 @@
         .nav-right { display:flex;align-items:center;gap:1.2rem; }
         .nav-right a { font-family:'Oswald',sans-serif;font-size:0.78rem;color:var(--text-muted);text-decoration:none;transition:color 0.2s; }
         .nav-right a:hover { color:var(--white); }
+        .nav-item-drop { position:relative; }
+        .nav-drop-menu { position:absolute;top:calc(100% + 0.9rem);left:50%;transform:translateX(-50%);background:rgba(10,14,24,0.99);border:1px solid var(--border);min-width:140px;display:none;flex-direction:column;z-index:200;padding:0.4rem 0;backdrop-filter:blur(20px); }
+        .nav-item-drop:hover .nav-drop-menu { display:flex; }
+        .nav-drop-menu a { display:block;padding:0.55rem 1rem;font-family:'Oswald',sans-serif;font-size:0.72rem;color:var(--text-muted);white-space:nowrap;text-decoration:none;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.15s,background 0.15s; }
+        .nav-drop-menu a:hover { color:var(--white);background:rgba(255,255,255,0.04); }
 
-        /* ===== LAYOUT ===== */
-        .mypage-wrap { max-width:1100px; margin:0 auto; padding:7rem 2rem 5rem; display:grid; grid-template-columns:260px 1fr; gap:2rem; align-items:start; }
+        /* LAYOUT */
+        .mypage-wrap { max-width:1100px; margin:0 auto; padding:7rem 2rem 5rem; display:grid; grid-template-columns:240px 1fr; gap:2rem; align-items:start; }
 
-        /* ===== SIDEBAR ===== */
+        /* SIDEBAR */
         .sidebar { position:sticky; top:7rem; }
         .user-card { background:var(--surface); border:1px solid var(--border); padding:1.8rem 1.5rem; margin-bottom:1rem; text-align:center; }
         .user-avatar-wrap { position:relative; display:inline-block; margin-bottom:1rem; }
@@ -45,14 +50,14 @@
         .user-grade { display:inline-block; background:rgba(201,162,62,0.15); border:1px solid rgba(201,162,62,0.3); color:var(--gold); font-family:'Oswald',sans-serif; font-size:0.65rem; letter-spacing:0.15em; padding:0.2rem 0.7rem; }
 
         .side-nav { background:var(--surface); border:1px solid var(--border); overflow:hidden; }
-        .side-nav-item { display:block; padding:0.9rem 1.4rem; color:var(--text-muted); text-decoration:none; font-size:0.85rem; border-left:3px solid transparent; transition:all 0.2s; cursor:pointer; border-bottom:1px solid var(--border); }
+        .side-nav-item { display:block; padding:0.9rem 1.4rem; color:var(--text-muted); text-decoration:none; font-size:0.85rem; border-left:3px solid transparent; transition:all 0.2s; cursor:pointer; border-bottom:1px solid var(--border); user-select:none; }
         .side-nav-item:last-child { border-bottom:none; }
         .side-nav-item:hover { background:rgba(255,255,255,0.02); color:var(--white); border-left-color:rgba(255,51,0,0.4); }
         .side-nav-item.active { background:rgba(255,51,0,0.06); color:var(--accent); border-left-color:var(--accent); font-weight:500; }
         .side-nav-item.danger { color:#FF5555; }
         .side-nav-item.danger:hover { background:rgba(255,85,85,0.06); border-left-color:#FF5555; }
 
-        /* ===== CONTENT ===== */
+        /* CONTENT */
         .content-area { min-width:0; }
         .tab-panel { display:none; }
         .tab-panel.active { display:block; animation:fadeUp 0.3s ease; }
@@ -61,7 +66,12 @@
         .panel-title { font-family:'Oswald',sans-serif; font-size:1.3rem; color:var(--white); letter-spacing:0.05em; margin-bottom:0.3rem; }
         .panel-sub { font-size:0.82rem; color:var(--text-muted); margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
 
-        /* ===== FORM COMMON ===== */
+        /* 내 정보 섹션 구분선 */
+        .info-section-header { display:flex; align-items:center; gap:1rem; margin:2.5rem 0 1.2rem; }
+        .info-section-header h3 { font-family:'Oswald',sans-serif; font-size:0.72rem; letter-spacing:0.35em; color:var(--text-muted); text-transform:uppercase; white-space:nowrap; }
+        .info-section-header::after { content:''; flex:1; height:1px; background:var(--border); }
+
+        /* FORM COMMON */
         .form-section { background:var(--surface); border:1px solid var(--border); padding:1.8rem; margin-bottom:1.2rem; }
         .form-section-title { font-family:'Oswald',sans-serif; font-size:0.75rem; letter-spacing:0.3em; color:var(--text-muted); text-transform:uppercase; margin-bottom:1.2rem; padding-bottom:0.8rem; border-bottom:1px solid var(--border); }
         .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem 1.2rem; }
@@ -72,7 +82,6 @@
         .form-input:focus { border-color:var(--accent); }
         .form-input::placeholder { color:var(--text-muted); }
         .form-input:read-only { color:var(--text-muted); cursor:not-allowed; }
-        .form-input[type="select"] { appearance:none; }
         select.form-input { appearance:none; cursor:pointer; }
         .form-hint { font-size:0.72rem; color:var(--text-muted); margin-top:0.3rem; }
         .form-hint.ok { color:#44CC88; }
@@ -84,8 +93,9 @@
         .btn-outline:hover { border-color:rgba(255,255,255,0.2); color:var(--white); }
         .btn-danger { background:transparent; color:#FF5555; border:1px solid rgba(255,85,85,0.3); padding:0.82rem 1.5rem; font-family:'Oswald',sans-serif; font-size:0.85rem; letter-spacing:0.08em; cursor:pointer; transition:all 0.2s; }
         .btn-danger:hover { background:rgba(255,85,85,0.08); border-color:#FF5555; }
+        .btn-sm { padding:0.5rem 1.2rem; font-size:0.8rem; }
 
-        /* ===== 주문 내역 ===== */
+        /* 주문 내역 */
         .order-card { background:var(--surface); border:1px solid var(--border); padding:1.3rem 1.5rem; margin-bottom:0.8rem; transition:border-color 0.2s; }
         .order-card:hover { border-color:rgba(255,255,255,0.12); }
         .order-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.8rem; }
@@ -102,11 +112,11 @@
         .order-btn { font-size:0.72rem; color:var(--text-muted); text-decoration:none; border:1px solid var(--border); padding:0.25rem 0.7rem; cursor:pointer; background:transparent; transition:all 0.2s; font-family:'Noto Sans KR',sans-serif; }
         .order-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--white); }
 
-        .empty-state { text-align:center; padding:4rem 2rem; color:var(--text-muted); }
-        .empty-state .icon { font-size:3rem; opacity:0.3; margin-bottom:1rem; }
+        .empty-state { text-align:center; padding:3rem 2rem; color:var(--text-muted); }
+        .empty-state .icon { font-size:2.5rem; opacity:0.3; margin-bottom:1rem; }
         .empty-state p { font-size:0.9rem; margin-bottom:1.5rem; }
 
-        /* ===== 배송지 ===== */
+        /* 배송지 */
         .addr-card { background:var(--surface); border:1px solid var(--border); padding:1.3rem 1.5rem; margin-bottom:0.8rem; position:relative; }
         .addr-card.default { border-color:rgba(255,51,0,0.35); }
         .addr-top { display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem; }
@@ -117,7 +127,6 @@
         .addr-btn { font-size:0.72rem; color:var(--text-muted); cursor:pointer; background:none; border:none; text-decoration:underline; font-family:'Noto Sans KR',sans-serif; transition:color 0.2s; }
         .addr-btn:hover { color:var(--white); }
         .addr-btn.del:hover { color:#FF5555; }
-
         .addr-form { background:var(--surface-2); border:1px solid var(--border); padding:1.5rem; margin-bottom:0.8rem; display:none; }
         .addr-form.open { display:block; animation:fadeUp 0.3s ease; }
         .addr-form-title { font-family:'Oswald',sans-serif; font-size:0.8rem; letter-spacing:0.2em; color:var(--text-muted); text-transform:uppercase; margin-bottom:1.2rem; }
@@ -125,16 +134,16 @@
         .addr-form-grid .full { grid-column:1/-1; }
         .addr-form-actions { display:flex; gap:0.6rem; justify-content:flex-end; }
 
-        /* ===== 비밀번호 ===== */
+        /* 비밀번호 */
         .pw-strength { height:4px; background:var(--border); margin-top:0.5rem; border-radius:2px; overflow:hidden; }
         .pw-strength-bar { height:100%; width:0; transition:width 0.3s, background 0.3s; border-radius:2px; }
 
-        /* ===== 탈퇴 ===== */
+        /* 탈퇴 */
         .danger-box { background:rgba(255,85,85,0.04); border:1px solid rgba(255,85,85,0.2); padding:1.8rem; }
         .danger-title { font-family:'Oswald',sans-serif; color:#FF5555; letter-spacing:0.05em; margin-bottom:0.6rem; }
         .danger-desc { font-size:0.84rem; color:var(--text-muted); line-height:1.8; margin-bottom:1.5rem; }
 
-        /* ===== POINTS ===== */
+        /* 포인트 */
         .points-hero { background:linear-gradient(135deg,rgba(201,162,62,0.14),rgba(201,162,62,0.04));border:1px solid rgba(201,162,62,0.25);padding:1.8rem;margin-bottom:1.2rem;text-align:center; }
         .points-hero-val { font-family:'Oswald',sans-serif;font-size:3rem;color:var(--gold);font-weight:700;letter-spacing:0.05em;line-height:1; }
         .points-hero-label { font-size:0.78rem;color:var(--text-muted);margin-top:0.4rem;margin-bottom:1.2rem; }
@@ -157,14 +166,7 @@
         .earn { color:#44CC88; }
         .spend { color:var(--accent); }
 
-        /* ===== NAV DROPDOWN ===== */
-        .nav-item-drop { position:relative; }
-        .nav-drop-menu { position:absolute;top:calc(100% + 0.9rem);left:50%;transform:translateX(-50%);background:rgba(10,14,24,0.99);border:1px solid var(--border);min-width:150px;display:none;flex-direction:column;z-index:200;padding:0.4rem 0;backdrop-filter:blur(20px); }
-        .nav-item-drop:hover .nav-drop-menu { display:flex; }
-        .nav-drop-menu a { display:block;padding:0.55rem 1rem;font-family:'Oswald',sans-serif;font-size:0.72rem;color:var(--text-muted);white-space:nowrap;text-decoration:none;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.15s,background 0.15s; }
-        .nav-drop-menu a:hover { color:var(--white);background:rgba(255,255,255,0.04); }
-
-        /* ===== TOAST ===== */
+        /* TOAST */
         .toast { position:fixed;bottom:2rem;right:2rem;z-index:999;pointer-events:none; }
         .toast-msg { background:var(--accent);color:white;padding:0.85rem 1.5rem;font-size:0.85rem;box-shadow:0 6px 30px rgba(255,51,0,0.35);animation:fadeUp 0.3s ease;margin-top:0.5rem; }
         .toast-msg.green { background:#1a7a4a; }
@@ -194,9 +196,6 @@
             <div class="nav-drop-menu">
                 <a href="mypage.html">내 정보</a>
                 <a href="mypage.html#orders">주문내역</a>
-                <a href="mypage.html#address">배송지관리</a>
-                <a href="mypage.html#favorites">관심선수</a>
-                <a href="mypage.html#points">포인트</a>
             </div>
         </li>
     </ul>
@@ -208,7 +207,7 @@
 
 <div class="mypage-wrap">
 
-    <!-- ===== 사이드바 ===== -->
+    <!-- 사이드바 -->
     <aside class="sidebar">
         <div class="user-card">
             <div class="user-avatar-wrap">
@@ -222,24 +221,22 @@
         </div>
 
         <nav class="side-nav">
-            <a class="side-nav-item active" onclick="showTab('profile')">👤 내 정보</a>
-            <a class="side-nav-item" onclick="showTab('orders')">📦 주문 내역</a>
-            <a class="side-nav-item" onclick="showTab('address')">📍 배송지 관리</a>
-            <a class="side-nav-item" onclick="showTab('password')">🔒 비밀번호 변경</a>
-            <a class="side-nav-item" onclick="showTab('favorites')">⭐ 관심 선수</a>
-            <a class="side-nav-item" onclick="showTab('points')" style="color:var(--gold);">💎 포인트</a>
-            <a class="side-nav-item danger" onclick="showTab('leave')">회원 탈퇴</a>
+            <a class="side-nav-item active" onclick="showTab('profile', this)">👤 내 정보</a>
+            <a class="side-nav-item" onclick="showTab('orders', this)">📦 주문 내역</a>
+            <a class="side-nav-item" onclick="showTab('password', this)">🔒 비밀번호 변경</a>
+            <a class="side-nav-item danger" onclick="showTab('leave', this)">회원 탈퇴</a>
         </nav>
     </aside>
 
-    <!-- ===== 콘텐츠 ===== -->
+    <!-- 콘텐츠 -->
     <div class="content-area">
 
-        <!-- 내 정보 -->
+        <!-- ===== 내 정보 ===== -->
         <div class="tab-panel active" id="tab-profile">
             <div class="panel-title">내 정보</div>
-            <p class="panel-sub">프로필 정보를 확인하고 수정할 수 있습니다.</p>
+            <p class="panel-sub">프로필 정보 수정, 배송지 관리, 관심 선수, 포인트를 한 곳에서 확인할 수 있습니다.</p>
 
+            <!-- 기본 정보 -->
             <div class="form-section">
                 <div class="form-section-title">기본 정보</div>
                 <div class="form-grid">
@@ -267,7 +264,7 @@
             </div>
 
             <div class="form-section">
-                <div class="form-section-title">생년월일</div>
+                <div class="form-section-title">추가 정보</div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">생년월일</label>
@@ -284,26 +281,15 @@
                 </div>
             </div>
 
-            <div style="display:flex;gap:0.8rem;margin-top:0.5rem;">
-                <button class="btn-save" onclick="saveProfile()">변경사항 저장</button>
+            <div style="display:flex;gap:0.8rem;margin-bottom:0.5rem;">
+                <button class="btn-save" onclick="saveProfile()">내 정보 저장</button>
             </div>
-        </div>
 
-        <!-- 주문 내역 -->
-        <div class="tab-panel" id="tab-orders">
-            <div class="panel-title">주문 내역</div>
-            <p class="panel-sub">최근 주문한 굿즈를 확인할 수 있습니다.</p>
-            <div id="orders-list"></div>
-        </div>
-
-        <!-- 배송지 관리 -->
-        <div class="tab-panel" id="tab-address">
-            <div class="panel-title">배송지 관리</div>
-            <p class="panel-sub">배송지를 최대 5개까지 등록할 수 있습니다.</p>
+            <!-- ─── 배송지 관리 ─── -->
+            <div class="info-section-header"><h3>배송지 관리</h3></div>
 
             <div id="addr-list"></div>
 
-            <!-- 배송지 추가 폼 -->
             <div class="addr-form" id="addr-add-form">
                 <div class="addr-form-title">배송지 추가</div>
                 <div class="addr-form-grid">
@@ -339,15 +325,71 @@
                     </div>
                 </div>
                 <div class="addr-form-actions">
-                    <button class="btn-outline" onclick="closeAddrForm()">취소</button>
-                    <button class="btn-save" onclick="saveAddress()">배송지 저장</button>
+                    <button class="btn-outline btn-sm" onclick="closeAddrForm()">취소</button>
+                    <button class="btn-save btn-sm" onclick="saveAddress()">배송지 저장</button>
                 </div>
             </div>
 
-            <button class="btn-outline" id="btn-add-addr" onclick="openAddrForm()" style="width:100%;margin-top:0.5rem;">+ 새 배송지 추가</button>
+            <button class="btn-outline" id="btn-add-addr" onclick="openAddrForm()" style="width:100%;margin-top:0.4rem;">+ 새 배송지 추가</button>
+
+            <!-- ─── 관심 선수 ─── -->
+            <div class="info-section-header"><h3>관심 선수</h3></div>
+
+            <div class="form-section">
+                <div class="form-section-title">파이터 선택</div>
+                <div style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1.2rem;" id="fighter-chips"></div>
+                <p class="form-hint" style="margin-bottom:1rem;">선택한 파이터의 신규 굿즈 출시 시 알림을 받습니다.</p>
+                <button class="btn-save btn-sm" onclick="saveFavorites()">관심 선수 저장</button>
+            </div>
+
+            <!-- ─── 포인트 ─── -->
+            <div class="info-section-header"><h3>포인트</h3></div>
+
+            <div class="points-hero">
+                <div class="points-hero-val" id="points-display">0 P</div>
+                <div class="points-hero-label">현재 보유 포인트</div>
+                <div class="points-actions">
+                    <a href="community.html" class="points-action-btn">승부예측 참여하기</a>
+                    <a href="community.html#raffle" class="points-action-btn outline" onclick="localStorage.setItem('openRaffle','1')">굿즈 응모하기</a>
+                </div>
+            </div>
+
+            <div class="points-how">
+                <div class="points-how-title">포인트 적립 방법</div>
+                <div class="points-how-item">
+                    <span>🥊 승부예측 참여 (경기당)</span>
+                    <span class="points-how-earn">+50 P</span>
+                </div>
+                <div class="points-how-item">
+                    <span>✅ 예측 적중 보너스</span>
+                    <span class="points-how-earn">+200 P</span>
+                </div>
+                <div class="points-how-item">
+                    <span>📝 커뮤니티 게시글 작성</span>
+                    <span class="points-how-earn">+10 P</span>
+                </div>
+                <div class="points-how-item">
+                    <span>🛒 굿즈 구매 (1,000원당)</span>
+                    <span class="points-how-earn">+5 P</span>
+                </div>
+            </div>
+
+            <div class="points-history-card">
+                <div class="form-section-title" style="margin-bottom:1rem;">포인트 내역</div>
+                <div id="points-history-list">
+                    <div class="empty-state"><div class="icon">💎</div><p>포인트 내역이 없습니다.<br>승부예측에 참여하여 포인트를 적립하세요!</p></div>
+                </div>
+            </div>
         </div>
 
-        <!-- 비밀번호 변경 -->
+        <!-- ===== 주문 내역 ===== -->
+        <div class="tab-panel" id="tab-orders">
+            <div class="panel-title">주문 내역</div>
+            <p class="panel-sub">최근 주문한 굿즈를 확인할 수 있습니다.</p>
+            <div id="orders-list"></div>
+        </div>
+
+        <!-- ===== 비밀번호 변경 ===== -->
         <div class="tab-panel" id="tab-password">
             <div class="panel-title">비밀번호 변경</div>
             <p class="panel-sub">주기적으로 비밀번호를 변경하면 보안이 강화됩니다.</p>
@@ -375,62 +417,7 @@
             <button class="btn-save" onclick="changePw()">비밀번호 변경</button>
         </div>
 
-        <!-- 관심 선수 -->
-        <div class="tab-panel" id="tab-favorites">
-            <div class="panel-title">관심 선수</div>
-            <p class="panel-sub">응원하는 파이터의 신규 굿즈 알림을 받을 수 있습니다.</p>
-
-            <div class="form-section">
-                <div class="form-section-title">파이터 선택</div>
-                <div style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1.5rem;" id="fighter-chips"></div>
-                <p class="form-hint">선택한 파이터의 신규 굿즈 출시 시 알림을 받습니다.</p>
-            </div>
-            <button class="btn-save" onclick="saveFavorites()">저장</button>
-        </div>
-
-        <!-- 포인트 -->
-        <div class="tab-panel" id="tab-points">
-            <div class="panel-title">포인트</div>
-            <p class="panel-sub">승부예측 참여로 포인트를 적립하고 굿즈 응모에 사용하세요.</p>
-
-            <div class="points-hero">
-                <div class="points-hero-val" id="points-display">0 P</div>
-                <div class="points-hero-label">현재 보유 포인트</div>
-                <div class="points-actions">
-                    <a href="community.html" class="points-action-btn">승부예측 참여하기</a>
-                    <a href="community.html#raffle" class="points-action-btn outline" onclick="localStorage.setItem('openRaffle','1')">굿즈 응모하기</a>
-                </div>
-            </div>
-
-            <div class="points-how">
-                <div class="points-how-title">포인트 적립 방법</div>
-                <div class="points-how-item">
-                    <span>🥊 승부예측 참여 (경기당)</span>
-                    <span class="points-how-earn">+50 P</span>
-                </div>
-                <div class="points-how-item">
-                    <span>✅ 예측 적중 보너스 (결과 발표 후)</span>
-                    <span class="points-how-earn">+200 P</span>
-                </div>
-                <div class="points-how-item">
-                    <span>📝 커뮤니티 게시글 작성</span>
-                    <span class="points-how-earn">+10 P</span>
-                </div>
-                <div class="points-how-item">
-                    <span>🛒 굿즈 구매 (1,000원당)</span>
-                    <span class="points-how-earn">+5 P</span>
-                </div>
-            </div>
-
-            <div class="points-history-card">
-                <div class="form-section-title" style="margin-bottom:1rem;">포인트 내역</div>
-                <div id="points-history-list">
-                    <div class="empty-state"><div class="icon">💎</div><p>포인트 내역이 없습니다.<br>승부예측에 참여하여 포인트를 적립하세요!</p></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 회원 탈퇴 -->
+        <!-- ===== 회원 탈퇴 ===== -->
         <div class="tab-panel" id="tab-leave">
             <div class="panel-title">회원 탈퇴</div>
             <p class="panel-sub">탈퇴 전 아래 내용을 반드시 확인해주세요.</p>
@@ -468,9 +455,6 @@
 <div class="toast" id="toast-container"></div>
 
 <script>
-/* ================================================================
-   데이터 로드
-   ================================================================ */
 let user = JSON.parse(localStorage.getItem('legacy_user') || 'null');
 
 if (!user) {
@@ -501,30 +485,23 @@ function loadUserData() {
     document.getElementById('input-birth').value = user.birth || '';
     if (user.gender) document.getElementById('input-gender').value = user.gender;
 
-    renderOrders();
     renderAddresses();
     renderFighters();
     renderPoints();
 }
 
-/* ================================================================
-   탭
-   ================================================================ */
-function showTab(id) {
+/* ===== 탭 전환 ===== */
+function showTab(id, el) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.side-nav-item').forEach(i => i.classList.remove('active'));
     document.getElementById('tab-' + id).classList.add('active');
-    event.currentTarget.classList.add('active');
+    el.classList.add('active');
     if (id === 'orders') renderOrders();
-    if (id === 'address') renderAddresses();
-    if (id === 'favorites') renderFighters();
-    if (id === 'points') renderPoints();
-    location.hash = id !== 'profile' ? '#' + id : '#';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    history.replaceState(null, '', id !== 'profile' ? '#' + id : location.pathname);
 }
 
-/* ================================================================
-   내 정보 저장
-   ================================================================ */
+/* ===== 내 정보 저장 ===== */
 function saveProfile() {
     user.name = document.getElementById('input-name').value.trim();
     user.nickname = document.getElementById('input-nickname').value.trim();
@@ -544,9 +521,7 @@ function formatPhone(el) {
     else el.value = v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);
 }
 
-/* ================================================================
-   프로필 이미지
-   ================================================================ */
+/* ===== 프로필 이미지 ===== */
 function changeAvatar(input) {
     if (!input.files[0]) return;
     const reader = new FileReader();
@@ -559,18 +534,21 @@ function changeAvatar(input) {
     reader.readAsDataURL(input.files[0]);
 }
 
-/* ================================================================
-   주문 내역
-   ================================================================ */
+/* ===== 주문 내역 ===== */
 function renderOrders() {
-    const orders = user.orders || [];
+    const orders = (user && user.orders) ? user.orders : [];
     const container = document.getElementById('orders-list');
+    if (!container) return;
     if (orders.length === 0) {
-        container.innerHTML = `<div class="empty-state"><div class="icon">📦</div><p>주문 내역이 없습니다.</p><a href="index.html#goods" style="display:inline-block;background:var(--accent);color:white;text-decoration:none;padding:0.8rem 1.8rem;font-family:'Oswald',sans-serif;font-size:0.9rem;">굿즈 보러가기</a></div>`;
+        container.innerHTML = `<div class="empty-state">
+            <div class="icon">📦</div>
+            <p>아직 주문 내역이 없습니다.</p>
+            <a href="index.html#goods" style="display:inline-block;background:var(--accent);color:white;text-decoration:none;padding:0.8rem 1.8rem;font-family:'Oswald',sans-serif;font-size:0.9rem;letter-spacing:0.08em;">굿즈 보러가기</a>
+        </div>`;
         return;
     }
     const statusMap = { '결제완료':'paid', '배송중':'shipping', '배송완료':'done' };
-    container.innerHTML = orders.map(o => `
+    container.innerHTML = orders.slice().reverse().map(o => `
         <div class="order-card">
             <div class="order-top">
                 <div>
@@ -590,14 +568,13 @@ function renderOrders() {
         </div>`).join('');
 }
 
-/* ================================================================
-   배송지 관리
-   ================================================================ */
+/* ===== 배송지 관리 ===== */
 function renderAddresses() {
-    const addrs = user.addresses || [];
+    const addrs = (user && user.addresses) ? user.addresses : [];
     const list = document.getElementById('addr-list');
+    if (!list) return;
     if (addrs.length === 0) {
-        list.innerHTML = `<div class="empty-state"><div class="icon">📍</div><p>등록된 배송지가 없습니다.</p></div>`;
+        list.innerHTML = `<div class="empty-state" style="padding:1.5rem;"><div class="icon">📍</div><p>등록된 배송지가 없습니다.</p></div>`;
     } else {
         list.innerHTML = addrs.map((a, i) => `
             <div class="addr-card ${a.isDefault ? 'default' : ''}">
@@ -606,8 +583,7 @@ function renderAddresses() {
                     ${a.isDefault ? '<span class="addr-default-badge">기본배송지</span>' : ''}
                 </div>
                 <div class="addr-info">
-                    ${a.zip ? '['+a.zip+'] ' : ''}${a.addr} ${a.detail || ''}<br>
-                    ${a.phone}
+                    ${a.zip ? '['+a.zip+'] ' : ''}${a.addr} ${a.detail || ''}<br>${a.phone}
                 </div>
                 <div class="addr-actions">
                     ${!a.isDefault ? `<button class="addr-btn" onclick="setDefault(${i})">기본 설정</button>` : ''}
@@ -665,9 +641,7 @@ function deleteAddr(idx) {
     showToast('배송지가 삭제되었습니다.', false);
 }
 
-/* ================================================================
-   비밀번호 변경
-   ================================================================ */
+/* ===== 비밀번호 변경 ===== */
 function checkNewPw() {
     const v = document.getElementById('new-pw').value;
     const bar = document.getElementById('pw-bar');
@@ -692,7 +666,6 @@ function checkNewPw2() {
     hint.className = 'form-hint ' + (v1 === v2 ? 'ok' : 'err');
     hint.textContent = v1 === v2 ? '비밀번호가 일치합니다' : '비밀번호가 일치하지 않습니다';
 }
-
 function changePw() {
     const newPw = document.getElementById('new-pw').value;
     const newPw2 = document.getElementById('new-pw2').value;
@@ -708,43 +681,33 @@ function changePw() {
     showToast('비밀번호가 변경되었습니다.', true);
 }
 
-/* ================================================================
-   관심 선수
-   ================================================================ */
+/* ===== 관심 선수 ===== */
 function renderFighters() {
-    const fav = user.favorites || [];
-    document.getElementById('fighter-chips').innerHTML = FIGHTERS.map(f => `
-        <button onclick="this.classList.toggle('fav-on')" class="fav-chip ${fav.includes(f) ? 'fav-on' : ''}"
-            style="padding:0.4rem 1rem;border:1px solid ${fav.includes(f)?'var(--accent)':'var(--border)'};background:${fav.includes(f)?'rgba(255,51,0,0.08)':'transparent'};color:${fav.includes(f)?'var(--accent)':'var(--text-muted)'};font-family:'Noto Sans KR',sans-serif;font-size:0.82rem;cursor:pointer;transition:all 0.2s;"
-            onmouseenter="if(!this.classList.contains('fav-on')){this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='var(--white)';}"
-            onmouseleave="if(!this.classList.contains('fav-on')){this.style.borderColor='var(--border)';this.style.color='var(--text-muted)';}">
+    const fav = (user && user.favorites) ? user.favorites : [];
+    document.getElementById('fighter-chips').innerHTML = FIGHTERS.map(f => {
+        const on = fav.includes(f);
+        return `<button onclick="toggleFav(this)" data-name="${f}" class="fav-chip ${on?'fav-on':''}"
+            style="padding:0.4rem 1rem;border:1px solid ${on?'var(--accent)':'var(--border)'};background:${on?'rgba(255,51,0,0.08)':'transparent'};color:${on?'var(--accent)':'var(--text-muted)'};font-family:'Noto Sans KR',sans-serif;font-size:0.82rem;cursor:pointer;transition:all 0.2s;">
             ${f}
-        </button>`).join('');
+        </button>`;
+    }).join('');
+}
+
+function toggleFav(btn) {
+    const on = btn.classList.toggle('fav-on');
+    btn.style.borderColor = on ? 'var(--accent)' : 'var(--border)';
+    btn.style.background = on ? 'rgba(255,51,0,0.08)' : 'transparent';
+    btn.style.color = on ? 'var(--accent)' : 'var(--text-muted)';
 }
 
 function saveFavorites() {
-    const selected = [...document.querySelectorAll('.fav-chip.fav-on')].map(c => c.textContent.trim());
+    const selected = [...document.querySelectorAll('.fav-chip.fav-on')].map(c => c.dataset.name);
     user.favorites = selected;
     localStorage.setItem('legacy_user', JSON.stringify(user));
     showToast('관심 선수가 저장되었습니다.', true);
 }
 
-/* ================================================================
-   회원 탈퇴
-   ================================================================ */
-function handleLeave() {
-    const email = document.getElementById('leave-email').value.trim();
-    if (email !== user.email) { showToast('이메일이 일치하지 않습니다.', false); return; }
-    if (!confirm('정말로 탈퇴하시겠습니까? 모든 정보가 삭제됩니다.')) return;
-    localStorage.removeItem('legacy_user');
-    localStorage.removeItem('legacy_loggedIn');
-    showToast('탈퇴되었습니다. 이용해주셔서 감사합니다.', false);
-    setTimeout(() => window.location.href = 'index.html', 1500);
-}
-
-/* ================================================================
-   포인트
-   ================================================================ */
+/* ===== 포인트 ===== */
 function renderPoints() {
     if (!user) return;
     const pts = user.points || 0;
@@ -752,7 +715,7 @@ function renderPoints() {
     const hist = user.pointsHistory || [];
     const listEl = document.getElementById('points-history-list');
     if (hist.length === 0) {
-        listEl.innerHTML = `<div class="empty-state"><div class="icon">💎</div><p>포인트 내역이 없습니다.<br>승부예측에 참여하여 포인트를 적립하세요!</p></div>`;
+        listEl.innerHTML = `<div class="empty-state" style="padding:1.5rem;"><div class="icon">💎</div><p>포인트 내역이 없습니다.<br>승부예측에 참여하여 포인트를 적립하세요!</p></div>`;
     } else {
         listEl.innerHTML = hist.map(h => `
             <div class="points-history-item">
@@ -765,9 +728,18 @@ function renderPoints() {
     }
 }
 
-/* ================================================================
-   공통
-   ================================================================ */
+/* ===== 회원 탈퇴 ===== */
+function handleLeave() {
+    const email = document.getElementById('leave-email').value.trim();
+    if (email !== user.email) { showToast('이메일이 일치하지 않습니다.', false); return; }
+    if (!confirm('정말로 탈퇴하시겠습니까? 모든 정보가 삭제됩니다.')) return;
+    localStorage.removeItem('legacy_user');
+    localStorage.removeItem('legacy_loggedIn');
+    showToast('탈퇴되었습니다. 이용해주셔서 감사합니다.', false);
+    setTimeout(() => window.location.href = 'index.html', 1500);
+}
+
+/* ===== 공통 ===== */
 function doLogout() {
     localStorage.removeItem('legacy_loggedIn');
     window.location.href = 'index.html';
@@ -782,18 +754,20 @@ function showToast(msg, success = true) {
     setTimeout(() => el.remove(), 2400);
 }
 
-// 해시로 탭 직접 이동
-const HASH_MAP = {orders:'orders',address:'address',favorites:'favorites',points:'points',password:'password'};
-const hashId = HASH_MAP[location.hash.replace('#','')];
-if (hashId) {
-    const navItem = document.querySelector(`.side-nav-item[onclick="showTab('${hashId}')"]`);
-    if (navItem) {
-        document.querySelectorAll('.side-nav-item').forEach(i=>i.classList.remove('active'));
-        navItem.classList.add('active');
-        document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-        document.getElementById('tab-'+hashId).classList.add('active');
+/* 해시로 탭 직접 이동 (#orders) */
+(function() {
+    const hash = location.hash.replace('#', '');
+    if (hash === 'orders') {
+        const navItem = document.querySelector(".side-nav-item[onclick=\"showTab('orders', this)\"]");
+        if (navItem) {
+            document.querySelectorAll('.side-nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            navItem.classList.add('active');
+            document.getElementById('tab-orders').classList.add('active');
+            renderOrders();
+        }
     }
-}
+})();
 
 loadUserData();
 </script>
